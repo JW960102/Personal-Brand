@@ -1,0 +1,39 @@
+/* ============================================
+   디자인 토큰 — 김종욱 피그마 시안 실측값 기반
+   fileKey uKigljo32pKJhTOieeVv5x / 아트보드 1920×1080
+   ============================================ */
+
+:root {
+  /* --- 컬러 (흑백 미니멀 — 포인트 컬러는 프로젝트 이미지 안에서만) --- */
+  --c-bg: #ffffff;
+  --c-ink: #000000;
+  --c-ink-60: rgba(0, 0, 0, 0.6);      /* Scroll Down 등 보조 텍스트 */
+  --c-header-bar: rgba(0, 0, 0, 0.4);  /* 헤더 반투명 바 */
+  --c-header-ink: #ffffff;
+  --c-scroll-grad: #515151;            /* 스크롤 인디케이터 하단색 */
+  --c-placeholder: #d9d9d9;            /* 이미지 자리표시 */
+
+  /* --- 폰트 시스템 (2폰트: 로고 세리프 + 나머지 전부 Pretendard) ---
+     · f-serif  : DM Serif Display Italic — 로고 전용 (장식용, 다른 곳에 쓰지 않음)
+     · f-sans   : Pretendard — Hero·타이틀·Menu·인덱스 숫자·한글 본문까지 전부
+       (Arial·Noto Sans KR 폐기 → Pretendard 단일화)
+     가중치 가이드: 200(대형 타이틀=Regular) / 500(부제=Medium) / 600(강조=SemiBold) */
+  --f-serif: "DM Serif Display", serif;                      /* 로고 전용 */
+  --f-sans: "Pretendard Variable", Pretendard, -apple-system, sans-serif; /* 그 외 전부 */
+
+  /* 하위호환 별칭 (기존 --f-logo/--f-display 참조 코드 대비) */
+  --f-logo: var(--f-serif);
+  --f-display: var(--f-sans);
+
+  /* --- 타이포 스케일 (시안 px → 1920 기준 vw 병기) ---
+     Hero 200px = 10.4167vw / 헤더 32px = 1.667vw / 본문 18px = 0.9375vw */
+  --t-hero: clamp(48px, 10.4167vw, 220px);   /* Hero 대형 타이틀 */
+  --t-header: clamp(20px, 1.667vw, 32px);     /* 로고·Menu */
+  --t-caption: clamp(13px, 0.9375vw, 18px);   /* Scroll Down */
+
+  --lh-hero: 0.865;      /* Hero 계단 행간 (top 265→440→613, 간격173 ÷ 200) */
+
+  /* --- 여백/레이아웃 --- */
+  --edge: clamp(20px, 1.5625vw, 30px);  /* 로고 좌측 여백 30px 기준 */
+  --header-h: clamp(64px, 6.09vw, 117px);
+}

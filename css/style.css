@@ -1,0 +1,165 @@
+/* ============================================
+   퍼스널 브랜드 v2 — 김종욱 피그마 시안 구현
+   ============================================ */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--f-display);
+  color: var(--c-ink);
+  background: var(--c-bg);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+img { max-width: 100%; display: block; }
+a { color: inherit; text-decoration: none; }
+
+/* ---------- 헤더 (전 페이지 공통 — 반투명 바 + 로고/Menu) ---------- */
+.site-header {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 100;
+  height: var(--header-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--edge);
+  background: var(--c-header-bar);
+  color: var(--c-header-ink);
+}
+.site-header .logo {
+  font-family: var(--f-logo);
+  font-style: italic;
+  font-size: var(--t-header);
+  line-height: 1;
+}
+.site-header .menu {
+  font-family: var(--f-sans);   /* button은 폰트 상속 안 됨 → 명시 (기본 Arial 방지) */
+  font-size: var(--t-header);
+  font-weight: 600;
+  line-height: 1;
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+/* ---------- Hero (DESIGN / DEVELOP / DELIVERED 계단 배치) ----------
+   시안 실측: 200px Pretendard, top 265→440→613 (간격173, 행간0.865)
+   좌측 edge: DEVELOP 399 / DESIGN 663 / DELIVERED 506 (1920 기준)
+   → 블록 좌측을 DEVELOP(399=20.78vw)에 두고 각 줄 들여쓰기로 계단 구현 */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100svh;
+  background: var(--c-bg);
+  overflow: hidden;
+}
+
+/* ---------- 배경 3D 오브제 캔버스 (JW, three.js) ---------- */
+.hero-3d {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;              /* 타이틀(z-index 2) 뒤 */
+  pointer-events: none;
+  display: block;
+}
+.hero-title {
+  position: absolute;
+  left: 20.78vw;                 /* 399/1920 */
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;                    /* 유리 오브제(z0) 위 */
+  font-size: var(--t-hero);
+  line-height: var(--lh-hero);
+  font-weight: 400;
+  white-space: nowrap;
+}
+/* 각 줄 = 마스크(overflow hidden) + 내부 텍스트. GSAP이 내부를 아래→위로 밀어올림 */
+.hero-title .hero-line {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.05em;   /* 디센더(g 등) 잘림 방지 */
+}
+.hero-title .line-inner { display: block; will-change: transform; }
+.hero-title .l-design    { margin-left: 13.75vw; }  /* 663-399=264 → 13.75vw */
+.hero-title .l-develop   { margin-left: 0; }        /* 기준선 */
+.hero-title .l-delivered { margin-left: 5.57vw; }   /* 506-399=107 → 5.57vw */
+/* GSAP 준비 전 텍스트 숨김 (JS 있을 때만). no-JS면 그대로 보임 */
+.js .hero-title .line-inner,
+.js .hero-scroll { visibility: hidden; }
+
+/* 스크롤 인디케이터 (하단 중앙) — 6×74 그라데이션 바 + 캡션 */
+.hero-scroll {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(24px, 4.5vh, 60px);
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.hero-scroll .bar {
+  width: 6px;
+  height: clamp(40px, 6.85vw, 74px);
+  background: linear-gradient(to bottom, rgba(217, 217, 217, 0), var(--c-scroll-grad));
+  position: relative;
+  overflow: hidden;
+}
+/* 살아있는 스크롤 힌트: 밝은 점이 바를 따라 계속 흘러내림 */
+.hero-scroll .bar::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 45%;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.9), rgba(255,255,255,0));
+  animation: scrollFlow 1.8s ease-in-out infinite;
+}
+@keyframes scrollFlow {
+  0%   { top: -50%; }
+  100% { top: 100%; }
+}
+.hero-scroll .caption {
+  font-size: var(--t-caption);
+  color: var(--c-ink-60);
+}
+
+/* ---------- AI 챗봇 위젯 (우하단 자리만 — API 미연동) ---------- */
+.chat-fab {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 200;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: none;
+  background: var(--c-ink);
+  color: var(--c-bg);
+  font-family: var(--f-sans);
+  font-size: 20px;
+  cursor: pointer;
+  transition: transform 0.25s ease;
+}
+.chat-fab:hover { transform: scale(1.08); }
+
+/* 모션 최소화 설정 존중 */
+@media (prefers-reduced-motion: reduce) {
+  .hero-title span,
+  .site-header,
+  .hero-scroll { animation: none !important; opacity: 1; transform: none; }
+  .hero-scroll .bar::after { display: none; }
+  html { scroll-behavior: auto; }
+}
+
+/* ---------- 반응형 ---------- */
+@media (max-width: 768px) {
+  /* 모바일: 계단 유지하되 좌측 여백 축소, 글자 화면폭에 맞춤 */
+  .hero-title { left: 8vw; font-size: clamp(40px, 15vw, 120px); }
+  .hero-title .l-design { margin-left: 20vw; }
+  .hero-title .l-delivered { margin-left: 8vw; }
+}
