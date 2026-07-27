@@ -13,17 +13,23 @@
   --c-scroll-grad: #515151;            /* 스크롤 인디케이터 하단색 */
   --c-placeholder: #d9d9d9;            /* 이미지 자리표시 */
 
-  /* --- 폰트 시스템 (2폰트: 로고 세리프 + 나머지 전부 Pretendard) ---
-     · f-serif  : DM Serif Display Italic — 로고 전용 (장식용, 다른 곳에 쓰지 않음)
-     · f-sans   : Pretendard — Hero·타이틀·Menu·인덱스 숫자·한글 본문까지 전부
-       (Arial·Noto Sans KR 폐기 → Pretendard 단일화)
-     가중치 가이드: 200(대형 타이틀=Regular) / 500(부제=Medium) / 600(강조=SemiBold) */
-  --f-serif: "DM Serif Display", serif;                      /* 로고 전용 */
-  --f-sans: "Pretendard Variable", Pretendard, -apple-system, sans-serif; /* 그 외 전부 */
+  /* --- 폰트 시스템 (outpost.design 폰트 분석 기반, 2026-07-27 개편) ---
+     outpost는 Scto Grotesk A(그로테스크) + Bradford LL(세리프) 2종으로 전체를 구성.
+     둘 다 유료라 무료·상업가능 대체폰트로 매칭 + 한글은 Pretendard 유지 → 3역할 체계.
+       · f-sans    : Pretendard — 한글·본문·UI 전부 (body 기본값)
+       · f-display : General Sans (Fontshare) — 영문 디스플레이/헤드라인·라벨·메뉴·로고 (Scto 대체)
+       · f-serif   : Newsreader (Google) — 에디토리얼 세리프/리드 문단·인용 (Bradford 대체)
+     ※ General Sans·Newsreader는 한글 글리프 없음 → fallback으로 Pretendard 지정
+     가중치 가이드: 400(Regular=헤드라인) / 500(Medium=라벨·메뉴) / 600(SemiBold=강조) */
+  --f-sans: "Pretendard Variable", Pretendard, -apple-system, sans-serif;      /* 한글·본문 기본 */
+  --f-display: "General Sans", "Pretendard Variable", Pretendard, sans-serif;  /* 영문 디스플레이 */
+  --f-serif: "Newsreader", "Pretendard Variable", Pretendard, serif;           /* 에디토리얼 세리프 */
+  --f-logo: var(--f-display);                                                  /* 로고 = 그로테스크 */
 
-  /* 하위호환 별칭 (기존 --f-logo/--f-display 참조 코드 대비) */
-  --f-logo: var(--f-serif);
-  --f-display: var(--f-sans);
+  /* --- 자간 (outpost 시그니처: 큰 텍스트일수록 극단적으로 조임) --- */
+  --ls-hero: -0.075em;   /* 히어로 대형 헤드라인 (outpost H1 -12.5px/166px = -0.075em) */
+  --ls-head: -0.05em;    /* 중간 헤드라인·소형 라벨 */
+  --ls-lead: -0.025em;   /* 세리프 리드 문단 */
 
   /* --- 타이포 스케일 (시안 px → 1920 기준 vw 병기) ---
      Hero 200px = 10.4167vw / 헤더 32px = 1.667vw / 본문 18px = 0.9375vw */
