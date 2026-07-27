@@ -5,7 +5,7 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
 body {
-  font-family: var(--f-display);
+  font-family: var(--f-sans);   /* 기본은 Pretendard(한글 안전). 영문 헤드라인만 --f-display로 개별 지정 */
   color: var(--c-ink);
   background: var(--c-bg);
   -webkit-font-smoothing: antialiased;
@@ -28,15 +28,17 @@ a { color: inherit; text-decoration: none; }
   color: var(--c-header-ink);
 }
 .site-header .logo {
-  font-family: var(--f-logo);
-  font-style: italic;
+  font-family: var(--f-logo);   /* General Sans (그로테스크) — outpost식 워드마크 */
   font-size: var(--t-header);
+  font-weight: 500;
+  letter-spacing: var(--ls-head);
   line-height: 1;
 }
 .site-header .menu {
-  font-family: var(--f-sans);   /* button은 폰트 상속 안 됨 → 명시 (기본 Arial 방지) */
+  font-family: var(--f-display);   /* button은 폰트 상속 안 됨 → 명시. 메뉴 라벨=그로테스크(Scto 대체) */
   font-size: var(--t-header);
-  font-weight: 600;
+  font-weight: 500;
+  letter-spacing: var(--ls-head);
   line-height: 1;
   background: none;
   border: none;
@@ -72,9 +74,11 @@ a { color: inherit; text-decoration: none; }
   top: 50%;
   transform: translateY(-50%);
   z-index: 2;                    /* 유리 오브제(z0) 위 */
+  font-family: var(--f-display); /* 영문 대형 헤드라인 = General Sans (Scto 대체) */
   font-size: var(--t-hero);
   line-height: var(--lh-hero);
   font-weight: 400;
+  letter-spacing: var(--ls-hero); /* outpost 시그니처: -0.075em 초타이트 */
   white-space: nowrap;
 }
 /* 각 줄 = 마스크(overflow hidden) + 내부 텍스트. GSAP이 내부를 아래→위로 밀어올림 */
