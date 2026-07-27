@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JW portfolio — 김종욱</title>
+  <meta name="description" content="디자인하고, 개발하고, 배포하는 UX/UI 디자이너 김종욱의 포트폴리오" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@1&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
+  <link rel="stylesheet" href="css/tokens.css" />
+  <link rel="stylesheet" href="css/style.css" />
+  <!-- GSAP (인터랙션 엔진) — outpost가 쓴 GSAP 계열, 업계 표준 라이브러리.
+       3.13부터 SplitText 무료 번들 포함 -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js" defer></script>
+  <!-- three.js (검증된 표준 3D 라이브러리) — Hero 배경 3D JW 오브제용 -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
+</head>
+<body>
+
+  <!-- 헤더 (전 페이지 공통) -->
+  <header class="site-header">
+    <a class="logo" href="index.html">JW portfolio</a>
+    <button class="menu" type="button">Menu</button>
+  </header>
+
+  <!-- ===== 01. Hero — DESIGN / DEVELOP / DELIVERED (계단 배치) ===== -->
+  <section class="hero" id="hero">
+    <!-- 배경 3D 오브제: JW 이니셜 (three.js, Y축 360° 회전 / 재질은 다음 단계) -->
+    <canvas class="hero-3d" id="hero3d" aria-hidden="true"></canvas>
+
+    <h1 class="hero-title">
+      <span class="hero-line l-design"><span class="line-inner">DESIGN</span></span>
+      <span class="hero-line l-develop"><span class="line-inner">DEVELOP</span></span>
+      <span class="hero-line l-delivered"><span class="line-inner">DELIVERED</span></span>
+    </h1>
+    <div class="hero-scroll">
+      <span class="bar"></span>
+      <span class="caption">Scroll Down</span>
+    </div>
+  </section>
+
+  <!-- AI 챗봇 위젯 (우하단 자리만 — API 미연동) -->
+  <button class="chat-fab" id="chatFab" aria-label="AI에게 물어보기">✳</button>
+
+  <script src="js/main.js"></script>
+  <script type="module" src="js/hero3d.js"></script>
+</body>
+</html>
