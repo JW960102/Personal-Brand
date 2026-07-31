@@ -9,28 +9,18 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="preconnect" href="https://api.fontshare.com" />
   <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin />
-  <!-- 영문 디스플레이/그로테스크 (outpost Scto Grotesk A 대체) — Fontshare, 무료·상업가능 -->
-  <link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600&display=swap" rel="stylesheet" />
-  <!-- 영문 에디토리얼 세리프 (outpost Bradford LL 대체) — Google Fonts, 무료 -->
+  <!-- 영문 디스플레이/그로테스크 (outpost Scto Grotesk A 대체) -->
+  <link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&display=swap" rel="stylesheet" />
+  <!-- 영문 에디토리얼 세리프 (outpost Bradford LL 대체) -->
   <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;1,6..72,300;1,6..72,400&display=swap" rel="stylesheet" />
-  <!-- 한글·본문·UI — Pretendard (유지) -->
+  <!-- 프로젝트 이미지 오버레이용 임팩트 폰트 (WE RUN, YOU IN?) -->
+  <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet" />
+  <!-- 한글·본문·UI — Pretendard -->
   <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
   <link rel="stylesheet" href="css/tokens.css" />
   <link rel="stylesheet" href="css/style.css" />
-  <!-- GSAP (인터랙션 엔진) — outpost가 쓴 GSAP 계열, 업계 표준 라이브러리.
-       3.13부터 SplitText 무료 번들 포함 -->
-  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js" defer></script>
-  <!-- three.js (검증된 표준 3D 라이브러리) — Hero 배경 3D JW 오브제용 -->
-  <script type="importmap">
-  {
-    "imports": {
-      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
-      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
-    }
-  }
-  </script>
+  <!-- NOTE(정적 1차 패스): 인터랙션(GSAP)·3D(three/hero3d)·챗봇 API 는 다음 단계.
+       구조/스타일 먼저 확정하고 나중에 얹는다. -->
 </head>
 <body>
 
@@ -40,26 +30,224 @@
     <button class="menu" type="button">Menu</button>
   </header>
 
-  <!-- ===== 01. Hero — DESIGN / DEVELOP / DELIVERED (계단 배치) ===== -->
-  <section class="hero" id="hero">
-    <!-- 배경 3D 오브제: JW 이니셜 (three.js, Y축 360° 회전 / 재질은 다음 단계) -->
-    <canvas class="hero-3d" id="hero3d" aria-hidden="true"></canvas>
+  <!-- 1920 무대 (뷰포트 폭 스케일 · js/main.js)
+       가치 섹션의 네이티브 sticky 핀을 위해 무대를 2개로 분할 -->
+  <div class="stage-wrap">
+  <div class="stage-clamp" id="clamp1">
+  <div class="stage" id="stage1">
+  <main>
 
-    <h1 class="hero-title">
-      <span class="hero-line l-design"><span class="line-inner">DESIGN</span></span>
-      <span class="hero-line l-develop"><span class="line-inner">DEVELOP</span></span>
-      <span class="hero-line l-delivered"><span class="line-inner">DELIVERED</span></span>
-    </h1>
-    <div class="hero-scroll">
-      <span class="bar"></span>
-      <span class="caption">Scroll Down</span>
+    <!-- ===== 01. Hero — THINK / MAKE & / DELIVER (실측 절대좌표) ===== -->
+    <section class="hero" id="hero">
+      <h1 class="hero-title">
+        <span class="hw hw-think">THINK</span>
+        <span class="hw hw-make">MAKE &amp;</span>
+        <span class="hw hw-deliver">DELIVER</span>
+      </h1>
+      <p class="hero-studio">JW<br />FIRST<br />DESIGN STUDIO</p>
+      <svg class="hero-arrow" width="93" height="98" viewBox="0 0 93 98" fill="none" aria-hidden="true">
+        <line x1="46.5" y1="0" x2="46.5" y2="97" stroke="currentColor" stroke-width="1.5" />
+        <path d="M0 51 L46.5 97.5 L93 51" stroke="currentColor" stroke-width="1.5" fill="none" />
+      </svg>
+    </section>
+
+    <!-- 영상 확장 스크롤 존 (높이는 js/main.js가 계산: 확장거리+홀드+영상 1화면) -->
+    <div class="video-zone" id="videoZone" aria-hidden="true"></div>
+
+    <!-- ===== 02. Intro (Pretendard 50px, 영상존에서 250px 아래) ===== -->
+    <section class="intro">
+      <p class="intro-lead">
+        모두가 모든 것을 잘한다고 말하는 시대에, 저는 하나를 깊게 팝니다.<br />
+        브랜드의 감성이 사용자 경험이 되는 순간을요.<br />
+        자기 디자인을 직접 구현해 검증하는 디자이너는 드뭅니다.<br />
+        제 화면은 "구현되면 예쁠 것"이 아니라 이미 작동하는 디자인입니다.<br />
+        <strong>디자인의 전 과정을 한 사람의 손으로 완성합니다.</strong>
+      </p>
+      <a class="btn-about" href="#about">
+        About me
+        <svg width="16" height="12" viewBox="0 0 16 12" fill="none" aria-hidden="true">
+          <path d="M0 6 H15 M10 1 L15 6 L10 11" stroke="currentColor" stroke-width="1.5" />
+        </svg>
+      </a>
+      <span class="intro-worktag">MY<br />LATEST<br />WORK</span>
+      <div class="intro-line" aria-hidden="true"></div>
+    </section>
+
+  </main>
+  </div><!-- /#stage1 -->
+  </div><!-- /#clamp1 -->
+
+  <!-- ===== 03. Values — sticky 핀 트랙 (무대 밖 · 자체 스케일 · 실측 절대배치) ===== -->
+  <div class="values-track" id="valuesTrack">
+  <div class="values-sticky" id="valuesSticky">
+  <div class="values-scale">
+    <section class="values">
+      <span class="v-label">What i’m made</span>
+      <h2 class="v-word v-of">OF</h2>
+      <h2 class="v-word v-curiosity">CURIOSITY</h2>
+      <div class="ph-img v-box v-box1"><span>이미지</span></div>
+      <p class="v-copy v-copy1">
+        가만히 있으면 중간밖에 못 간다고 믿습니다.<br />
+        남들이 만류할 때 먼저 손을 들었고, 그 선택이 늘 저를 가장 멀리 데려갔습니다.
+      </p>
+      <h2 class="v-word v-craft">CRAFT</h2>
+      <p class="v-copy v-copy2">
+        보기 좋은 화면보다 헤매지 않는 화면을 먼저 만듭니다.<br />
+        시안이 아니라, 사용자가 목적에 닿을 때까지 작동하는 결과로 증명합니다.
+      </p>
+      <div class="ph-img v-box v-box2"><span>이미지</span></div>
+      <h2 class="v-word v-and">AND</h2>
+      <p class="v-copy v-copy3">
+        디자인과 개발 사이, 사람과 사람 사이를 잇습니다.<br />
+        개발의 언어를 이해하는 디자이너가 팀 전체의 속도를 바꾼다고 믿습니다.
+      </p>
+      <h2 class="v-word v-connection">CONNECTION</h2>
+      <div class="ph-img v-box v-box3"><span>이미지</span></div>
+    </section>
+  </div><!-- /.values-scale -->
+  </div><!-- /.values-sticky -->
+  </div><!-- /.values-track -->
+
+  <div class="stage-clamp" id="clamp2">
+  <div class="stage" id="stage2">
+
+    <!-- ===== 04-01. TEAM PROJECT · Running App (실측 절대배치) ===== -->
+    <section class="proj proj1" id="work">
+      <span class="p-num">01</span>
+      <!-- 대표 사진 (WE RUN, YOU IN? 오버레이) — 프레임 노드 받으면 좌표 확정 -->
+      <figure class="ph-img p1-photo">
+        <span>이미지</span>
+        <p class="p1-overlay">WE RUN,<br /><em>YOU IN?</em></p>
+      </figure>
+      <h2 class="p-title p1-title">TEAM PROJECT<br />Running App</h2>
+      <span class="p-tools p1-tools">figma, adobe, AI assistant</span>
+      <div class="ph-meta p1-meta"><span>툴 · 기여도</span></div>
+      <div class="ph-img p1-img2"><span>이미지</span></div>
+      <div class="ph-img p1-img3"><span>이미지</span></div>
+    </section>
+
+    <!-- ===== 04. Selected Works (02·03 — 실측 전 임시) ===== -->
+    <section class="work">
+
+      <!-- 02 일광전구 웹 리뉴얼 -->
+      <article class="project">
+        <span class="project-num">02</span>
+        <header class="project-head">
+          <span class="project-cat">TEAM PROJECT</span>
+          <h2 class="project-name">Web Renewal</h2>
+          <span class="project-tools">figma, adobe, AI assistant</span>
+        </header>
+        <div class="project-media">
+          <div class="ph-img m-a"><span>이미지</span></div>
+          <div class="ph-meta m-b"><span>툴 · 기여도</span></div>
+          <div class="ph-img m-c"><span>이미지</span></div>
+          <div class="ph-img m-d"><span>이미지</span></div>
+        </div>
+      </article>
+
+      <!-- 03 GOI 다이어리 앱 -->
+      <article class="project">
+        <span class="project-num">03</span>
+        <header class="project-head">
+          <span class="project-cat">SIDE PROJECT</span>
+          <h2 class="project-name">Diary App</h2>
+          <span class="project-tools">figma, adobe, AI assistant</span>
+        </header>
+        <div class="project-media">
+          <div class="ph-img m-a"><span>이미지</span></div>
+          <div class="ph-meta m-b"><span>툴 · 기여도</span></div>
+          <div class="ph-img m-c"><span>이미지</span></div>
+          <div class="ph-img m-d"><span>이미지</span></div>
+        </div>
+      </article>
+
+    </section>
+
+    <!-- ===== 05. Transition — Designed to be used ===== -->
+    <section class="cta-more">
+      <span class="cta-label">◆ FEATURED PROJECTS</span>
+      <div class="cta-body">
+        <h2 class="cta-title">Designed to be used, not just seen</h2>
+        <p class="cta-sub">보여주기 위한 게 아니라, 실제로 쓰이는 결과물</p>
+        <a class="btn btn-dark" href="#more">↳ VIEW MORE PROJECTS</a>
+      </div>
+    </section>
+
+    <!-- ===== 06. More projects (list) ===== -->
+    <section class="more" id="more">
+      <a class="more-row" href="#">
+        <span class="more-title">ClonCoding 01</span>
+        <span class="more-tags">
+          <span class="tag">태그</span><span class="tag">태그</span><span class="tag">태그</span><span class="tag">태그</span><span class="tag">태그</span>
+        </span>
+        <span class="more-arrow" aria-hidden="true">↳</span>
+      </a>
+      <a class="more-row" href="#">
+        <span class="more-title">ClonCoding 02</span>
+        <span class="more-tags">
+          <span class="tag">태그</span><span class="tag">태그</span><span class="tag">태그</span><span class="tag">태그</span><span class="tag">태그</span>
+        </span>
+        <span class="more-arrow" aria-hidden="true">↳</span>
+      </a>
+      <a class="more-row" href="#">
+        <span class="more-title">ClonCoding 03</span>
+        <span class="more-tags">
+          <span class="tag">태그</span><span class="tag">태그</span><span class="tag">태그</span><span class="tag">태그</span><span class="tag">태그</span>
+        </span>
+        <span class="more-arrow" aria-hidden="true">↳</span>
+      </a>
+      <a class="more-row" href="#">
+        <span class="more-title">Graduation work</span>
+        <span class="more-tags">
+          <span class="tag">태그</span><span class="tag">태그</span><span class="tag">태그</span><span class="tag">태그</span><span class="tag">태그</span>
+        </span>
+        <span class="more-arrow" aria-hidden="true">↳</span>
+      </a>
+    </section>
+
+  <!-- ===== 07. Footer ===== -->
+  <footer class="site-footer" id="contact">
+    <div class="foot-top">
+      <p class="foot-cta">Looking for a designer<br />who can build it, too?</p>
+      <a class="btn btn-ghost" href="mailto:jongwook0102@gmail.com">↳ Contact</a>
+      <nav class="foot-nav">
+        <a href="#hero">HOME</a>
+        <a href="#about">ABOUT</a>
+        <a href="#work">WORK</a>
+        <a href="#contact">CONTACT</a>
+      </nav>
     </div>
-  </section>
 
-  <!-- AI 챗봇 위젯 (우하단 자리만 — API 미연동) -->
+    <div class="foot-cols">
+      <div class="foot-col">
+        <span class="foot-col-label">MY ADDRESS</span>
+        <p>27, Yonggu-daero<br />2753beon-gil<br />Suji-gu, Yongin-si<br />Gyeonggi-do<br />103 901</p>
+      </div>
+      <div class="foot-col">
+        <span class="foot-col-label">GET IN TOUCH</span>
+        <p><a href="mailto:jongwook0102@gmail.com">jongwook0102@gmail.com</a><br />010 2912 6264</p>
+      </div>
+      <div class="foot-col">
+        <span class="foot-col-label">CONNECT WITH ME</span>
+        <p><a href="#">X</a><br /><a href="#">INSTAGRAM</a><br /><a href="#">FACEBOOK</a></p>
+      </div>
+    </div>
+  </footer>
+  </div><!-- /#stage2 -->
+  </div><!-- /#clamp2 -->
+  </div><!-- /.stage-wrap -->
+
+  <!-- 히어로 영상 (무대 밖 고정 레이어 — 스크롤에 따라 박스→풀스크린 확장, js/main.js)
+       ※ 스케일된 무대(transform) 안에서는 fixed가 깨져서 밖에 둠.
+       영상 파일 생기면 <span> 대신 <video muted autoplay loop playsinline> 넣기 -->
+  <div class="hero-video" id="heroVideo"><span>영상</span></div>
+
+  <!-- + 십자 메뉴 버튼 (무대 밖 fixed — 항상 화면 고정, 클릭 시 메뉴) -->
+  <span class="hero-mark" role="button" tabindex="0" aria-label="메뉴 열기"></span>
+
+  <!-- AI 챗봇 위젯 (자리만 — 기존 챗봇 재활용 예정) -->
   <button class="chat-fab" id="chatFab" aria-label="AI에게 물어보기">✳</button>
 
   <script src="js/main.js"></script>
-  <script type="module" src="js/hero3d.js"></script>
 </body>
 </html>

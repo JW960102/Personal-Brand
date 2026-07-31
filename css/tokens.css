@@ -12,6 +12,8 @@
   --c-header-ink: #ffffff;
   --c-scroll-grad: #515151;            /* 스크롤 인디케이터 하단색 */
   --c-placeholder: #d9d9d9;            /* 이미지 자리표시 */
+  --c-line: #cacaca;                   /* 연한 선·비활성 요소 공통 (히어로 + 마크, 구분선) */
+  --c-lime: #d4ff3f;                   /* W:RUN 라임 (프로젝트 01 오버레이 강조) */
 
   /* --- 폰트 시스템 (outpost.design 폰트 분석 기반, 2026-07-27 개편) ---
      outpost는 Scto Grotesk A(그로테스크) + Bradford LL(세리프) 2종으로 전체를 구성.
@@ -38,6 +40,18 @@
   --t-caption: clamp(13px, 0.9375vw, 18px);   /* Scroll Down */
 
   --lh-hero: 0.865;      /* Hero 계단 행간 (top 265→440→613, 간격173 ÷ 200) */
+
+  /* --- 폰트 크기 (시안 실측 px · 1920 고정 기준 · 요소 간 재활용) ---
+     새 크기 나올 때마다 여기 한 줄씩 추가하면 됨. */
+  --fs-250: 250px; /* 히어로 헤드라인 THINK/MAKE&/DELIVER (General Sans 400, 자간 -17.5px) */
+  --fs-150: 150px; /* 가치 섹션 대형 워드 OF CURIOSITY… (General Sans 500, 행간 1.3, 자간 -4.5px) */
+  --fs-100: 100px; /* 프로젝트 제목 TEAM PROJECT/Running App (General Sans 500, 행간 0.9, 자간 -3px) */
+  --fs-66: 66.66px;/* 프로젝트 이미지 오버레이 (Anton, 행간 1) */
+  --fs-50: 50px;   /* 인트로 카피 (Pretendard 400, 행간 1.4, 자간 -1.5px) */
+  --fs-32: 32px;   /* 로고 JW portfolio */
+  --fs-24: 24px;   /* Menu */
+  --fs-20: 20px;   /* JW FIRST DESIGN STUDIO · MY LATEST WORK (General Sans 500, 자간 -0.6px, 행간 0.9) */
+  --fs-16: 16px;   /* About me 버튼 텍스트 */
 
   /* --- 여백/레이아웃 --- */
   --edge: clamp(20px, 1.5625vw, 30px);  /* 로고 좌측 여백 30px 기준 */
