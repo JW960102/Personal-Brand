@@ -1,11 +1,12 @@
 /* ============================================
-   퍼스널 브랜드 v2 — 김종욱 피그마 시안 구현
+   퍼스널 브랜드 v2 — 김종욱 포트폴리오 (정적 1차 패스)
+   Figma node 1023:3 (세로 롱스크롤) 구현. 인터랙션/3D/챗봇은 다음 단계.
    ============================================ */
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
 body {
-  font-family: var(--f-sans);   /* 기본은 Pretendard(한글 안전). 영문 헤드라인만 --f-display로 개별 지정 */
+  font-family: var(--f-sans);
   color: var(--c-ink);
   background: var(--c-bg);
   -webkit-font-smoothing: antialiased;
@@ -14,125 +15,557 @@ body {
 img { max-width: 100%; display: block; }
 a { color: inherit; text-decoration: none; }
 
-/* ---------- 헤더 (전 페이지 공통 — 반투명 바 + 로고/Menu) ---------- */
+/* 레이아웃 토큰 — 1920 기준 (px 고정) + 뷰포트 폭 스케일 */
+:root {
+  --canvas: 1920px;
+  --sf: 1;                /* 1920 → 뷰포트 폭 스케일 팩터 (js/main.js가 갱신) */
+  --pad-x: 30px;          /* 기본(엣지) 좌우 여백 */
+  --gutter: 130px;        /* 섹션 내 디자인 요소 좌우 여백 */
+  --pad-section: 180px;   /* 세로 섹션 간격 (추후 조정) */
+}
+/* 1920 무대를 뷰포트 폭에 딱 맞게 스케일 → px 그대로 두고 어떤 화면이든 꽉 참.
+   무대는 2개(#stage1/#stage2)로 분할 — 사이의 가치 섹션은 네이티브 sticky 핀.
+   transform은 레이아웃 높이를 안 줄이므로 .stage-clamp 높이를 JS가 보정. */
+/* ⚠ overflow 금지 — 조상에 overflow가 있으면 sticky 핀이 죽음 (가로 클립은 body가 담당) */
+.stage-wrap { width: 100vw; }
+.stage { width: var(--canvas); transform-origin: top left; transform: scale(var(--sf)); }
+main, .site-footer { width: 100%; }
+
+/* 가치 섹션 sticky 트랙 (무대 밖 · 실제 px — 높이는 JS가 세팅) */
+.values-track { position: relative; }
+.values-sticky { position: sticky; top: calc(-70px * var(--sf)); overflow: visible; }  /* 핀 위치 살짝 위로 */
+.values-scale { width: var(--canvas); transform-origin: top left; transform: scale(var(--sf)); }
+
+/* ---------- 공통: 버튼 ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  height: 40px;
+  padding: 0 20px;
+  border: 1px solid var(--c-ink);
+  border-radius: 999px;
+  font-family: var(--f-display);
+  font-size: clamp(12px, 0.73vw, 14px);
+  font-weight: 500;
+  letter-spacing: var(--ls-head);
+  white-space: nowrap;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.btn:hover { background: var(--c-ink); color: var(--c-bg); }
+.btn-dark { background: var(--c-ink); color: var(--c-bg); }
+.btn-dark:hover { background: transparent; color: var(--c-ink); }
+.btn-ghost { border-color: currentColor; }
+
+/* ---------- 공통: 자리표시 박스 ----------
+   .ph-img  = 이미지 들어갈 자리
+   .ph-meta = 툴 + 기여도 들어갈 자리 (점선으로 구분) */
+.ph-img, .ph-meta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--c-placeholder);
+  color: rgba(0,0,0,0.4);
+  font-size: clamp(12px, 0.83vw, 16px);
+  font-family: var(--f-display);
+}
+.ph-meta {
+  background: #f2f2f2;
+  border: 1.5px dashed rgba(0,0,0,0.28);
+  color: rgba(0,0,0,0.5);
+}
+
+/* ---------- 헤더 (풀 너비 바 · 높이 89px · #999=검정40%) ----------
+   바는 화면 전체 너비를 채운다(1920 캔버스에 안 갇힘). 로고/Menu는 엣지 30px. */
 .site-header {
   position: fixed;
-  inset: 0 0 auto 0;
+  inset: 0 0 auto 0;             /* 좌·우 0 → 풀 너비 */
   z-index: 100;
-  height: var(--header-h);
+  width: 100%;                   /* 풀 너비 유지 */
+  height: calc(74px * var(--sf));/* 시안 89px에서 약 15px 줄임 */
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 var(--edge);
-  background: var(--c-header-bar);
-  color: var(--c-header-ink);
+  padding: 0 calc(var(--pad-x) * var(--sf));
+  background: rgba(0, 0, 0, 0.4);/* = #999999 over white */
+  color: #fff;
+  transition: transform 0.35s ease;
 }
+/* 영상 풀스크린 동안 헤더 숨김 (js가 토글) */
+.site-header.hidden { transform: translateY(-100%); }
 .site-header .logo {
-  font-family: var(--f-logo);   /* General Sans (그로테스크) — outpost식 워드마크 */
-  font-size: var(--t-header);
-  font-weight: 500;
-  letter-spacing: var(--ls-head);
+  font-family: var(--f-serif);   /* 워드마크 = 세리프 이탤릭 */
+  font-style: italic;
+  font-size: calc(var(--fs-32) * var(--sf));  /* 32px × 스케일 */
   line-height: 1;
 }
 .site-header .menu {
-  font-family: var(--f-display);   /* button은 폰트 상속 안 됨 → 명시. 메뉴 라벨=그로테스크(Scto 대체) */
-  font-size: var(--t-header);
+  font-family: var(--f-display);
+  font-size: calc(var(--fs-24) * var(--sf));  /* 24px × 스케일 */
   font-weight: 500;
   letter-spacing: var(--ls-head);
   line-height: 1;
-  background: none;
-  border: none;
-  color: inherit;
-  cursor: pointer;
+  background: none; border: none; color: inherit; cursor: pointer;
 }
 
-/* ---------- Hero (DESIGN / DEVELOP / DELIVERED 계단 배치) ----------
-   시안 실측: 200px Pretendard, top 265→440→613 (간격173, 행간0.865)
-   좌측 edge: DEVELOP 399 / DESIGN 663 / DELIVERED 506 (1920 기준)
-   → 블록 좌측을 DEVELOP(399=20.78vw)에 두고 각 줄 들여쓰기로 계단 구현 */
+/* ===== 01. Hero — THINK / MAKE & / DELIVER (1920 캔버스 실측 절대좌표) =====
+   각 요소 left/top = 시안 절대좌표(px). 히어로 높이는 사진/스튜디오 노드 받으면 확정. */
 .hero {
   position: relative;
-  min-height: 100vh;
-  min-height: 100svh;
-  background: var(--c-bg);
-  overflow: hidden;
+  width: var(--canvas);
+  height: 1080px;          /* 첫 화면(임시) */
 }
+/* + 마크 (시안 110×110 @ 911,108) — 얇은 십자 메뉴 버튼.
+   무대 밖 fixed(항상 화면 고정) + --sf 연동으로 시안 위치·크기 유지 */
+.hero-mark {
+  position: fixed;
+  left: calc(911px * var(--sf));
+  top: calc(108px * var(--sf));
+  width: calc(110px * var(--sf));
+  height: calc(110px * var(--sf));
+  z-index: 999;               /* 제일 앞 — 영상·헤더 포함 모든 것 위 */
+  cursor: pointer;
+}
+.hero-mark:focus-visible { outline: none; }
+.hero-mark::before, .hero-mark::after {
+  content: ""; position: absolute;
+  background: var(--c-line);              /* 기본: 연한 통일색 #cacaca */
+  transition: background 0.25s ease;
+}
+.hero-mark:hover::before, .hero-mark:hover::after,
+.hero-mark:focus-visible::before, .hero-mark:focus-visible::after {
+  background: var(--c-ink);               /* 호버/포커스: 검정 */
+}
+.hero-mark::before { left: 50%; top: 0; width: 2px; height: 100%; transform: translateX(-50%); }
+.hero-mark::after  { top: 50%; left: 0; height: 2px; width: 100%; transform: translateY(-50%); }
 
-/* ---------- 배경 3D 오브제 캔버스 (JW, three.js) ---------- */
-.hero-3d {
+/* 대형 헤드라인 (General Sans 400 · 250px · 자간 -17.5px · 행간 1.0) */
+.hero-title { margin: 0; }
+.hero-title .hw {
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0;              /* 타이틀(z-index 2) 뒤 */
-  pointer-events: none;
-  display: block;
-}
-.hero-title {
-  position: absolute;
-  left: 20.78vw;                 /* 399/1920 */
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 2;                    /* 유리 오브제(z0) 위 */
-  font-family: var(--f-display); /* 영문 대형 헤드라인 = General Sans (Scto 대체) */
-  font-size: var(--t-hero);
-  line-height: var(--lh-hero);
+  font-family: var(--f-display);
   font-weight: 400;
-  letter-spacing: var(--ls-hero); /* outpost 시그니처: -0.075em 초타이트 */
+  font-size: var(--fs-250);
+  line-height: 1;
+  letter-spacing: -17.5px;
   white-space: nowrap;
+  color: var(--c-ink);
 }
-/* 각 줄 = 마스크(overflow hidden) + 내부 텍스트. GSAP이 내부를 아래→위로 밀어올림 */
-.hero-title .hero-line {
-  display: block;
-  overflow: hidden;
-  padding-bottom: 0.05em;   /* 디센더(g 등) 잘림 방지 */
-}
-.hero-title .line-inner { display: block; will-change: transform; }
-.hero-title .l-design    { margin-left: 13.75vw; }  /* 663-399=264 → 13.75vw */
-.hero-title .l-develop   { margin-left: 0; }        /* 기준선 */
-.hero-title .l-delivered { margin-left: 5.57vw; }   /* 506-399=107 → 5.57vw */
-/* GSAP 준비 전 텍스트 숨김 (JS 있을 때만). no-JS면 그대로 보임 */
-.js .hero-title .line-inner,
-.js .hero-scroll { visibility: hidden; }
+.hw-think   { left: 632px; top: 218px; }   /* 시안 실측 */
+.hw-make    { left: 373px; top: 416px; }
+.hw-deliver { left: 588px; top: 611px; }
 
-/* 스크롤 인디케이터 (하단 중앙) — 6×74 그라데이션 바 + 캡션 */
-.hero-scroll {
+/* JW FIRST DESIGN STUDIO (General Sans 500 · 20px · 자간 -0.6px · 행간 0.9) @ (30,779) */
+.hero-studio {
   position: absolute;
-  left: 50%;
-  bottom: clamp(24px, 4.5vh, 60px);
-  transform: translateX(-50%);
+  left: 30px; top: 779px;
+  margin: 0;
+  font-family: var(--f-display);
+  font-weight: 500;
+  font-size: var(--fs-20);
+  letter-spacing: -0.6px;
+  line-height: 0.9;
+}
+/* 화살표 (세로선 + 화살촉 벡터) @ (1697,862), 93×98 — 오른쪽 끝이 130 거터 */
+.hero-arrow {
+  position: absolute;
+  left: 1697px; top: 862px;
+  width: 93px; height: 98px;
+  color: var(--c-ink);
+}
+
+/* 영상 확장 스크롤 존 (무대 안 스페이서 — 높이는 js가 계산) */
+.video-zone { width: 100%; }
+
+/* 히어로 영상 레이어 (무대 밖 fixed — 좌표/크기는 js가 매 프레임 계산)
+   히어로에선 MAKE & 옆 박스 → 스크롤하면 풀스크린으로 확장 */
+.hero-video {
+  position: fixed;
+  left: 0; top: 0;
+  z-index: 90;               /* 헤더(100) 아래, 무대 콘텐츠 위 */
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 12px;
-}
-.hero-scroll .bar {
-  width: 6px;
-  height: clamp(40px, 6.85vw, 74px);
-  background: linear-gradient(to bottom, rgba(217, 217, 217, 0), var(--c-scroll-grad));
-  position: relative;
+  justify-content: center;
+  background: var(--c-placeholder);
+  color: rgba(0, 0, 0, 0.4);
+  font-family: var(--f-display);
+  font-size: 16px;
   overflow: hidden;
+  will-change: transform;
 }
-/* 살아있는 스크롤 힌트: 밝은 점이 바를 따라 계속 흘러내림 */
-.hero-scroll .bar::after {
+.hero-video video { width: 100%; height: 100%; object-fit: cover; }
+
+/* ===== 02. Intro (시안 실측: Pretendard 50px/1.4/-1.5px, 버튼 141×42) ===== */
+.intro {
+  padding: 200px var(--gutter) 0;   /* 영상존 → 인트로 카피 간격 */
+}
+.intro-lead {
+  font-family: var(--f-sans);
+  font-weight: 400;
+  font-size: var(--fs-50);
+  line-height: 1.4;
+  letter-spacing: -1.5px;
+}
+.intro-lead strong { font-weight: 700; }
+
+/* About me 버튼 (141×42 알약) — 호버 시 검정 채움 + 흰 글자 */
+.btn-about {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 49px;                 /* 카피 하단→버튼 (시안 y399 - 카피 350) */
+  height: 42px;
+  padding: 0 20px;
+  border: 1px solid var(--c-ink);
+  border-radius: 21px;
+  font-family: var(--f-sans);
+  font-size: var(--fs-16);
+  font-weight: 400;
+  color: var(--c-ink);
+  transition: background 0.25s ease, color 0.25s ease;
+}
+.btn-about:hover,
+.btn-about:focus-visible { background: var(--c-ink); color: #fff; }
+
+/* MY LATEST WORK — 우측 아래 (히어로 스튜디오와 동일 스타일, 우측정렬) */
+.intro-worktag {
+  display: block;
+  margin-top: 93px;   /* 버튼 → 워크태그 (280의 1/3) */
+  font-family: var(--f-display);
+  font-weight: 500;
+  font-size: var(--fs-20);
+  letter-spacing: -0.6px;
+  line-height: 0.9;
+  text-align: right;
+}
+/* 구분선 — 워크태그 50px 아래, 1px 연한 선 */
+.intro-line {
+  margin-top: 50px;
+  height: 1px;
+  background: var(--c-line);
+}
+
+/* ===== 03. Values — 실측 절대배치 + 스크롤 스텝 인터랙션 =====
+   기본 = 컴팩트(워드 간 162px, 카피 숨김). 스크롤 핀 중 s1→s2→s3 순서로
+   카피가 하나씩 등장하고, 그 아래 워드들이 +51px 내려가 자리를 내줌.
+   (시안 규칙: 카피 있는 간격 213 - 없는 간격 162 = 51) */
+.values {
+  position: relative;
+  height: 1094px;               /* 최종 상태 콘텐츠 하단 + 100 (시안 여백) */
+}
+/* 워드 이동 공통 */
+.values .v-word, .values .v-box { transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+/* 섹션 끝 구분선 (130, 4286) 폭 1660 */
+.values::after {
   content: "";
   position: absolute;
-  left: 0;
-  width: 100%;
-  height: 45%;
-  background: linear-gradient(to bottom, rgba(255,255,255,0.9), rgba(255,255,255,0));
-  animation: scrollFlow 1.8s ease-in-out infinite;
+  left: var(--gutter); right: var(--gutter); bottom: 0;
+  height: 1px;
+  background: var(--c-line);
 }
-@keyframes scrollFlow {
-  0%   { top: -50%; }
-  100% { top: 100%; }
+/* 라벨 (Newsreader 이탤릭 20px) @ (736,184) */
+.v-label {
+  position: absolute;
+  left: 736px; top: 184px;
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: var(--fs-20);
+  letter-spacing: -0.6px;
+  line-height: 1.3;
+  white-space: nowrap;
 }
-.hero-scroll .caption {
-  font-size: var(--t-caption);
+/* 대형 워드 (General Sans 500 · 150px · 행간 1.3 · 자간 -4.5px) */
+.v-word {
+  position: absolute;
+  margin: 0;
+  font-family: var(--f-display);
+  font-weight: 500;
+  font-size: var(--fs-150);
+  line-height: 1.3;
+  letter-spacing: -4.5px;
+  white-space: nowrap;
+}
+/* 컴팩트 기본 좌표 (워드 간 162) — 박스는 자기 워드에 +23 종속 */
+.v-of         { left: 867px; top: 100px; }
+.v-curiosity  { left: 446px; top: 262px; }
+.v-craft      { left: 714px; top: 424px; }
+.v-and        { left: 907px; top: 586px; }
+.v-connection { left: 338px; top: 748px; }
+/* 소카피 (Pretendard 400 · 24px · 행간 1.3 · 중앙) — 기본 숨김, 스텝에 등장 */
+.v-copy {
+  position: absolute;
+  margin: 0;
+  font-family: var(--f-sans);
+  font-weight: 400;
+  font-size: var(--fs-24);
+  letter-spacing: -0.72px;
+  line-height: 1.3;
+  text-align: center;
+  white-space: nowrap;
+  opacity: 0;
+  z-index: 2;                 /* 박스보다 위 — 겹쳐도 글자가 가려지지 않게 */
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.v-copy1 { left: 604px; top: 444px; transform: translateY(24px); }     /* CURIOSITY +182 (실측) */
+.v-copy2 { left: 50%; top: 606px; transform: translate(-50%, 24px); }  /* CRAFT +182 */
+.v-copy3 { left: 50%; top: 768px; transform: translate(-50%, 24px); }  /* AND +182 */
+/* 이미지 박스 214×149 (자기 워드 top +23) */
+.v-box { width: 214px; height: 149px; position: absolute; border-radius: 10px; z-index: 1; }
+.v-box1 { left: 1237px; top: 285px; }   /* CURIOSITY 종속 */
+.v-box2 { left: 684px;  top: 609px; }   /* AND 종속 */
+.v-box3 { left: 1331px; top: 771px; }   /* CONNECTION 종속 */
+
+/* ── 스텝 상태: 카피 등장 + 아래 워드들 +51px ── */
+.values.s1 .v-copy1 { opacity: 1; transform: translateY(0); }
+.values.s2 .v-copy2 { opacity: 1; transform: translate(-50%, 0); }
+.values.s3 .v-copy3 { opacity: 1; transform: translate(-50%, 0); }
+/* 지나간 카피는 위로 빠지며 사라짐 */
+.values.s2 .v-copy1, .values.s3 .v-copy1 { opacity: 0; transform: translateY(-24px); }
+.values.s3 .v-copy2 { opacity: 0; transform: translate(-50%, -24px); }
+/* 카피 아래 워드·박스 밀림 */
+.values.s1 .v-craft, .values.s1 .v-and, .values.s1 .v-connection,
+.values.s1 .v-box2, .values.s1 .v-box3 { transform: translateY(51px); }
+.values.s2 .v-and, .values.s2 .v-connection,
+.values.s2 .v-box3 { transform: translateY(51px); }
+.values.s2 .v-box2 { transform: translateY(66px); }   /* 카피2와 겹침 방지 +15 */
+.values.s3 .v-connection { transform: translateY(51px); }
+.values.s3 .v-box3 { transform: translateY(66px); }   /* 카피3과 겹침 방지 +15 */
+
+/* ===== 04-01. TEAM PROJECT · Running App (실측 절대배치, y0 = 가치 끝 라인) ===== */
+.proj {
+  position: relative;
+  width: var(--canvas);
+}
+.proj::after {          /* 섹션 끝 구분선 (거터 폭) */
+  content: "";
+  position: absolute;
+  left: var(--gutter); right: var(--gutter); bottom: 0;
+  height: 1px;
+  background: var(--c-line);
+}
+.proj1 { height: 1795px; }
+/* 번호 (General Sans 600 · 20px · 우측정렬) @ (1008,100) → 우측 끝 1027 */
+.p-num {
+  position: absolute;
+  left: 1008px; top: 100px;
+  font-family: var(--f-display);
+  font-weight: 600;
+  font-size: var(--fs-20);
+  letter-spacing: -0.6px;
+  line-height: 1;
+  white-space: nowrap;
+}
+/* 프로젝트 제목 (General Sans 500 · 100px · 행간 0.9 · 자간 -3 · 우측정렬) */
+.p-title {
+  position: absolute;
+  margin: 0;
+  font-family: var(--f-display);
+  font-weight: 500;
+  font-size: var(--fs-100);
+  line-height: 0.9;
+  letter-spacing: -3px;
+  text-align: right;
+  white-space: nowrap;
+}
+/* 툴 라인 (Newsreader 400 · 24px · 우측정렬) */
+.p-tools {
+  position: absolute;
+  font-family: var(--f-serif);
+  font-weight: 400;
+  font-size: var(--fs-24);
+  letter-spacing: -0.72px;
+  line-height: 1;
+  white-space: nowrap;
+}
+/* — 01 배치 — */
+.p1-title { left: 295px; top: 571px; width: 732px; }
+.p1-tools { left: 798px; top: 791px; }
+.p1-meta  { position: absolute; left: 130px;  top: 815px;  width: 417px; height: 514px; }
+.p1-img2  { position: absolute; left: 684px;  top: 1036px; width: 343px; height: 515px; }
+.p1-img3  { position: absolute; left: 1155px; top: 1181px; width: 685px; height: 514px; }
+/* 대표 사진 (추정 좌표 — 프레임 노드 받으면 확정) */
+.p1-photo {
+  position: absolute;
+  left: 1078px; top: 100px;
+  width: 712px; height: 713px;
+  margin: 0;
+}
+/* 사진 위 오버레이 (Anton 66.66px, 흰/라임) */
+.p1-overlay {
+  position: absolute;
+  left: 44px; top: 114px;
+  margin: 0;
+  font-family: 'Anton', var(--f-display);
+  font-weight: 400;
+  font-size: var(--fs-66);
+  line-height: 1;
+  color: #ffffff;
+  text-align: left;
+}
+.p1-overlay em { font-style: normal; color: var(--c-lime); }
+
+/* ===== 04. Selected Works (02·03 — 실측 전 임시) ===== */
+.work { padding: 0 var(--gutter); }
+.project {
+  position: relative;
+  padding: var(--pad-section) 0;
+  border-top: 1px solid rgba(0,0,0,0.12);
+}
+.project:first-child { border-top: none; }
+.project-num {
+  position: absolute;
+  top: var(--pad-section);
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--f-display);
+  font-size: clamp(12px, 0.83vw, 15px);
+  font-weight: 600;
+}
+.project-head { margin-bottom: clamp(32px, 4vw, 72px); }
+.project-cat {
+  display: block;
+  font-family: var(--f-display);
+  font-size: clamp(24px, 2.9vw, 56px);
+  font-weight: 500;
+  letter-spacing: var(--ls-head);
+  line-height: 1.05;
+}
+.project-name {
+  font-family: var(--f-display);
+  font-weight: 400;
+  font-size: clamp(28px, 3.5vw, 68px);
+  letter-spacing: var(--ls-head);
+  line-height: 1.05;
+}
+.project-tools {
+  display: block;
+  margin-top: clamp(6px, 0.8vw, 14px);
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-size: clamp(12px, 0.9vw, 17px);
   color: var(--c-ink-60);
 }
+/* 미디어 영역 (이미지/메타 박스 배치 — 시안의 스캐터를 그리드로 근사) */
+.project-media {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(16px, 2vw, 40px);
+  align-items: start;
+}
+.project-media .m-a { grid-column: 1 / 2; aspect-ratio: 3 / 4; }
+.project-media .m-b { grid-column: 2 / 3; aspect-ratio: 3 / 4; margin-top: 12%; }
+.project-media .m-c { grid-column: 3 / 4; aspect-ratio: 3 / 4; }
+.project-media .m-d { grid-column: 4 / 5; aspect-ratio: 3 / 4; margin-top: 24%; }
 
-/* ---------- AI 챗봇 위젯 (우하단 자리만 — API 미연동) ---------- */
+/* ===== 05. Transition — Designed to be used ===== */
+.cta-more {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: clamp(24px, 4vw, 80px);
+  padding: var(--pad-section) var(--gutter);
+  border-top: 1px solid rgba(0,0,0,0.12);
+}
+.cta-label {
+  font-family: var(--f-display);
+  font-size: clamp(11px, 0.73vw, 14px);
+  font-weight: 600;
+  letter-spacing: var(--ls-head);
+}
+.cta-title {
+  font-family: var(--f-display);
+  font-weight: 500;
+  font-size: clamp(28px, 3.65vw, 70px);
+  letter-spacing: var(--ls-head);
+  line-height: 1.05;
+}
+.cta-sub {
+  margin-top: clamp(8px, 1vw, 16px);
+  font-size: clamp(14px, 1vw, 20px);
+  color: var(--c-ink);
+}
+.cta-more .btn { margin-top: clamp(20px, 2.5vw, 40px); }
+
+/* ===== 06. More projects (list) ===== */
+.more { padding: 0 var(--gutter) var(--pad-section); }
+.more-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: clamp(16px, 3vw, 60px);
+  padding: clamp(18px, 2vw, 34px) 0;
+  border-top: 1px solid rgba(0,0,0,0.12);
+  transition: opacity 0.2s ease;
+}
+.more-row:last-child { border-bottom: 1px solid rgba(0,0,0,0.12); }
+.more-row:hover { opacity: 0.55; }
+.more-title {
+  font-family: var(--f-display);
+  font-size: clamp(18px, 1.67vw, 32px);
+  font-weight: 400;
+  letter-spacing: var(--ls-head);
+}
+.more-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.tag {
+  padding: 5px 12px;
+  border: 1px solid rgba(0,0,0,0.3);
+  border-radius: 999px;
+  font-size: clamp(10px, 0.68vw, 13px);
+  color: var(--c-ink-60);
+  white-space: nowrap;
+}
+.more-arrow { font-size: clamp(18px, 1.4vw, 26px); }
+
+/* ===== 07. Footer ===== */
+.site-footer {
+  background: var(--c-ink);
+  color: var(--c-bg);
+  padding: var(--pad-section) var(--gutter) 80px;
+}
+.foot-top {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: start;
+  gap: clamp(24px, 4vw, 80px);
+  padding-bottom: clamp(48px, 6vw, 100px);
+}
+.foot-cta {
+  font-family: var(--f-display);
+  font-size: clamp(18px, 1.67vw, 32px);
+  font-weight: 500;
+  line-height: 1.2;
+}
+.foot-nav { display: flex; flex-direction: column; gap: 4px; }
+.foot-nav a {
+  font-family: var(--f-display);
+  font-size: clamp(11px, 0.73vw, 14px);
+  font-weight: 500;
+  letter-spacing: var(--ls-head);
+}
+.foot-nav a:hover { opacity: 0.6; }
+.foot-cols {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(24px, 3vw, 60px);
+  padding-top: clamp(32px, 4vw, 60px);
+  border-top: 1px solid rgba(255,255,255,0.2);
+}
+.foot-col-label {
+  display: block;
+  margin-bottom: clamp(10px, 1.2vw, 20px);
+  font-family: var(--f-display);
+  font-size: clamp(9px, 0.6vw, 11px);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  opacity: 0.6;
+}
+.foot-col p {
+  font-size: clamp(12px, 0.83vw, 15px);
+  line-height: 1.6;
+}
+.foot-col a:hover { opacity: 0.6; }
+
+/* ---------- AI 챗봇 위젯 (자리만) ---------- */
 .chat-fab {
   position: fixed;
   right: 24px;
@@ -151,19 +584,28 @@ a { color: inherit; text-decoration: none; }
 }
 .chat-fab:hover { transform: scale(1.08); }
 
-/* 모션 최소화 설정 존중 */
+/* ---------- 모션 최소화 ---------- */
 @media (prefers-reduced-motion: reduce) {
-  .hero-title span,
-  .site-header,
-  .hero-scroll { animation: none !important; opacity: 1; transform: none; }
-  .hero-scroll .bar::after { display: none; }
   html { scroll-behavior: auto; }
 }
 
-/* ---------- 반응형 ---------- */
-@media (max-width: 768px) {
-  /* 모바일: 계단 유지하되 좌측 여백 축소, 글자 화면폭에 맞춤 */
-  .hero-title { left: 8vw; font-size: clamp(40px, 15vw, 120px); }
-  .hero-title .l-design { margin-left: 20vw; }
-  .hero-title .l-delivered { margin-left: 8vw; }
+/* ---------- 반응형 (태블릿) ---------- */
+@media (max-width: 900px) {
+  .cta-more { grid-template-columns: 1fr; }
+  .project-media { grid-template-columns: repeat(2, 1fr); }
+  .project-media .m-b, .project-media .m-d { margin-top: 0; }
+  .foot-top { grid-template-columns: 1fr; }
+  .foot-cols { grid-template-columns: 1fr 1fr; }
+}
+
+/* ---------- 반응형 (모바일) ---------- */
+@media (max-width: 600px) {
+  .hero-title .l1, .hero-title .l2, .hero-title .l3 { margin-left: 0; }
+  .value-img { display: none; }             /* 모바일: 데코 이미지 숨김 */
+  .project-media { grid-template-columns: 1fr; }
+  .project-media .m-a, .project-media .m-b,
+  .project-media .m-c, .project-media .m-d { grid-column: auto; margin-top: 0; }
+  .more-row { grid-template-columns: 1fr auto; }
+  .more-tags { display: none; }             /* 모바일: 태그 생략 */
+  .foot-cols { grid-template-columns: 1fr; }
 }
