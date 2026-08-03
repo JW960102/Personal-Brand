@@ -9,8 +9,8 @@
   --c-ink: #000000;
   --c-ink-60: rgba(0, 0, 0, 0.6);      /* Scroll Down 등 보조 텍스트 */
   --c-ink-40: rgba(0, 0, 0, 0.4);      /* 리스트 행 기본(호버 전) — 호버 시 진해짐 */
-  --c-header-bar: rgba(0, 0, 0, 0.4);  /* 헤더 반투명 바 */
-  --c-header-ink: #ffffff;
+  --c-header-bar: rgba(0, 0, 0, 0.4);  /* ⏸ 미사용 — 헤더 반투명 바 폐기(2026-08-04, 색반전 블렌드로 대체) */
+  --c-header-ink: #ffffff;             /* 헤더 글자 = difference 기준색 (흰색 고정) */
   --c-scroll-grad: #515151;            /* 스크롤 인디케이터 하단색 */
   --c-placeholder: #d9d9d9;            /* 이미지 자리표시 */
   --c-line: #cacaca;                   /* 연한 선·비활성 요소 공통 (히어로 + 마크, 구분선) */

@@ -29,7 +29,7 @@
   var EXPAND = 900;     // 박스→풀스크린 확장 스크롤 거리 (캔버스 px)
   var HOLD = 600;       // 풀스크린 유지 구간 (캔버스 px)
   // --- 가치 섹션 ---
-  var VALUES_H = 1094;  // .values 높이 (캔버스 px, CSS와 동일)
+  var VALUES_H = 1244;  // .values 높이 (캔버스 px, CSS와 동일 — 바꾸면 style.css .values 도 같이)
   var PIN_DIST = 3000;  // sticky 핀 동안 스크롤 거리 (캔버스 px, 스텝당 1000)
 
   var sf = 1;
