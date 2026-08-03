@@ -21,7 +21,7 @@
   <link rel="stylesheet" href="css/style.css" />
   <!-- 인트로 애니메이션용: 첫 페인트 전에 JS 여부를 표시 (JS 없으면 숨김 없이 그대로 노출) -->
   <script>document.documentElement.classList.add('js');</script>
-  <!-- three.js (히어로 배경 3D 유리 오브제 — js/hero3d.js) -->
+  <!-- ⏸ 3D 오브제 임시 비활성 (2026-08-03) — 되살리려면 이 주석 + 아래 2곳(canvas, hero3d.js) 해제
   <script type="importmap">
     {
       "imports": {
@@ -30,6 +30,7 @@
       }
     }
   </script>
+  -->
 </head>
 <body>
 
@@ -39,9 +40,10 @@
     <button class="menu" type="button">Menu</button>
   </header>
 
-  <!-- 배경 3D 유리 오브제 "JW" (three.js · js/hero3d.js)
-       무대 밖 고정 레이어 — 화면 중앙에서 전 구간 계속 회전, 콘텐츠 뒤에 깔림 -->
+  <!-- ⏸ 배경 3D 유리 오브제 "JW" — 임시 비활성 (2026-08-03)
+       무대 밖 고정 레이어 · 화면 중앙에서 전 구간 회전, 콘텐츠 뒤에 깔림
   <canvas id="hero3d" aria-hidden="true"></canvas>
+  -->
 
   <!-- 1920 무대 (뷰포트 폭 스케일 · js/main.js)
        가치 섹션의 네이티브 sticky 핀을 위해 무대를 2개로 분할 -->
@@ -63,6 +65,8 @@
         <line x1="46.5" y1="0" x2="46.5" y2="97" stroke="currentColor" stroke-width="1.5" />
         <path d="M0 51 L46.5 97.5 L93 51" stroke="currentColor" stroke-width="1.5" fill="none" />
       </svg>
+      <!-- + 십자 — 히어로 시안 자리(911,108)에 고정된 장식 요소 (버튼 아님, 2026-08-04) -->
+      <span class="hero-mark" aria-hidden="true"></span>
     </section>
 
     <!-- 영상 확장 스크롤 존 (높이는 js/main.js가 계산: 확장거리+홀드+영상 1화면) -->
@@ -266,6 +270,8 @@
   <button class="chat-fab" id="chatFab" aria-label="AI에게 물어보기">✳</button>
 
   <script src="js/main.js"></script>
+  <!-- ⏸ 3D 오브제 임시 비활성 (2026-08-03)
   <script type="module" src="js/hero3d.js"></script>
+  -->
 </body>
 </html>
