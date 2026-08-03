@@ -8,6 +8,7 @@
   --c-bg: #ffffff;
   --c-ink: #000000;
   --c-ink-60: rgba(0, 0, 0, 0.6);      /* Scroll Down 등 보조 텍스트 */
+  --c-ink-40: rgba(0, 0, 0, 0.4);      /* 리스트 행 기본(호버 전) — 호버 시 진해짐 */
   --c-header-bar: rgba(0, 0, 0, 0.4);  /* 헤더 반투명 바 */
   --c-header-ink: #ffffff;
   --c-scroll-grad: #515151;            /* 스크롤 인디케이터 하단색 */

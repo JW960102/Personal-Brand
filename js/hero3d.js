@@ -18,10 +18,9 @@ import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 import { RGBShiftShader } from 'three/addons/shaders/RGBShiftShader.js';
 
 const canvas = document.getElementById('hero3d');
-const hero = document.querySelector('.hero');
 
 function initHero3D() {
-  if (!canvas || !hero) return;
+  if (!canvas) return;
 
   let renderer;
   try {
@@ -33,7 +32,8 @@ function initHero3D() {
     return;
   }
 
-  const getSize = () => ({ w: hero.clientWidth, h: hero.clientHeight });
+  // 뷰포트 고정 레이어 — 화면 크기 기준으로 그린다 (스크롤과 무관하게 중앙 유지)
+  const getSize = () => ({ w: window.innerWidth, h: window.innerHeight });
   let { w, h } = getSize();
 
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
