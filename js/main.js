@@ -83,15 +83,10 @@
       values.classList.toggle('s3', step === 3);
     }
 
-    // 헤더 (방향 기반):
-    //  · 최상단 = 항상 보임 · 영상 풀스크린 = 무조건 숨김
-    //  · 그 외 = 내리는 중 숨김 유지, 올리면 등장
+    // 헤더 (방향 기반): 최상단 = 항상 보임 / 내리는 중 = 숨김 / 올리면 = 등장
     if (header) {
-      var full = y >= D * 0.95 && y <= D + H;
       if (y < 10) {
         header.classList.remove('hidden');
-      } else if (full) {
-        header.classList.add('hidden');
       } else if (y > lastY + 2) {
         header.classList.add('hidden');
       } else if (y < lastY - 2) {
@@ -107,6 +102,37 @@
   window.addEventListener('load', fit);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
   fit();
+})();
+
+// Contact 버튼: 메일 작성창은 href(mailto)가 열고, 동시에 주소를 클립보드에 복사.
+// (메일 앱이 없는 환경에서도 주소를 얻을 수 있게 하는 안전장치)
+(function () {
+  var btn = document.querySelector('[data-copy]');
+  if (!btn) return;
+
+  var toast = document.createElement('div');
+  toast.className = 'copy-toast';
+  document.body.appendChild(toast);
+  var timer;
+
+  function show(msg) {
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(timer);
+    timer = setTimeout(function () { toast.classList.remove('show'); }, 2000);
+  }
+
+  btn.addEventListener('click', function () {
+    var addr = btn.getAttribute('data-copy');
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(addr).then(
+        function () { show('이메일 주소가 복사되었습니다 — ' + addr); },
+        function () { show(addr); }
+      );
+    } else {
+      show(addr);
+    }
+  });
 })();
 
 // AI 챗봇 위젯: 자리만 (API 연동은 이후 단계)

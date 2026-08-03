@@ -19,8 +19,15 @@
   <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
   <link rel="stylesheet" href="css/tokens.css" />
   <link rel="stylesheet" href="css/style.css" />
-  <!-- NOTE(정적 1차 패스): 인터랙션(GSAP)·3D(three/hero3d)·챗봇 API 는 다음 단계.
-       구조/스타일 먼저 확정하고 나중에 얹는다. -->
+  <!-- three.js (히어로 배경 3D 유리 오브제 — js/hero3d.js) -->
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
 </head>
 <body>
 
@@ -29,6 +36,10 @@
     <a class="logo" href="index.html">JW portfolio</a>
     <button class="menu" type="button">Menu</button>
   </header>
+
+  <!-- 배경 3D 유리 오브제 "JW" (three.js · js/hero3d.js)
+       무대 밖 고정 레이어 — 화면 중앙에서 전 구간 계속 회전, 콘텐츠 뒤에 깔림 -->
+  <canvas id="hero3d" aria-hidden="true"></canvas>
 
   <!-- 1920 무대 (뷰포트 폭 스케일 · js/main.js)
        가치 섹션의 네이티브 sticky 핀을 위해 무대를 2개로 분할 -->
@@ -63,8 +74,8 @@
         제 화면은 "구현되면 예쁠 것"이 아니라 이미 작동하는 디자인입니다.<br />
         <strong>디자인의 전 과정을 한 사람의 손으로 완성합니다.</strong>
       </p>
-      <a class="btn-about" href="#about">
-        About me
+      <a class="btn-fill btn-about" href="#about">
+        <span>About me</span>
         <svg width="16" height="12" viewBox="0 0 16 12" fill="none" aria-hidden="true">
           <path d="M0 6 H15 M10 1 L15 6 L10 11" stroke="currentColor" stroke-width="1.5" />
         </svg>
@@ -85,7 +96,7 @@
       <span class="v-label">What i’m made</span>
       <h2 class="v-word v-of">OF</h2>
       <h2 class="v-word v-curiosity">CURIOSITY</h2>
-      <div class="ph-img v-box v-box1"><span>이미지</span></div>
+      <img class="v-box v-box1" src="images/CURIOSITY.webp" alt="" />
       <p class="v-copy v-copy1">
         가만히 있으면 중간밖에 못 간다고 믿습니다.<br />
         남들이 만류할 때 먼저 손을 들었고, 그 선택이 늘 저를 가장 멀리 데려갔습니다.
@@ -95,14 +106,14 @@
         보기 좋은 화면보다 헤매지 않는 화면을 먼저 만듭니다.<br />
         시안이 아니라, 사용자가 목적에 닿을 때까지 작동하는 결과로 증명합니다.
       </p>
-      <div class="ph-img v-box v-box2"><span>이미지</span></div>
+      <img class="v-box v-box2" src="images/CRAFT.webp" alt="" />
       <h2 class="v-word v-and">AND</h2>
       <p class="v-copy v-copy3">
         디자인과 개발 사이, 사람과 사람 사이를 잇습니다.<br />
         개발의 언어를 이해하는 디자이너가 팀 전체의 속도를 바꾼다고 믿습니다.
       </p>
       <h2 class="v-word v-connection">CONNECTION</h2>
-      <div class="ph-img v-box v-box3"><span>이미지</span></div>
+      <img class="v-box v-box3" src="images/CONNECTION.webp" alt="" />
     </section>
   </div><!-- /.values-scale -->
   </div><!-- /.values-sticky -->
@@ -114,53 +125,38 @@
     <!-- ===== 04-01. TEAM PROJECT · Running App (실측 절대배치) ===== -->
     <section class="proj proj1" id="work">
       <span class="p-num">01</span>
-      <!-- 대표 사진 (WE RUN, YOU IN? 오버레이) — 프레임 노드 받으면 좌표 확정 -->
-      <figure class="ph-img p1-photo">
-        <span>이미지</span>
-        <p class="p1-overlay">WE RUN,<br /><em>YOU IN?</em></p>
-      </figure>
+      <!-- 대표 사진 (텍스트는 이미지에 포함) — 너비 맞춤 + 상단 정렬 -->
+      <figure class="p1-photo"><img src="images/running-app-01-1.webp" alt="" /></figure>
       <h2 class="p-title p1-title">TEAM PROJECT<br />Running App</h2>
       <span class="p-tools p1-tools">figma, adobe, AI assistant</span>
       <div class="ph-meta p1-meta"><span>툴 · 기여도</span></div>
-      <div class="ph-img p1-img2"><span>이미지</span></div>
-      <div class="ph-img p1-img3"><span>이미지</span></div>
+      <img class="p1-img2" src="images/runnin-app-02.webp" alt="" />
+      <img class="p1-img3" src="images/runnin-app-03.webp" alt="" />
     </section>
 
-    <!-- ===== 04. Selected Works (02·03 — 실측 전 임시) ===== -->
-    <section class="work">
+    <!-- ===== 04-02. TEAM PROJECT · Web Renewal (실측 절대배치 — 01의 미러) ===== -->
+    <section class="proj proj2">
+      <span class="p-num p2-num">02</span>
+      <!-- 대표 사진 (ILKW 조명, 텍스트는 이미지에 포함) -->
+      <img class="p2-photo" src="images/ILKW-01.webp" alt="" />
+      <h2 class="p-title p2-title">TEAM PROJECT<br />Web Renewal</h2>
+      <span class="p-tools p2-tools">figma, adobe, AI assistant</span>
+      <div class="ph-meta p2-meta"><span>툴 · 기여도</span></div>
+      <img class="p2-img2" src="images/ILKW-02.webp" alt="" />
+      <img class="p2-obj" src="images/ILKW-03.webp" alt="" />
+    </section>
 
-      <!-- 02 일광전구 웹 리뉴얼 -->
-      <article class="project">
-        <span class="project-num">02</span>
-        <header class="project-head">
-          <span class="project-cat">TEAM PROJECT</span>
-          <h2 class="project-name">Web Renewal</h2>
-          <span class="project-tools">figma, adobe, AI assistant</span>
-        </header>
-        <div class="project-media">
-          <div class="ph-img m-a"><span>이미지</span></div>
-          <div class="ph-meta m-b"><span>툴 · 기여도</span></div>
-          <div class="ph-img m-c"><span>이미지</span></div>
-          <div class="ph-img m-d"><span>이미지</span></div>
-        </div>
-      </article>
-
-      <!-- 03 GOI 다이어리 앱 -->
-      <article class="project">
-        <span class="project-num">03</span>
-        <header class="project-head">
-          <span class="project-cat">SIDE PROJECT</span>
-          <h2 class="project-name">Diary App</h2>
-          <span class="project-tools">figma, adobe, AI assistant</span>
-        </header>
-        <div class="project-media">
-          <div class="ph-img m-a"><span>이미지</span></div>
-          <div class="ph-meta m-b"><span>툴 · 기여도</span></div>
-          <div class="ph-img m-c"><span>이미지</span></div>
-          <div class="ph-img m-d"><span>이미지</span></div>
-        </div>
-      </article>
-
+    <!-- ===== 04-03. SIDE PROJECT · Diary App (실측 절대배치 — 01과 같은 우측 정렬) ===== -->
+    <section class="proj proj3">
+      <span class="p-num p3-num">03</span>
+      <!-- 모바일 목업 (별개 이미지, 영역은 01 대표사진과 동일) -->
+      <img class="p3-photo" src="images/diary-app-01.webp" alt="" />
+      <h2 class="p-title p3-title">SIDE PROJECT<br />Diary App</h2>
+      <span class="p-tools p3-tools">figma, adobe, AI assistant</span>
+      <div class="ph-meta p3-meta"><span>툴 · 기여도</span></div>
+      <!-- 가로 프레임엔 가로 사진(03), 세로 프레임엔 세로 사진(02) — 비율 기준 배치 -->
+      <img class="p3-img2" src="images/diary-app-03.webp" alt="" />
+      <img class="p3-img3" src="images/diary-app-02.webp" alt="" />
     </section>
 
     <!-- ===== 05. Transition — Designed to be used ===== -->
@@ -169,7 +165,12 @@
       <div class="cta-body">
         <h2 class="cta-title">Designed to be used, not just seen</h2>
         <p class="cta-sub">보여주기 위한 게 아니라, 실제로 쓰이는 결과물</p>
-        <a class="btn btn-dark" href="#more">↳ VIEW MORE PROJECTS</a>
+        <a class="btn-fill btn-more" href="#more">
+          <svg class="ico-corner" width="14" height="12" viewBox="0 0 14 12" fill="none" aria-hidden="true">
+            <path d="M1 0 V7 H12 M8.5 3.5 L12.5 7 L8.5 10.5" stroke="currentColor" stroke-width="1" fill="none" />
+          </svg>
+          <span>VIEW MORE PROJECTS</span>
+        </a>
       </div>
     </section>
 
@@ -178,60 +179,70 @@
       <a class="more-row" href="#">
         <span class="more-title">ClonCoding 01</span>
         <span class="more-tags">
-          <span class="tag">태그</span><span class="tag">태그</span><span class="tag">태그</span><span class="tag">태그</span><span class="tag">태그</span>
+          <span class="tag">웹 페이지의 특징 영어로</span><span class="tag">웹 페이지의 특징 영어로</span><span class="tag">웹 페이지의 특징 영어로</span><span class="tag">웹 페이지의 특징 영어로</span><span class="tag">웹 페이지의 특징 영어로</span>
         </span>
-        <span class="more-arrow" aria-hidden="true">↳</span>
+        <svg class="ico-corner more-arrow" width="22" height="19" viewBox="0 0 22 19" fill="none" aria-hidden="true">
+          <path d="M1 0 V11 H19 M15 6.5 L20.5 11 L15 15.5" stroke="currentColor" stroke-width="1" fill="none" />
+        </svg>
       </a>
       <a class="more-row" href="#">
         <span class="more-title">ClonCoding 02</span>
         <span class="more-tags">
-          <span class="tag">태그</span><span class="tag">태그</span><span class="tag">태그</span><span class="tag">태그</span><span class="tag">태그</span>
+          <span class="tag">웹 페이지의 특징 영어로</span><span class="tag">웹 페이지의 특징 영어로</span><span class="tag">웹 페이지의 특징 영어로</span><span class="tag">웹 페이지의 특징 영어로</span><span class="tag">웹 페이지의 특징 영어로</span>
         </span>
-        <span class="more-arrow" aria-hidden="true">↳</span>
+        <svg class="ico-corner more-arrow" width="22" height="19" viewBox="0 0 22 19" fill="none" aria-hidden="true">
+          <path d="M1 0 V11 H19 M15 6.5 L20.5 11 L15 15.5" stroke="currentColor" stroke-width="1" fill="none" />
+        </svg>
       </a>
       <a class="more-row" href="#">
         <span class="more-title">ClonCoding 03</span>
         <span class="more-tags">
-          <span class="tag">태그</span><span class="tag">태그</span><span class="tag">태그</span><span class="tag">태그</span><span class="tag">태그</span>
+          <span class="tag">웹 페이지의 특징 영어로</span><span class="tag">웹 페이지의 특징 영어로</span><span class="tag">웹 페이지의 특징 영어로</span><span class="tag">웹 페이지의 특징 영어로</span><span class="tag">웹 페이지의 특징 영어로</span>
         </span>
-        <span class="more-arrow" aria-hidden="true">↳</span>
+        <svg class="ico-corner more-arrow" width="22" height="19" viewBox="0 0 22 19" fill="none" aria-hidden="true">
+          <path d="M1 0 V11 H19 M15 6.5 L20.5 11 L15 15.5" stroke="currentColor" stroke-width="1" fill="none" />
+        </svg>
       </a>
       <a class="more-row" href="#">
         <span class="more-title">Graduation work</span>
         <span class="more-tags">
-          <span class="tag">태그</span><span class="tag">태그</span><span class="tag">태그</span><span class="tag">태그</span><span class="tag">태그</span>
+          <span class="tag">웹 페이지의 특징 영어로</span><span class="tag">웹 페이지의 특징 영어로</span><span class="tag">웹 페이지의 특징 영어로</span><span class="tag">웹 페이지의 특징 영어로</span><span class="tag">웹 페이지의 특징 영어로</span>
         </span>
-        <span class="more-arrow" aria-hidden="true">↳</span>
+        <svg class="ico-corner more-arrow" width="22" height="19" viewBox="0 0 22 19" fill="none" aria-hidden="true">
+          <path d="M1 0 V11 H19 M15 6.5 L20.5 11 L15 15.5" stroke="currentColor" stroke-width="1" fill="none" />
+        </svg>
       </a>
     </section>
 
-  <!-- ===== 07. Footer ===== -->
+  <!-- ===== 07. Footer (실측 절대배치 — 거터 폭 다크 박스) ===== -->
   <footer class="site-footer" id="contact">
-    <div class="foot-top">
-      <p class="foot-cta">Looking for a designer<br />who can build it, too?</p>
-      <a class="btn btn-ghost" href="mailto:jongwook0102@gmail.com">↳ Contact</a>
-      <nav class="foot-nav">
-        <a href="#hero">HOME</a>
-        <a href="#about">ABOUT</a>
-        <a href="#work">WORK</a>
-        <a href="#contact">CONTACT</a>
-      </nav>
-    </div>
+    <p class="f-cta">Looking for a designer<br />who can build it, too?</p>
+    <!-- 클릭 시 메일 작성창 열림 + 주소 클립보드 복사 (js/main.js) -->
+    <a class="btn-fill f-contact" href="mailto:jongwook0102@gmail.com" data-copy="jongwook0102@gmail.com">
+      <svg class="ico-corner" width="13" height="12" viewBox="0 0 13 12" fill="none" aria-hidden="true">
+        <path d="M1 0 V7 H11 M7.5 3.5 L11.5 7 L7.5 10.5" stroke="currentColor" stroke-width="1" fill="none" />
+      </svg>
+      <span>Contact</span>
+    </a>
+    <nav class="f-nav">
+      <a href="#hero">HOME</a>
+      <a href="#about">ABOUT</a>
+      <a href="#work">WORK</a>
+      <a href="#contact">CONTACT</a>
+    </nav>
 
-    <div class="foot-cols">
-      <div class="foot-col">
-        <span class="foot-col-label">MY ADDRESS</span>
-        <p>27, Yonggu-daero<br />2753beon-gil<br />Suji-gu, Yongin-si<br />Gyeonggi-do<br />103 901</p>
-      </div>
-      <div class="foot-col">
-        <span class="foot-col-label">GET IN TOUCH</span>
-        <p><a href="mailto:jongwook0102@gmail.com">jongwook0102@gmail.com</a><br />010 2912 6264</p>
-      </div>
-      <div class="foot-col">
-        <span class="foot-col-label">CONNECT WITH ME</span>
-        <p><a href="#">X</a><br /><a href="#">INSTAGRAM</a><br /><a href="#">FACEBOOK</a></p>
-      </div>
-    </div>
+    <div class="f-line f-line1"></div>
+    <div class="f-line f-line2"></div>
+    <div class="f-line f-line3"></div>
+
+    <span class="f-label f-label1">MY ADDRESS</span>
+    <p class="f-body f-body1">27, Yonggu-daero<br />2753beon-gi<br />Suji-gu, Yongin-si<br />Gyeonggi-do<br />103 901</p>
+
+    <span class="f-label f-label2">GET IN TOUCH</span>
+    <p class="f-body f-body2"><a href="mailto:jongwook0102@gmail.com">jongwook0102@gmail.com</a><br />010 2912 6264</p>
+
+    <span class="f-label f-label3">CONNET WHIT ME</span>
+    <p class="f-body f-body3"><a href="#">X</a><br /><a href="#">INSTAGRAM</a><br /><a href="#">FACEBOOK</a></p>
   </footer>
   </div><!-- /#stage2 -->
   </div><!-- /#clamp2 -->
@@ -249,5 +260,6 @@
   <button class="chat-fab" id="chatFab" aria-label="AI에게 물어보기">✳</button>
 
   <script src="js/main.js"></script>
+  <script type="module" src="js/hero3d.js"></script>
 </body>
 </html>
