@@ -77,6 +77,11 @@ function initHero3D() {
   let mesh = null;
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  // 최초 진입 인트로: 헤더가 내려온 뒤 오브제가 0 → 원래 크기로 커지며 등장 (1회)
+  const INTRO_DELAY = 0.5;   // 초
+  const INTRO_DUR = 1.1;
+  let introT = 0;            // 메시 생성 시점부터의 경과 시간
+
   const fontUrl =
     'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/fonts/helvetiker_bold.typeface.json';
   new FontLoader().load(
@@ -111,6 +116,7 @@ function initHero3D() {
       });
 
       mesh = new THREE.Mesh(geo, mat);
+      if (!reduceMotion) mesh.scale.setScalar(0);   // 인트로 시작 상태
       scene.add(mesh);
 
       // 디버그 훅 (검증용)
@@ -147,6 +153,13 @@ function initHero3D() {
     const dt = clock.getDelta();
     if (mesh && !reduceMotion) {
       mesh.rotation.y += dt * 0.22; // 천천히 수평 회전
+
+      // 등장 확대 (최초 1회만 — 끝나면 더 이상 갱신하지 않음)
+      if (introT < INTRO_DELAY + INTRO_DUR) {
+        introT += dt;
+        const p = Math.min(Math.max((introT - INTRO_DELAY) / INTRO_DUR, 0), 1);
+        mesh.scale.setScalar(1 - Math.pow(1 - p, 3)); // easeOutCubic
+      }
     }
     composer.render();
   }

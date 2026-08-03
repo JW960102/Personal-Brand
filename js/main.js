@@ -14,6 +14,15 @@
   var video = document.getElementById('heroVideo');
   var zone = document.getElementById('videoZone');
   var header = document.querySelector('.site-header');
+  var arrow = document.querySelector('.hero-arrow');
+  var introSec = document.querySelector('.intro');
+  var introRevealed = false;
+
+  // 프로젝트 이미지·기여도 박스: 아래에 떠 있다가 자기 영역이 다 보이면 제자리로
+  // (스크롤에 연동 — 위로 올리면 그대로 되돌아감)
+  var FLOAT_OFFSET = 90;    // 띄우는 거리 (캔버스 px)
+  var FLOAT_SETTLE = 0.30;  // 요소 상단이 화면 높이의 이 지점에 오면 제자리 (낮을수록 늦게 도착)
+  var floats = [];          // { el, top(문서 기준 화면좌표), h }
 
   // --- 히어로 영상 박스 (1920 캔버스 px · MAKE & 오른쪽) ---
   var BOX = { x: 1226, y: 465, w: 264, h: 176 };
@@ -25,6 +34,8 @@
 
   var sf = 1;
   var lastY = 0;        // 헤더 방향 감지용 직전 스크롤 위치
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var introDone = false; // 인트로 재생 중에는 헤더·화살표를 스크롤 로직이 건드리지 않음
 
   // 1920 무대를 뷰포트 폭에 맞춰 스케일 (--sf).
   // transform은 레이아웃 높이를 안 줄이므로 클램프/트랙 높이를 실제 px로 보정.
@@ -36,7 +47,22 @@
     if (clamp2 && stage2) clamp2.style.height = stage2.offsetHeight * sf + 'px';
     if (sticky) sticky.style.height = VALUES_H * sf + 'px';
     if (track) track.style.height = (VALUES_H + PIN_DIST) * sf + 'px';
+    measureFloats();   // 높이 확정 후 측정
     onScroll();
+  }
+
+  // 부유 대상의 문서상 위치를 미리 재둔다 (매 스크롤마다 레이아웃을 읽으면 버벅임).
+  // transform이 걸린 상태로 재면 위치가 어긋나므로 전부 초기화한 뒤 한 번에 측정.
+  function measureFloats() {
+    var els = document.querySelectorAll('.proj > img, .proj > figure, .proj > .ph-meta');
+    var i;
+    for (i = 0; i < els.length; i++) els[i].style.transform = '';
+    var y = window.scrollY || window.pageYOffset;
+    floats = [];
+    for (i = 0; i < els.length; i++) {
+      var r = els[i].getBoundingClientRect();
+      floats.push({ el: els[i], top: r.top + y, h: r.height });
+    }
   }
 
   function lerp(a, b, t) { return a + (b - a) * t; }
@@ -73,6 +99,30 @@
       video.style.height = Hh + 'px';
     }
 
+    // 인트로 카피: 섹션이 화면에 1/3쯤 들어오면 한 번만 순차 등장 (되돌리지 않음)
+    // getBoundingClientRect는 무대 스케일이 반영된 실제 화면 좌표라 --sf 보정이 불필요
+    if (introSec && !introRevealed && introSec.getBoundingClientRect().top < vh * 0.67) {
+      introSec.classList.add('reveal');
+      introRevealed = true;
+    }
+
+    // 프로젝트 이미지·기여도 박스 부유:
+    // 화면 아래에서 진입할 때 밀려 있다가, 상단이 화면 높이의 FLOAT_SETTLE 지점까지
+    // 올라오면 제자리(0)에 안착. 이동 구간을 화면 기준으로 잡아 요소 크기와 무관하게
+    // 같은 리듬으로 움직인다.
+    if (!reduceMotion) {
+      var range = vh * (1 - FLOAT_SETTLE);
+      for (var fi = 0; fi < floats.length; fi++) {
+        var f = floats[fi];
+        var p = (vh - (f.top - y)) / range;          // 0=막 진입, 1=안착
+        p = p < 0 ? 0 : (p > 1 ? 1 : p);
+        // easeInOutCubic — 전반에 몰리지 않고 끝까지 고르게 따라 올라옴
+        var e = p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;
+        var off = FLOAT_OFFSET * (1 - e);
+        f.el.style.transform = off > 0.1 ? 'translateY(' + off + 'px)' : '';
+      }
+    }
+
     // 가치 섹션 스텝: 핀은 네이티브 sticky가 담당, JS는 클래스 토글만
     if (track && values) {
       var tt = y - track.offsetTop;             // 트랙 진입 후 스크롤량 (실제 px)
@@ -83,8 +133,14 @@
       values.classList.toggle('s3', step === 3);
     }
 
+    // 히어로 화살표: 스크롤 시작(0)부터 서서히 페이드 → 영상 풀스크린 시점에 소멸
+    // (인트로 재생 중에는 CSS 페이드인이 담당하므로 건드리지 않음)
+    if (arrow && introDone) {
+      arrow.style.opacity = Math.max(0, 1 - y / D);
+    }
+
     // 헤더 (방향 기반): 최상단 = 항상 보임 / 내리는 중 = 숨김 / 올리면 = 등장
-    if (header) {
+    if (header && introDone) {
       if (y < 10) {
         header.classList.remove('hidden');
       } else if (y > lastY + 2) {
@@ -92,8 +148,32 @@
       } else if (y < lastY - 2) {
         header.classList.remove('hidden');
       }
-      lastY = y;
     }
+    lastY = y;
+  }
+
+  // 최초 진입 인트로 (1회만, 반복 없음).
+  // 타임라인은 CSS(.intro-play)가, 3D 확대는 hero3d.js가 각각 담당한다.
+  function startVideo() {
+    var v = video && video.querySelector('video');
+    if (v) { var p = v.play(); if (p && p.catch) p.catch(function () {}); }
+  }
+
+  function playIntro() {
+    if (reduceMotion) {
+      root.classList.add('intro-play');
+      introDone = true;
+      startVideo();
+      onScroll();
+      return;
+    }
+    requestAnimationFrame(function () {
+      root.classList.add('intro-play');
+      // 영상은 MAKE & 와 함께 올라오는 순간부터 재생
+      setTimeout(startVideo, 2300);
+      // 마지막 줄(2.6s 시작 + 0.9s)이 끝난 뒤 스크롤 로직에 제어권을 넘김
+      setTimeout(function () { introDone = true; onScroll(); }, 3600);
+    });
   }
 
   // 동기 처리 (rAF로 미루면 보정이 한 프레임 늦어 들썩임)
@@ -102,6 +182,7 @@
   window.addEventListener('load', fit);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
   fit();
+  playIntro();
 })();
 
 // Contact 버튼: 메일 작성창은 href(mailto)가 열고, 동시에 주소를 클립보드에 복사.

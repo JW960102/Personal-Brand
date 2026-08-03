@@ -19,6 +19,8 @@
   <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
   <link rel="stylesheet" href="css/tokens.css" />
   <link rel="stylesheet" href="css/style.css" />
+  <!-- 인트로 애니메이션용: 첫 페인트 전에 JS 여부를 표시 (JS 없으면 숨김 없이 그대로 노출) -->
+  <script>document.documentElement.classList.add('js');</script>
   <!-- three.js (히어로 배경 3D 유리 오브제 — js/hero3d.js) -->
   <script type="importmap">
     {
@@ -50,10 +52,11 @@
 
     <!-- ===== 01. Hero — THINK / MAKE & / DELIVER (실측 절대좌표) ===== -->
     <section class="hero" id="hero">
+      <!-- 각 줄은 마스크(overflow) + 내부 span 이동으로 "자기 자리 아래에서 솟아오르는" 등장 -->
       <h1 class="hero-title">
-        <span class="hw hw-think">THINK</span>
-        <span class="hw hw-make">MAKE &amp;</span>
-        <span class="hw hw-deliver">DELIVER</span>
+        <span class="hw hw-think"><span>THINK</span></span>
+        <span class="hw hw-make"><span>MAKE &amp;</span></span>
+        <span class="hw hw-deliver"><span>DELIVER</span></span>
       </h1>
       <p class="hero-studio">JW<br />FIRST<br />DESIGN STUDIO</p>
       <svg class="hero-arrow" width="93" height="98" viewBox="0 0 93 98" fill="none" aria-hidden="true">
@@ -67,12 +70,13 @@
 
     <!-- ===== 02. Intro (Pretendard 50px, 영상존에서 250px 아래) ===== -->
     <section class="intro">
+      <!-- 줄마다 마스크 — 섹션 진입 시 히어로와 같은 방식으로 순차 상승 -->
       <p class="intro-lead">
-        모두가 모든 것을 잘한다고 말하는 시대에, 저는 하나를 깊게 팝니다.<br />
-        브랜드의 감성이 사용자 경험이 되는 순간을요.<br />
-        자기 디자인을 직접 구현해 검증하는 디자이너는 드뭅니다.<br />
-        제 화면은 "구현되면 예쁠 것"이 아니라 이미 작동하는 디자인입니다.<br />
-        <strong>디자인의 전 과정을 한 사람의 손으로 완성합니다.</strong>
+        <span class="il"><span>모두가 모든 것을 잘한다고 말하는 시대에, 저는 하나를 깊게 팝니다.</span></span>
+        <span class="il"><span>브랜드의 감성이 사용자 경험이 되는 순간을요.</span></span>
+        <span class="il"><span>자기 디자인을 직접 구현해 검증하는 디자이너는 드뭅니다.</span></span>
+        <span class="il"><span>제 화면은 "구현되면 예쁠 것"이 아니라 이미 작동하는 디자인입니다.</span></span>
+        <span class="il"><strong>디자인의 전 과정을 한 사람의 손으로 완성합니다.</strong></span>
       </p>
       <a class="btn-fill btn-about" href="#about">
         <span>About me</span>
@@ -251,7 +255,9 @@
   <!-- 히어로 영상 (무대 밖 고정 레이어 — 스크롤에 따라 박스→풀스크린 확장, js/main.js)
        ※ 스케일된 무대(transform) 안에서는 fixed가 깨져서 밖에 둠.
        영상 파일 생기면 <span> 대신 <video muted autoplay loop playsinline> 넣기 -->
-  <div class="hero-video" id="heroVideo"><span>영상</span></div>
+  <div class="hero-video" id="heroVideo">
+    <div class="hero-video-inner"><span>영상</span></div>
+  </div>
 
   <!-- + 십자 메뉴 버튼 (무대 밖 fixed — 항상 화면 고정, 클릭 시 메뉴) -->
   <span class="hero-mark" role="button" tabindex="0" aria-label="메뉴 열기"></span>
