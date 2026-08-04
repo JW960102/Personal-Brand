@@ -62,8 +62,7 @@
     root.style.setProperty('--sf', sf);
     root.style.setProperty('--stage-margin', m + 'px');
     if (zone) zone.style.height = (EXPAND + HOLD) + 'px';
-    if (clamp1 && stage1) clamp1.style.height = stage1.offsetHeight * sf + 'px';
-    if (clamp2 && stage2) clamp2.style.height = stage2.offsetHeight * sf + 'px';
+    syncHeights();
     if (sticky) sticky.style.height = VALUES_H * sf + 'px';
     if (track) track.style.height = (VALUES_H + PIN_DIST) * sf + 'px';
     // 고정 푸터와 그것이 드러날 스크롤 여유는 같은 높이여야 딱 맞게 드러난다
@@ -71,6 +70,13 @@
     if (footerSpace) footerSpace.style.height = FOOTER_H * sf + 'px';
     measureFloats();   // 높이 확정 후 측정
     onScroll();
+  }
+
+  // 클램프 높이 = 무대의 '축소된' 높이. 무대 안 내용이 늘어나면(아코디언 등)
+  // 다시 재지 않으면 overflow:hidden 에 잘린다.
+  function syncHeights() {
+    if (clamp1 && stage1) clamp1.style.height = stage1.offsetHeight * sf + 'px';
+    if (clamp2 && stage2) clamp2.style.height = stage2.offsetHeight * sf + 'px';
   }
 
   // 부유 대상의 문서상 위치를 미리 재둔다 (매 스크롤마다 레이아웃을 읽으면 버벅임).
@@ -180,6 +186,90 @@
     lastY = y;
   }
 
+  // FEATURED PROJECTS 아코디언 — 여러 개를 동시에 열 수 있다.
+  // 펼치는 0.4초 동안 무대 높이가 계속 변하므로, 전환이 끝날 때까지
+  // 매 프레임 클램프 높이를 다시 맞춘다 (안 하면 늘어난 부분이 잘림).
+  function initAccordion() {
+    var rows = document.querySelectorAll('.more-row');
+    if (!rows.length) return;
+
+    function followHeight() {
+      var until = Date.now() + 500;          // 전환 0.4s + 여유
+      (function step() {
+        syncHeights();
+        if (Date.now() < until) {
+          requestAnimationFrame(step);
+        } else {
+          measureFloats();                    // 아래 요소들의 문서 위치가 바뀌었으므로 재측정
+          onScroll();
+        }
+      })();
+    }
+
+    for (var i = 0; i < rows.length; i++) {
+      rows[i].addEventListener('click', function () {
+        var item = this.closest('.more-item');
+        if (!item) return;
+        var open = item.classList.toggle('is-open');
+        this.setAttribute('aria-expanded', open ? 'true' : 'false');
+        followHeight();
+      });
+    }
+  }
+
+  // 리스트 호버 미리보기 — 실제 클론 사이트를 iframe 으로 띄운다.
+  // iframe 은 그 행에 처음 올렸을 때만 만들고 이후 재사용 (매번 새로 불러오지 않도록).
+  function initPreview() {
+    var host = document.getElementById('morePreview');
+    if (!host) return;
+    // 터치 기기에는 호버가 없으므로 만들지 않는다
+    if (!window.matchMedia('(hover: hover)').matches) return;
+
+    var rows = document.querySelectorAll('.more-row[data-preview]');
+    var frames = {};
+    var current = null;
+
+    function place(e) {
+      var pad = 20;
+      var w = host.offsetWidth, h = host.offsetHeight;
+      var x = e.clientX + pad;
+      var y = e.clientY - h / 2;
+      if (x + w > window.innerWidth - pad) x = e.clientX - w - pad;   // 오른쪽이 좁으면 왼쪽에
+      if (y < pad) y = pad;
+      if (y + h > window.innerHeight - pad) y = window.innerHeight - h - pad;
+      host.style.left = x + 'px';
+      host.style.top = y + 'px';
+    }
+
+    for (var i = 0; i < rows.length; i++) {
+      (function (row) {
+        var url = row.getAttribute('data-preview');
+
+        row.addEventListener('mouseenter', function (e) {
+          if (!frames[url]) {
+            var f = document.createElement('iframe');
+            f.setAttribute('loading', 'lazy');
+            f.setAttribute('tabindex', '-1');
+            f.setAttribute('aria-hidden', 'true');
+            f.src = url;
+            host.appendChild(f);
+            frames[url] = f;
+          }
+          if (current && current !== frames[url]) current.classList.remove('is-active');
+          current = frames[url];
+          current.classList.add('is-active');
+          place(e);
+          host.classList.add('is-on');
+        });
+
+        row.addEventListener('mousemove', place);
+        row.addEventListener('mouseleave', function () {
+          host.classList.remove('is-on');
+        });
+      })(rows[i]);
+    }
+  }
+
   // 최초 진입 인트로 (1회만, 반복 없음).
   // 타임라인은 CSS(.intro-play)가, 3D 확대는 hero3d.js가 각각 담당한다.
   function startVideo() {
@@ -210,6 +300,8 @@
   window.addEventListener('load', fit);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
   fit();
+  initAccordion();
+  initPreview();
   playIntro();
 })();
 
