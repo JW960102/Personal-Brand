@@ -305,44 +305,73 @@
       </div>
     </section>
 
-    <!-- ===== 06. More projects (list) ===== -->
+    <!-- ===== 06. More projects (아코디언 — 클릭하면 아래로 펼쳐짐) =====
+         ⚠️ 아래 설명 문구는 실제 클론코딩 대상·실습 내용으로 교체할 것 -->
     <section class="more" id="more">
-      <a class="more-row" href="#">
-        <span class="more-title">ClonCoding 01</span>
-        <span class="more-tags">
-          <span class="tag">웹 페이지의 특징 영어로</span><span class="tag">웹 페이지의 특징 영어로</span><span class="tag">웹 페이지의 특징 영어로</span><span class="tag">웹 페이지의 특징 영어로</span><span class="tag">웹 페이지의 특징 영어로</span>
-        </span>
-        <svg class="ico-corner more-arrow" width="22" height="19" viewBox="0 0 22 19" fill="none" aria-hidden="true">
-          <path d="M1 0 V11 H19 M15 6.5 L20.5 11 L15 15.5" stroke="currentColor" stroke-width="1" fill="none" />
-        </svg>
-      </a>
-      <a class="more-row" href="#">
-        <span class="more-title">ClonCoding 02</span>
-        <span class="more-tags">
-          <span class="tag">웹 페이지의 특징 영어로</span><span class="tag">웹 페이지의 특징 영어로</span><span class="tag">웹 페이지의 특징 영어로</span><span class="tag">웹 페이지의 특징 영어로</span><span class="tag">웹 페이지의 특징 영어로</span>
-        </span>
-        <svg class="ico-corner more-arrow" width="22" height="19" viewBox="0 0 22 19" fill="none" aria-hidden="true">
-          <path d="M1 0 V11 H19 M15 6.5 L20.5 11 L15 15.5" stroke="currentColor" stroke-width="1" fill="none" />
-        </svg>
-      </a>
-      <a class="more-row" href="#">
-        <span class="more-title">ClonCoding 03</span>
-        <span class="more-tags">
-          <span class="tag">웹 페이지의 특징 영어로</span><span class="tag">웹 페이지의 특징 영어로</span><span class="tag">웹 페이지의 특징 영어로</span><span class="tag">웹 페이지의 특징 영어로</span><span class="tag">웹 페이지의 특징 영어로</span>
-        </span>
-        <svg class="ico-corner more-arrow" width="22" height="19" viewBox="0 0 22 19" fill="none" aria-hidden="true">
-          <path d="M1 0 V11 H19 M15 6.5 L20.5 11 L15 15.5" stroke="currentColor" stroke-width="1" fill="none" />
-        </svg>
-      </a>
-      <a class="more-row" href="#">
-        <span class="more-title">Graduation work</span>
-        <span class="more-tags">
-          <span class="tag">웹 페이지의 특징 영어로</span><span class="tag">웹 페이지의 특징 영어로</span><span class="tag">웹 페이지의 특징 영어로</span><span class="tag">웹 페이지의 특징 영어로</span><span class="tag">웹 페이지의 특징 영어로</span>
-        </span>
-        <svg class="ico-corner more-arrow" width="22" height="19" viewBox="0 0 22 19" fill="none" aria-hidden="true">
-          <path d="M1 0 V11 H19 M15 6.5 L20.5 11 L15 15.5" stroke="currentColor" stroke-width="1" fill="none" />
-        </svg>
-      </a>
+      <div class="more-item">
+        <button class="more-row" type="button" aria-expanded="false" aria-controls="morePanel1"
+                data-preview="clones/03/">
+          <span class="more-title">ClonCoding 01</span>
+          <svg class="more-arrow" width="20" height="12" viewBox="0 0 20 12" fill="none" aria-hidden="true">
+            <path d="M2 3 L10 10 L18 3" stroke="currentColor" stroke-width="1.5" fill="none" />
+          </svg>
+        </button>
+        <div class="more-panel" id="morePanel1">
+          <div>
+            <p>와이스튜디오 웹사이트를 클론코딩했습니다.<br />
+              페이드 슬라이더와 글자 단위 텍스트 등장 연출을 중점적으로 실습하는 것이 주였습니다.</p>
+            <a class="more-link" href="clones/03/" target="_blank" rel="noopener noreferrer">사이트 열기</a>
+          </div>
+        </div>
+      </div>
+      <div class="more-item">
+        <button class="more-row" type="button" aria-expanded="false" aria-controls="morePanel2"
+                data-preview="clones/04/">
+          <span class="more-title">ClonCoding 02</span>
+          <svg class="more-arrow" width="20" height="12" viewBox="0 0 20 12" fill="none" aria-hidden="true">
+            <path d="M2 3 L10 10 L18 3" stroke="currentColor" stroke-width="1.5" fill="none" />
+          </svg>
+        </button>
+        <div class="more-panel" id="morePanel2">
+          <div>
+            <p>크루 아라모드 웹사이트를 클론코딩했습니다.<br />
+              배경 영상 레이아웃과 스크롤 구간별 고정 처리를 중점적으로 실습하는 것이 주였습니다.</p>
+            <a class="more-link" href="clones/04/" target="_blank" rel="noopener noreferrer">사이트 열기</a>
+          </div>
+        </div>
+      </div>
+      <div class="more-item">
+        <button class="more-row" type="button" aria-expanded="false" aria-controls="morePanel3"
+                data-preview="clones/05/">
+          <span class="more-title">ClonCoding 03</span>
+          <svg class="more-arrow" width="20" height="12" viewBox="0 0 20 12" fill="none" aria-hidden="true">
+            <path d="M2 3 L10 10 L18 3" stroke="currentColor" stroke-width="1.5" fill="none" />
+          </svg>
+        </button>
+        <div class="more-panel" id="morePanel3">
+          <div>
+            <p>뮤자인 웹사이트를 클론코딩했습니다.<br />
+              SVG 선 그리기와 스크롤에 따른 배경색 전환을 중점적으로 실습하는 것이 주였습니다.</p>
+            <a class="more-link" href="clones/05/" target="_blank" rel="noopener noreferrer">사이트 열기</a>
+          </div>
+        </div>
+      </div>
+      <div class="more-item">
+        <button class="more-row" type="button" aria-expanded="false" aria-controls="morePanel4"
+                data-preview="clones/06/">
+          <span class="more-title">ClonCoding 04</span>
+          <svg class="more-arrow" width="20" height="12" viewBox="0 0 20 12" fill="none" aria-hidden="true">
+            <path d="M2 3 L10 10 L18 3" stroke="currentColor" stroke-width="1.5" fill="none" />
+          </svg>
+        </button>
+        <div class="more-panel" id="morePanel4">
+          <div>
+            <p>대방건설 웹사이트를 클론코딩했습니다.<br />
+              두 종류의 슬라이더와 인디케이터 커스터마이징을 중점적으로 실습하는 것이 주였습니다.</p>
+            <a class="more-link" href="clones/06/" target="_blank" rel="noopener noreferrer">사이트 열기</a>
+          </div>
+        </div>
+      </div>
     </section>
 
   </div><!-- /#stage2 -->
@@ -397,6 +426,9 @@
   <div class="hero-video" id="heroVideo">
     <div class="hero-video-inner"><span>영상</span></div>
   </div>
+
+  <!-- 리스트 호버 시 뜨는 클론 사이트 미리보기 (iframe 은 js/main.js 가 최초 호버에 생성) -->
+  <div class="more-preview" id="morePreview" aria-hidden="true"></div>
 
   <!-- 플로팅 버튼 3개 묶음 (위 → 아래: 맨 위로 / 앱 열기 / 챗봇) -->
   <div class="fab-stack">
