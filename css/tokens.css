@@ -47,8 +47,10 @@
   --fs-250: 250px; /* 히어로 헤드라인 THINK/MAKE&/DELIVER (General Sans 400, 자간 -17.5px) */
   --fs-150: 150px; /* 가치 섹션 대형 워드 OF CURIOSITY… (General Sans 500, 행간 1.3, 자간 -4.5px) */
   --fs-100: 100px; /* 프로젝트 제목 TEAM PROJECT/Running App (General Sans 500, 행간 0.9, 자간 -3px) */
+  --fs-80: 80px;   /* HOW I WORK 카드 영문 헤드라인 (시안 100px → 한 줄 유지 위해 축소) */
   --fs-66: 66.66px;/* 프로젝트 이미지 오버레이 (Anton, 행간 1) */
-  --fs-50: 50px;   /* 인트로 카피 (Pretendard 400, 행간 1.4, 자간 -1.5px) */
+  --fs-56: 56px;   /* 인트로 영문 헤드라인 (General Sans 500, 행간 1.3, 자간 -1.5px)
+                      ※ 2026-08-04: 한글 카피가 24px로 내려가며 이 자리는 영문 헤드라인 차지 (50 → 56) */
   --fs-32: 32px;   /* 로고 JW portfolio */
   --fs-24: 24px;   /* Menu */
   --fs-20: 20px;   /* JW FIRST DESIGN STUDIO · MY LATEST WORK (General Sans 500, 자간 -0.6px, 행간 0.9) */

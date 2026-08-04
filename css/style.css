@@ -40,20 +40,52 @@ a { color: inherit; text-decoration: none; }
 
 /* ⚠ .stage-wrap 에는 overflow 금지 — sticky 핀(.values-track)의 조상이라 핀이 죽음
    (가로 클립은 body가 담당) */
-.stage-wrap { position: relative; z-index: 1; width: 100vw; }
+/* background 필수 — 아래 깔린 고정 푸터를 덮고 있어야 '드러남' 효과가 성립 */
+.stage-wrap { position: relative; z-index: 1; width: 100vw; background: var(--c-bg); }
 /* 반면 .stage-clamp 에는 overflow 필수.
    transform: scale()은 레이아웃 높이를 안 줄이므로, JS가 클램프 높이를 축소 후 값으로
    맞춰도 무대의 '축소 전 원본 높이'가 문서 스크롤 영역에 그대로 잡힌다.
    → 마지막 클램프(#clamp2) 아래로 stage높이×(1-sf) 만큼 흰 여백이 생김 (2026-08-04 수정).
    sticky 트랙은 클램프 밖 형제라 여기 overflow를 줘도 핀에 영향 없음. */
 .stage-clamp { overflow: hidden; }
-.stage { width: var(--canvas); transform-origin: top left; transform: scale(var(--sf)); }
+/* 스케일 래퍼 공통 — 좌우 여백(--stage-margin)만큼 밀고 축소.
+   translateX 를 scale 앞에 두어 여백은 배율의 영향을 받지 않는다. */
+.stage {
+  width: var(--canvas);
+  transform-origin: top left;
+  transform: translateX(var(--stage-margin, 0px)) scale(var(--sf));
+}
 main, .site-footer { width: 100%; }
+
+/* ---------- 푸터 드러남 (reveal) ----------
+   푸터를 화면 하단에 고정해 본문 뒤에 깔아두고, 본문이 위로 걷히면서 드러나게 한다.
+   ⚠ 성립 조건: 본문(.stage-wrap)이 불투명해야 푸터를 가릴 수 있음.
+     → 3D 오브제를 되살릴 때는 캔버스를 .stage-wrap 안 맨 뒤로 옮겨야 함
+       (지금처럼 .stage-wrap 뒤에 두면 불투명 배경에 가려짐) */
+.footer-reveal {
+  position: fixed;
+  left: 0; bottom: 0;
+  width: 100vw;
+  z-index: 0;              /* 본문(.stage-wrap = z1) 뒤 */
+  overflow: hidden;        /* 높이는 JS가 푸터 높이×sf 로 지정 */
+  background: #191919;     /* 무대 여백과 무관하게 화면 끝까지 채우도록 여기서 칠함 */
+}
+.footer-scale {
+  width: var(--canvas);
+  transform-origin: top left;
+  transform: translateX(var(--stage-margin, 0px)) scale(var(--sf));
+}
+/* 푸터가 드러날 만큼의 스크롤 여유 — 높이는 JS가 지정 */
+.footer-space { width: 100%; }
 
 /* 가치 섹션 sticky 트랙 (무대 밖 · 실제 px — 높이는 JS가 세팅) */
 .values-track { position: relative; }
 .values-sticky { position: sticky; top: calc(-70px * var(--sf)); overflow: visible; }  /* 핀 위치 살짝 위로 */
-.values-scale { width: var(--canvas); transform-origin: top left; transform: scale(var(--sf)); }
+.values-scale {
+  width: var(--canvas);
+  transform-origin: top left;
+  transform: translateX(var(--stage-margin, 0px)) scale(var(--sf));
+}
 
 /* ---------- 공통: 버튼 ---------- */
 .btn {
@@ -110,7 +142,8 @@ main, .site-footer { width: 100%; }
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 calc(var(--pad-x) * var(--sf));
+  /* 로고·Menu 를 캔버스 엣지(30px)에 맞춤 — 무대 여백만큼 함께 밀린다 */
+  padding: 0 calc(var(--stage-margin, 0px) + var(--pad-x) * var(--sf));
   background: none;              /* 회색 박스 제거 — 뒤 콘텐츠가 그대로 보임 */
   color: #fff;                   /* difference 기준색 (변경 금지) */
   mix-blend-mode: difference;    /* 뒤 배경색을 반전시켜 항상 읽히게 */
@@ -182,9 +215,10 @@ main, .site-footer { width: 100%; }
 .hw-deliver { left: 588px; top: 611px; }
 
 /* ===== 최초 진입 인트로 (1회, 반복 없음) =====
-   0.0s 헤더 하강 → 0.5s 3D 오브제 확대(hero3d.js, 1.6s 종료) → 텀 →
-   2.0s THINK / 2.3s MAKE &(+영상 동시 등장·재생) / 2.6s DELIVER (0.3s 간격) →
-   2.0s 스튜디오·화살표·십자 페이드인
+   0.0s 헤더 하강 → 0.7s THINK(+스튜디오·화살표·십자 페이드인)
+   → 1.0s MAKE &(+영상 동시 등장·재생) → 1.3s DELIVER (0.3s 간격)
+   ※ 2026-08-04: 3D 오브제 비활성화에 맞춰 오브제 확대를 기다리던 유예(약 1.3s) 제거.
+     오브제를 되살리면 hero3d.js 종료 시각(약 1.6s) 뒤로 아래 --delay 들을 다시 밀 것.
    ※ .js 는 head 인라인 스크립트가 첫 페인트 전에 부여 — JS가 없으면 아무것도 숨기지 않음 */
 .js:not(.intro-play) .site-header { transform: translateY(-100%); }
 /* 각 줄을 마스크로 감싸 자기 자리 아래에 숨겨둠.
@@ -198,10 +232,10 @@ main, .site-footer { width: 100%; }
 
 /* 등장 지연은 --delay 로 각 줄에 상속시킨다.
    (별도 규칙으로 transition-delay 를 덮어쓰면 선택자 우선순위에 밀려 무시됨) */
-.hw-think   { --delay: 2.00s; }
-.hw-make    { --delay: 2.30s; }   /* 0.3s 간격 */
-.hw-deliver { --delay: 2.60s; }
-.hero-video { --delay: 2.30s; }   /* MAKE & 와 동시 */
+.hw-think   { --delay: 0.70s; }
+.hw-make    { --delay: 1.00s; }   /* 0.3s 간격 */
+.hw-deliver { --delay: 1.30s; }
+.hero-video { --delay: 1.00s; }   /* MAKE & 와 동시 */
 
 .intro-play .hero-title .hw > span,
 .intro-play .hero-video-inner {
@@ -210,7 +244,7 @@ main, .site-footer { width: 100%; }
 }
 .intro-play .hero-studio,
 .intro-play .hero-arrow,
-.intro-play .hero-mark { opacity: 1; transition: opacity 0.8s ease 2.0s; }
+.intro-play .hero-mark { opacity: 1; transition: opacity 0.8s ease 0.7s; }
 
 /* 모션 최소화 설정: 전환 없이 즉시 최종 상태 */
 @media (prefers-reduced-motion: reduce) {
@@ -223,7 +257,9 @@ main, .site-footer { width: 100%; }
 /* JW FIRST DESIGN STUDIO (General Sans 500 · 20px · 자간 -0.6px) @ (30,779) */
 .hero-studio {
   position: absolute;
-  left: 30px; top: 779px;
+  /* top = DELIVER 하단(611 + 250) — 문단 상단을 헤드라인 마지막 줄 아래에 맞춤
+     (2026-08-04: 779 → 861, 기존에는 두 요소의 '하단'이 맞아 있었음) */
+  left: 30px; top: 861px;
   margin: 0;
   font-family: var(--f-display);
   font-weight: 500;
@@ -268,29 +304,48 @@ main, .site-footer { width: 100%; }
 .intro {
   padding: 200px var(--gutter) 0;   /* 영상존 → 인트로 카피 간격 */
 }
+/* 영문 헤드라인 — 한글 카피를 소개하는 한 문장 (시각적 앵커 역할) */
+.intro-title {
+  margin: 0 0 20px;               /* 한글 카피와 한 덩어리로 읽히도록 좁힘 (40 → 20)
+                                     — 아래 About me 버튼과의 간격(49)과 대비를 만든다 */
+  overflow: hidden;               /* 등장 마스크 */
+  font-family: var(--f-display);
+  font-weight: 500;
+  font-size: var(--fs-56);
+  line-height: 1.3;               /* 디센더(g·p)가 마스크에 잘리지 않을 만큼 확보 */
+  letter-spacing: -1.5px;
+}
+.intro-title > span { display: block; }
+
+/* 한글 본문 — 2026-08-04: 50px → 24px (한글이 크고 길어 답답하다는 피드백) */
 .intro-lead {
   font-family: var(--f-sans);
   font-weight: 400;
-  font-size: var(--fs-50);
+  font-size: var(--fs-24);
   line-height: 1.4;
-  letter-spacing: -1.5px;
+  letter-spacing: -0.72px;        /* 24px 기준으로 비례 조정 (기존 -1.5는 50px용) */
 }
 .intro-lead strong { font-weight: 700; }
 /* 줄 단위 마스크 — 섹션 1/3 진입 시(.reveal) 순차 상승. 버튼·워크태그는 대상 아님 */
 .intro-lead .il { display: block; overflow: hidden; }
 .intro-lead .il > * { display: block; }
-.js .intro-lead .il > * { transform: translateY(110%); }
-.intro-lead .il:nth-child(1) { --delay: 0s; }
-.intro-lead .il:nth-child(2) { --delay: 0.15s; }
-.intro-lead .il:nth-child(3) { --delay: 0.30s; }
-.intro-lead .il:nth-child(4) { --delay: 0.45s; }
-.intro-lead .il:nth-child(5) { --delay: 0.60s; }
-.intro.reveal .intro-lead .il > * {
+.js .intro-lead .il > *,
+.js .intro-title > span { transform: translateY(115%); }
+/* 영문 헤드라인이 먼저, 그다음 한글 5줄이 0.15s 간격으로 */
+.intro-title              { --delay: 0s; }
+.intro-lead .il:nth-child(1) { --delay: 0.15s; }
+.intro-lead .il:nth-child(2) { --delay: 0.30s; }
+.intro-lead .il:nth-child(3) { --delay: 0.45s; }
+.intro-lead .il:nth-child(4) { --delay: 0.60s; }
+.intro-lead .il:nth-child(5) { --delay: 0.75s; }
+.intro.reveal .intro-lead .il > *,
+.intro.reveal .intro-title > span {
   transform: translateY(0);
   transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1) var(--delay, 0s);
 }
 @media (prefers-reduced-motion: reduce) {
-  .js .intro-lead .il > * { transform: none; transition: none; }
+  .js .intro-lead .il > *,
+  .js .intro-title > span { transform: none; transition: none; }
 }
 
 /* 알약 버튼 공통 — 호버 시 검정이 left 0에서부터 차오르고 글자가 흰색으로 */
@@ -395,14 +450,15 @@ main, .site-footer { width: 100%; }
 .v-craft      { left: 714px; top: 424px; }
 .v-and        { left: 907px; top: 586px; }
 .v-connection { left: 338px; top: 748px; }
-/* 소카피 (Pretendard 400 · 24px · 행간 1.3 · 중앙) — 기본 숨김, 스텝에 등장 */
+/* 소카피 (Pretendard 400 · 20px · 행간 1.3 · 중앙) — 기본 숨김, 스텝에 등장
+   2026-08-04: 24 → 20 (한글 본문 크기를 사이트 전체에서 낮추는 흐름에 맞춤) */
 .v-copy {
   position: absolute;
   margin: 0;
   font-family: var(--f-sans);
   font-weight: 400;
-  font-size: var(--fs-24);
-  letter-spacing: -0.72px;
+  font-size: var(--fs-20);
+  letter-spacing: -0.6px;         /* 20px 기준 비례 조정 (-0.03em) */
   line-height: 1.3;
   text-align: center;
   white-space: nowrap;
@@ -440,6 +496,133 @@ main, .site-footer { width: 100%; }
 .values.s2 .v-box2 { transform: translateY(66px); }   /* 카피2와 겹침 방지 +15 */
 .values.s3 .v-connection { transform: translateY(51px); }
 .values.s3 .v-box3 { transform: translateY(66px); }   /* 카피3과 겹침 방지 +15 */
+
+/* ===== 03-b. HOW I WORK — 버튼 전환 카드 =====
+   가로 스크롤을 강제하지 않고, 카드를 같은 자리에 겹쳐두고 버튼으로 교체한다.
+   텍스트 위계는 인트로와 동일: 큰 영문 헤드라인 + 작은 한글 서브카피. */
+.story {
+  position: relative;
+  width: var(--canvas);
+  height: 780px;
+}
+.story::after {                 /* 섹션 끝 구분선 */
+  content: "";
+  position: absolute;
+  left: var(--gutter); right: var(--gutter); bottom: 0;
+  height: 1px;
+  background: var(--c-line);
+}
+/* 섹션 라벨 공통 (General Sans 500 · 16px · 자간 -0.48 + 마름모 마커, 시안 실측)
+   HOW I WORK / FEATURED PROJECTS 가 같은 규격을 쓴다.
+   ⚠ 마름모는 CSS가 그리므로 마크업에 ◆ 문자를 넣지 말 것 */
+.story-label,
+.cta-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--f-display);
+  font-size: var(--fs-16);
+  font-weight: 500;
+  letter-spacing: -0.48px;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+.story-label::before,
+.cta-label::before {              /* ◆ — 시안의 15px 사각형을 45° 회전 */
+  content: "";
+  width: 11px; height: 11px;
+  background: var(--c-ink);
+  transform: rotate(45deg);
+}
+.story-label { position: absolute; left: var(--gutter); top: 150px; }
+.story-count {
+  position: absolute;
+  left: 600px; top: 150px;        /* 본문 칼럼과 같은 라인에 정렬 */
+  font-family: var(--f-display);
+  font-size: var(--fs-16);
+  font-weight: 500;
+  letter-spacing: -0.48px;
+  line-height: 1.2;
+  color: var(--c-ink-40);
+}
+.story-count em { font-style: normal; color: var(--c-ink); }
+/* 이전/다음 버튼 — 56×56 두 개, 오른쪽 끝이 거터(1790). 라벨 행과 세로 중앙 정렬 */
+.story-nav {
+  position: absolute;
+  left: 1666px; top: 132px;
+  display: flex;
+  gap: 12px;
+}
+.story-btn {
+  width: 56px; height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--c-line);
+  background: none;
+  color: var(--c-ink);
+  cursor: pointer;
+  transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+}
+.story-btn:hover,
+.story-btn:focus-visible {
+  background: var(--c-ink);
+  border-color: var(--c-ink);
+  color: #fff;
+}
+
+/* 카드는 같은 자리에 겹쳐두고 활성 카드만 표시 */
+.story-stage {
+  position: absolute;
+  left: 0; top: 284px;
+  width: 100%; height: 300px;
+}
+.story-slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(12px);
+  transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.story-slide.is-active {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+.story-img {                      /* 가로 4:3 사진에 맞춘 프레임 */
+  position: absolute;
+  left: var(--gutter); top: 0;
+  width: 360px; height: 270px;
+  object-fit: cover;
+}
+/* 이미지 오른쪽 끝(490)에서 110 띄움 → 본문 600, 오른쪽 거터(1790)까지 1190 */
+.story-body { position: absolute; left: 600px; top: 0; width: 1190px; }
+/* 큰 영문 (시안 100px → 80px: 가장 긴 문장도 한 줄에 들어가도록 축소) */
+.story-en {
+  margin: 0 0 60px;
+  font-family: var(--f-display);
+  font-weight: 500;
+  font-size: var(--fs-80);
+  line-height: 0.9;
+  letter-spacing: -2.4px;         /* 80px 기준 비례 조정 (-0.03em) */
+}
+/* 작은 한글 서브카피 (시안 실측: Pretendard 400 · 24px · 행간 1.3 · 자간 -0.72) */
+.story-ko {
+  margin: 0 0 36px;
+  font-family: var(--f-sans);
+  font-weight: 400;
+  font-size: var(--fs-24);
+  line-height: 1.3;
+  letter-spacing: -0.72px;
+}
+.story-caption {
+  font-family: var(--f-display);
+  font-size: var(--fs-16);
+  font-weight: 500;
+  letter-spacing: -0.48px;
+  color: var(--c-ink-40);
+}
 
 /* ===== 04-01. TEAM PROJECT · Running App (실측 절대배치, y0 = 가치 끝 라인) ===== */
 .proj {
@@ -491,6 +674,63 @@ main, .site-footer { width: 100%; }
 .p1-title { left: 295px; top: 571px; width: 732px; }
 .p1-tools { left: 798px; top: 791px; }
 .p1-meta  { position: absolute; left: 130px;  top: 815px;  width: 417px; height: 514px; }
+
+/* ---------- 기여도 카드 (프로젝트 메타 박스) ----------
+   수치를 적지 않고 막대 길이만으로 비중을 읽히게 한다.
+   막대 길이는 인라인 --v (최대 참여 단계를 100%로 둔 상대값). */
+.meta-card {
+  display: flex;
+  flex-direction: column;
+  padding: 32px 30px;
+  background: #f4f4f4;
+}
+.meta-label {
+  font-family: var(--f-display);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--c-ink-40);
+}
+/* 사용한 기술 — 카드에서 가장 큰 목소리 */
+.meta-stack {
+  margin: 22px 0 0;
+  font-family: var(--f-display);
+  font-weight: 500;
+  font-size: 26px;
+  line-height: 1.28;
+  letter-spacing: -0.78px;
+}
+.meta-stack span { display: block; }
+/* 단계별 비중 — 카드 아래쪽에 고정 */
+.meta-bars {
+  margin-top: auto;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+.meta-bars li { display: block; }
+.meta-bars span {
+  display: block;
+  margin-bottom: 7px;
+  font-family: var(--f-sans);
+  font-size: 13px;
+  letter-spacing: -0.39px;
+  color: var(--c-ink-60);
+}
+.meta-bars i {                    /* 막대: 옅은 트랙 위에 검정 채움 */
+  display: block;
+  height: 5px;
+  background: rgba(0, 0, 0, 0.12);
+  position: relative;
+}
+.meta-bars i::after {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: var(--v, 0%);
+  background: var(--c-ink);
+}
 .p1-img2  { position: absolute; left: 684px;  top: 1036px; width: 343px; height: 515px; object-fit: cover; }
 /* ※ Figma의 685×514는 크롭 전 원본 이미지 노드 크기. 실제 보이는 영역은
    417×514(우측 끝 1790 정렬) — 툴·기여도 박스와 동일 규격 */
@@ -552,14 +792,8 @@ main, .site-footer { width: 100%; }
                                          묶음이라 둘 사이만 100 좁힘. 앞뒤 섹션 간격은 350 유지. */
   padding: 138px var(--gutter) 0;
 }
-.cta-label {
-  margin-top: 6px;                    /* 70px 제목의 캡높이에 옵티컬 정렬 */
-  font-family: var(--f-display);
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: var(--ls-head);
-  white-space: nowrap;
-}
+/* 타이포·마커는 위쪽 '섹션 라벨 공통' 규칙이 담당 — 여기선 위치만 */
+.cta-label { margin-top: 6px; }       /* 70px 제목의 캡높이에 옵티컬 정렬 */
 .cta-title {
   font-family: var(--f-display);
   font-weight: 500;
@@ -733,23 +967,215 @@ main, .site-footer { width: 100%; }
 .copy-toast.show { opacity: 1; transform: translate(-50%, 0); }
 
 /* ---------- AI 챗봇 위젯 (자리만) ---------- */
-.chat-fab {
+/* 플로팅 버튼 묶음 — 흰 알약 안에 3개(맨 위로 / 앱 / 챗봇)를 세로로.
+   화면 UI라 무대 스케일(--sf)을 따르지 않고 고정 px 를 쓴다. */
+.fab-stack {
   position: fixed;
-  right: 24px;
-  bottom: 24px;
+  right: 40px;
+  bottom: 60px;
   z-index: 200;
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  border: none;
-  background: var(--c-ink);
-  color: var(--c-bg);
-  font-family: var(--f-sans);
-  font-size: 20px;
-  cursor: pointer;
-  transition: transform 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px;
+  border-radius: 32px;
+  background: #fff;
+  box-shadow: 0 3px 14px rgba(0, 0, 0, 0.13);
 }
-.chat-fab:hover { transform: scale(1.08); }
+.fab {
+  width: 84px;                    /* 묶음 전체 너비 100px (84 + 좌우 패딩 8) */
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 28px;
+  background: none;
+  color: var(--c-ink);
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.fab:hover,
+.fab:focus-visible { background: var(--c-ink); color: #fff; }
+.fab svg { width: 24px; height: 24px; }
+/* InApp — 텍스트 버튼 */
+.fab-text {
+  font-family: var(--f-display);
+  font-size: var(--fs-16);
+  font-weight: 500;
+  letter-spacing: -0.48px;
+}
+/* 챗봇 — SVG를 마스크로 써서 currentColor 를 따라가게 (호버 시 흰색으로 반전) */
+.fab-chat::before {
+  content: "";
+  width: 26px;
+  height: 26px;
+  background: currentColor;
+  -webkit-mask: url(../images/chatbot.svg) center / contain no-repeat;
+  mask: url(../images/chatbot.svg) center / contain no-repeat;
+}
+
+/* ---------- AI 챗봇 패널 ----------
+   플로팅 버튼 묶음 바로 위에 뜬다. 화면 UI라 무대 스케일(--sf)을 따르지 않음. */
+.chat-panel {
+  position: fixed;
+  right: 40px;
+  bottom: 264px;                  /* 버튼 묶음(높이 ≈192 + bottom 60) 위 */
+  z-index: 210;
+  width: 380px;
+  height: min(680px, calc(100vh - 300px));   /* 세로로 길게 — 화면이 낮으면 자동으로 줄어듦 */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.16);
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.chat-panel.is-open { opacity: 1; transform: translateY(0); }
+.chat-panel[hidden] { display: none; }   /* flex 가 hidden 을 덮지 않도록 명시 */
+
+.chat-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--c-line);
+}
+.chat-title {
+  font-family: var(--f-display);
+  font-size: var(--fs-16);
+  font-weight: 500;
+  letter-spacing: -0.48px;
+}
+.chat-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px; height: 28px;
+  border: none;
+  border-radius: 50%;
+  background: none;
+  color: var(--c-ink);
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+.chat-close:hover { background: rgba(0, 0, 0, 0.06); }
+
+.chat-log {
+  flex: 1;
+  min-height: 120px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 18px 20px;
+}
+.chat-msg {
+  max-width: 85%;
+  padding: 10px 14px;
+  border-radius: 14px;
+  font-family: var(--f-sans);
+  font-size: 14px;
+  line-height: 1.5;
+  letter-spacing: -0.28px;
+  white-space: pre-wrap;          /* 서버가 줄바꿈으로 문단을 나눔 */
+  word-break: break-word;
+}
+/* 순수 검정 대신 한 단계 연한 먹색 — 대화창이 무겁지 않도록 */
+.chat-msg--bot   { align-self: flex-start; background: #f7f7f7; color: rgba(0, 0, 0, 0.78); }
+.chat-msg--user  { align-self: flex-end; background: rgba(0, 0, 0, 0.78); color: #fff; }
+.chat-msg--error { align-self: flex-start; background: #fdf3f3; color: #a04040; }
+
+/* 안내 문구 (모델 버전) — 말풍선이 아니라 주석처럼 */
+.chat-note {
+  margin: -4px 0 2px;
+  font-family: var(--f-sans);
+  font-size: 12px;
+  line-height: 1.4;
+  letter-spacing: -0.24px;
+  color: var(--c-ink-40);
+}
+
+/* 응답 대기 표시 */
+.chat-typing { display: flex; gap: 4px; align-items: center; }
+.chat-typing span {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--c-ink-40);
+  animation: chat-blink 1.2s infinite ease-in-out;
+}
+.chat-typing span:nth-child(2) { animation-delay: 0.2s; }
+.chat-typing span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes chat-blink {
+  0%, 60%, 100% { opacity: 0.25; }
+  30% { opacity: 1; }
+}
+
+/* 첫 질문 유도 칩 */
+.chat-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 0 20px 14px;
+}
+.chat-chips button {
+  padding: 7px 12px;
+  border: 1px solid var(--c-line);
+  border-radius: 999px;
+  background: none;
+  font-family: var(--f-sans);
+  font-size: 13px;
+  color: var(--c-ink-60);
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+.chat-chips button:hover {
+  background: rgba(0, 0, 0, 0.78);
+  border-color: rgba(0, 0, 0, 0.78);
+  color: #fff;
+}
+
+.chat-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 20px 18px;
+  border-top: 1px solid var(--c-line);
+}
+.chat-input {
+  flex: 1;
+  min-width: 0;
+  height: 40px;
+  padding: 0 14px;
+  border: 1px solid var(--c-line);
+  border-radius: 20px;
+  background: none;
+  font-family: var(--f-sans);
+  font-size: 14px;
+  color: var(--c-ink);
+}
+.chat-input:focus { outline: none; border-color: var(--c-ink); }
+.chat-send {
+  flex: none;
+  width: 40px; height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.78);
+  color: #fff;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+.chat-send:hover { opacity: 0.8; }
+
+@media (max-width: 520px) {
+  .chat-panel { right: 16px; left: 16px; width: auto; bottom: 240px; }
+}
 
 /* ---------- 모션 최소화 ---------- */
 @media (prefers-reduced-motion: reduce) {
