@@ -75,6 +75,7 @@
     <!-- ===== 02. Intro (Pretendard 50px, 영상존에서 250px 아래) ===== -->
     <section class="intro">
       <!-- 줄마다 마스크 — 섹션 진입 시 히어로와 같은 방식으로 순차 상승 -->
+      <h2 class="intro-title"><span>Where brand feeling becomes experience.</span></h2>
       <p class="intro-lead">
         <span class="il"><span>모두가 모든 것을 잘한다고 말하는 시대에, 저는 하나를 깊게 팝니다.</span></span>
         <span class="il"><span>브랜드의 감성이 사용자 경험이 되는 순간을요.</span></span>
@@ -130,14 +131,102 @@
   <div class="stage-clamp" id="clamp2">
   <div class="stage" id="stage2">
 
+    <!-- ===== 03-b. HOW I WORK — 버튼으로 넘기는 카드 (가로 스크롤 강제 없음) =====
+         카드 내용은 자리표시. 문구·이미지는 확정되면 교체 -->
+    <section class="story" id="how">
+      <!-- 앞의 마름모는 CSS(.story-label::before)가 그림 — 여기에 ◆ 문자를 넣지 말 것 -->
+      <span class="story-label">HOW I WORK</span>
+      <span class="story-count"><em id="storyNow">01</em> / <span id="storyTotal">04</span></span>
+      <div class="story-nav">
+        <button class="story-btn" id="storyPrev" type="button" aria-label="이전 카드">
+          <svg width="20" height="12" viewBox="0 0 20 12" fill="none" aria-hidden="true">
+            <path d="M20 6 H1 M6 1 L1 6 L6 11" stroke="currentColor" stroke-width="1" fill="none" />
+          </svg>
+        </button>
+        <button class="story-btn" id="storyNext" type="button" aria-label="다음 카드">
+          <svg width="20" height="12" viewBox="0 0 20 12" fill="none" aria-hidden="true">
+            <path d="M0 6 H19 M14 1 L19 6 L14 11" stroke="currentColor" stroke-width="1" fill="none" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="story-stage">
+        <article class="story-slide is-active">
+          <img class="story-img" src="images/work-section-01.webp" alt="" />
+          <div class="story-body">
+            <h3 class="story-en">I start where users get lost.</h3>
+            <p class="story-ko">
+              보기 좋은 화면보다 헤매지 않는 화면이 먼저라고 생각합니다.<br />
+              그래서 사용자가 어디서 멈추고, 무엇을 못 찾고, 왜 되돌아가는지를 먼저 봅니다.<br />
+              화면을 그리기 전에 그 문제가 정말 존재하는지부터 확인합니다.
+            </p>
+            <span class="story-caption">STEP 01 — RESEARCH</span>
+          </div>
+        </article>
+        <article class="story-slide">
+          <img class="story-img" src="images/work-section-02.webp" alt="" />
+          <div class="story-body">
+            <h3 class="story-en">One problem, defined sharply.</h3>
+            <p class="story-ko">
+              모든 걸 해결하려다 아무것도 바꾸지 못하는 경우를 많이 봤습니다.<br />
+              그래서 가장 아픈 지점 하나를 골라 한 문장으로 정의하는 데 시간을 씁니다.<br />
+              정의가 선명해지면 그다음 결정들은 훨씬 빨라집니다.
+            </p>
+            <span class="story-caption">STEP 02 — DEFINE</span>
+          </div>
+        </article>
+        <article class="story-slide">
+          <img class="story-img" src="images/work-section-03.webp" alt="" />
+          <div class="story-body">
+            <h3 class="story-en">I design it, then I build it.</h3>
+            <p class="story-ko">
+              시안에서 멈추지 않고 직접 구현해 화면을 움직이게 만듭니다.<br />
+              눌렀을 때의 반응, 기다리는 순간, 예외 상황까지 만들어봐야 진짜 문제가 드러납니다.<br />
+              그 지점에서 디자인은 한 번 더 바뀝니다.
+            </p>
+            <span class="story-caption">STEP 03 — DESIGN &amp; BUILD</span>
+          </div>
+        </article>
+        <article class="story-slide">
+          <img class="story-img" src="images/work-section-04.webp" alt="" />
+          <div class="story-body">
+            <h3 class="story-en">Proven by use, not by taste.</h3>
+            <p class="story-ko">
+              취향으로 끝내지 않고 직접 써보며 검증합니다.<br />
+              휴리스틱 평가로 기준을 세우고, 사용자가 목적에 닿을 때까지 고칩니다.<br />
+              &lsquo;예쁘다&rsquo;가 아니라 &lsquo;작동한다&rsquo;로 증명하는 것이 제 일입니다.
+            </p>
+            <span class="story-caption">STEP 04 — VALIDATE</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
     <!-- ===== 04-01. TEAM PROJECT · Running App (실측 절대배치) ===== -->
     <section class="proj proj1" id="work">
       <span class="p-num">01</span>
       <!-- 대표 사진 (텍스트는 이미지에 포함) — 너비 맞춤 + 상단 정렬 -->
       <figure class="p1-photo"><img src="images/running-app-01-1.webp" alt="" /></figure>
       <h2 class="p-title p1-title">TEAM PROJECT<br />Running App</h2>
-      <span class="p-tools p1-tools">figma, adobe, AI assistant</span>
-      <div class="ph-meta p1-meta"><span>툴 · 기여도</span></div>
+      <span class="p-tools p1-tools">RunninApp &ldquo;WE RUN&rdquo;</span>
+      <!-- 기여도 카드 — 막대는 최대값(바이브코딩) 대비 상대 길이. 수치는 노출하지 않음 -->
+      <div class="meta-card p1-meta">
+        <span class="meta-label">MY CONTRIBUTION</span>
+        <p class="meta-stack">
+          <span>Claude API</span>
+          <span>React + TypeScript</span>
+          <span>Tailwind CSS</span>
+          <span>Vercel Deploy</span>
+        </p>
+        <ul class="meta-bars">
+          <li style="--v:70%"><span>UX 기획 · 리서치</span><i></i></li>
+          <li style="--v:85%"><span>와이어프레임</span><i></i></li>
+          <li style="--v:90%"><span>UI 디자인</span><i></i></li>
+          <li style="--v:100%"><span>프론트엔드 구현</span><i></i></li>
+          <li style="--v:65%"><span>기획서 · 발표</span><i></i></li>
+          <li style="--v:80%"><span>배포 · 사용성 테스트</span><i></i></li>
+        </ul>
+      </div>
       <img class="p1-img2" src="images/runnin-app-02.webp" alt="" />
       <img class="p1-img3" src="images/runnin-app-03.webp" alt="" />
     </section>
@@ -148,8 +237,25 @@
       <!-- 대표 사진 (ILKW 조명, 텍스트는 이미지에 포함) -->
       <img class="p2-photo" src="images/ILKW-01.webp" alt="" />
       <h2 class="p-title p2-title">TEAM PROJECT<br />Web Renewal</h2>
-      <span class="p-tools p2-tools">figma, adobe, AI assistant</span>
-      <div class="ph-meta p2-meta"><span>툴 · 기여도</span></div>
+      <span class="p-tools p2-tools">K-brand &ldquo;ILKW web&rdquo;</span>
+      <!-- 기여도 카드 — 막대는 최대값(배포·사용성 평가) 대비 상대 길이 -->
+      <div class="meta-card p2-meta">
+        <span class="meta-label">MY CONTRIBUTION</span>
+        <p class="meta-stack">
+          <span>React + Vite</span>
+          <span>GSAP Scroll</span>
+          <span>Three.js</span>
+          <span>Vercel Deploy</span>
+        </p>
+        <ul class="meta-bars">
+          <li style="--v:56%"><span>UX 기획 · 리서치</span><i></i></li>
+          <li style="--v:56%"><span>와이어프레임</span><i></i></li>
+          <li style="--v:56%"><span>UI 디자인 · 토큰</span><i></i></li>
+          <li style="--v:67%"><span>프론트엔드 구현</span><i></i></li>
+          <li style="--v:10%"><span>기획서 · 발표</span><i></i></li>
+          <li style="--v:100%"><span>배포 · 휴리스틱 평가</span><i></i></li>
+        </ul>
+      </div>
       <img class="p2-img2" src="images/ILKW-02.webp" alt="" />
       <img class="p2-obj" src="images/ILKW-03.webp" alt="" />
     </section>
@@ -160,8 +266,24 @@
       <!-- 모바일 목업 (별개 이미지, 영역은 01 대표사진과 동일) -->
       <img class="p3-photo" src="images/diary-app-01.webp" alt="" />
       <h2 class="p-title p3-title">SIDE PROJECT<br />Diary App</h2>
-      <span class="p-tools p3-tools">figma, adobe, AI assistant</span>
-      <div class="ph-meta p3-meta"><span>툴 · 기여도</span></div>
+      <span class="p-tools p3-tools">DiaryApp &ldquo;GOI&rdquo;</span>
+      <!-- 개인 프로젝트 — 막대는 단계별 작업 비중 (수치 추정치, 확정되면 --v 조정) -->
+      <div class="meta-card p3-meta">
+        <span class="meta-label">SOLO PROJECT</span>
+        <p class="meta-stack">
+          <span>React + Vite</span>
+          <span>PWA Install</span>
+          <span>17 Screens</span>
+          <span>Vercel Deploy</span>
+        </p>
+        <ul class="meta-bars">
+          <li style="--v:55%"><span>UX 기획 · 리서치</span><i></i></li>
+          <li style="--v:85%"><span>UI 디자인</span><i></i></li>
+          <li style="--v:100%"><span>프론트엔드 구현</span><i></i></li>
+          <li style="--v:60%"><span>AI 기능 연동</span><i></i></li>
+          <li style="--v:45%"><span>배포 · PWA</span><i></i></li>
+        </ul>
+      </div>
       <!-- 가로 프레임엔 가로 사진(03), 세로 프레임엔 세로 사진(02) — 비율 기준 배치 -->
       <img class="p3-img2" src="images/diary-app-03.webp" alt="" />
       <img class="p3-img3" src="images/diary-app-02.webp" alt="" />
@@ -169,7 +291,8 @@
 
     <!-- ===== 05. Transition — Designed to be used ===== -->
     <section class="cta-more">
-      <span class="cta-label">◆ FEATURED PROJECTS</span>
+      <!-- 앞의 마름모는 CSS(.cta-label::before)가 그림 — 여기에 ◆ 문자를 넣지 말 것 -->
+      <span class="cta-label">FEATURED PROJECTS</span>
       <div class="cta-body">
         <h2 class="cta-title">Designed to be used, not just seen</h2>
         <p class="cta-sub">보여주기 위한 게 아니라, 실제로 쓰이는 결과물</p>
@@ -222,8 +345,21 @@
       </a>
     </section>
 
-  <!-- ===== 07. Footer (실측 절대배치 — 거터 폭 다크 박스) ===== -->
-  <footer class="site-footer" id="contact">
+  </div><!-- /#stage2 -->
+  </div><!-- /#clamp2 -->
+  </div><!-- /.stage-wrap -->
+
+  <!-- 푸터가 드러날 만큼의 스크롤 여유 (높이 = 푸터 높이, js/main.js가 지정)
+       #contact 앵커도 여기 — 고정된 푸터 자체는 스크롤 대상이 될 수 없으므로 -->
+  <div class="footer-space" id="contact"></div>
+
+  <!-- ===== 07. Footer =====
+       화면 하단에 고정되어 본문(.stage-wrap) 뒤에 깔려 있다가,
+       끝까지 스크롤하면 본문이 걷히면서 아래에서 드러난다.
+       ※ 무대 밖이라 스케일 래퍼(.footer-scale)를 따로 씌움 -->
+  <div class="footer-reveal" id="footerReveal">
+  <div class="footer-scale">
+  <footer class="site-footer">
     <p class="f-cta">Looking for a designer<br />who can build it, too?</p>
     <!-- 클릭 시 메일 작성창 열림 + 주소 클립보드 복사 (js/main.js) -->
     <a class="btn-fill f-contact" href="mailto:jongwook0102@gmail.com" data-copy="jongwook0102@gmail.com">
@@ -252,9 +388,8 @@
     <span class="f-label f-label3">CONNET WHIT ME</span>
     <p class="f-body f-body3"><a href="#">X</a><br /><a href="#">INSTAGRAM</a><br /><a href="#">FACEBOOK</a></p>
   </footer>
-  </div><!-- /#stage2 -->
-  </div><!-- /#clamp2 -->
-  </div><!-- /.stage-wrap -->
+  </div><!-- /.footer-scale -->
+  </div><!-- /.footer-reveal -->
 
   <!-- 히어로 영상 (무대 밖 고정 레이어 — 스크롤에 따라 박스→풀스크린 확장, js/main.js)
        ※ 스케일된 무대(transform) 안에서는 fixed가 깨져서 밖에 둠.
@@ -263,13 +398,54 @@
     <div class="hero-video-inner"><span>영상</span></div>
   </div>
 
-  <!-- + 십자 메뉴 버튼 (무대 밖 fixed — 항상 화면 고정, 클릭 시 메뉴) -->
-  <span class="hero-mark" role="button" tabindex="0" aria-label="메뉴 열기"></span>
+  <!-- 플로팅 버튼 3개 묶음 (위 → 아래: 맨 위로 / 앱 열기 / 챗봇) -->
+  <div class="fab-stack">
+    <button class="fab" id="fabTop" type="button" aria-label="맨 위로 이동">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+        <path d="M4 13.5 L11 6.5 L18 13.5" stroke="currentColor" stroke-width="1.5" fill="none" />
+      </svg>
+    </button>
+    <!-- 카드뉴스 에디터 (배포본) — 새 탭으로 열어 포트폴리오 스크롤 위치를 잃지 않게 -->
+    <a class="fab fab-text" id="fabApp" href="https://card-news-editor-peach.vercel.app/"
+       target="_blank" rel="noopener noreferrer">InApp</a>
+    <!-- 아이콘은 CSS 마스크(images/chatbot.svg) — 호버 시 색이 같이 반전되도록 -->
+    <button class="fab fab-chat" id="fabChat" type="button" aria-label="AI에게 물어보기"
+            aria-expanded="false" aria-controls="chatPanel"></button>
+  </div>
 
-  <!-- AI 챗봇 위젯 (자리만 — 기존 챗봇 재활용 예정) -->
-  <button class="chat-fab" id="chatFab" aria-label="AI에게 물어보기">✳</button>
+  <!-- AI 챗봇 패널 — 서버(/api/chat)가 Claude API를 대신 호출한다 (키는 서버에만) -->
+  <section class="chat-panel" id="chatPanel" aria-label="AI 안내원" hidden>
+    <header class="chat-head">
+      <span class="chat-title">Ask about JW</span>
+      <button class="chat-close" id="chatClose" type="button" aria-label="닫기">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path d="M3 3 L13 13 M13 3 L3 13" stroke="currentColor" stroke-width="1.5" />
+        </svg>
+      </button>
+    </header>
+
+    <div class="chat-log" id="chatLog" role="log" aria-live="polite"></div>
+
+    <!-- 첫 질문 유도 칩 (대화 시작 전에만 노출) -->
+    <div class="chat-chips" id="chatChips">
+      <button type="button">어떤 디자이너입니까?</button>
+      <button type="button">진행한 프로젝트를 알려주십시오</button>
+      <button type="button">구현까지 직접 담당합니까?</button>
+    </div>
+
+    <form class="chat-form" id="chatForm">
+      <input class="chat-input" id="chatInput" type="text" autocomplete="off"
+             placeholder="궁금한 점을 물어보세요" maxlength="2000" />
+      <button class="chat-send" type="submit" aria-label="보내기">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+          <path d="M2 9 H15 M10 4 L15 9 L10 14" stroke="currentColor" stroke-width="1.5" fill="none" />
+        </svg>
+      </button>
+    </form>
+  </section>
 
   <script src="js/main.js"></script>
+  <script src="js/chat.js"></script>
   <!-- ⏸ 3D 오브제 임시 비활성 (2026-08-03)
   <script type="module" src="js/hero3d.js"></script>
   -->
