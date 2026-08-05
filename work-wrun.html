@@ -21,7 +21,12 @@
   <!-- 헤더 (메인과 동일 — 추후 JS include 로 공통화 예정) -->
   <header class="site-header">
     <a class="logo" href="index.html">JW portfolio</a>
-    <button class="menu" type="button">Menu</button>
+    <nav class="site-gnb" aria-label="주요 메뉴">
+      <a href="index.html#hero">Home</a>
+      <a href="index.html#about">About</a>
+      <a href="works.html">Work</a>
+      <a href="#contact">Contact</a>
+    </nav>
   </header>
 
   <!-- 1920 무대. 케이스 스터디는 시안 좌표가 없어 흐름 배치를 쓴다
@@ -99,28 +104,15 @@
           앱 자체의 디테일과 완성도를 높이는 데 썼습니다.
         </p>
 
-      <div class="meta-card case-card">
-        <span class="meta-label">MY CONTRIBUTION</span>
-        <p class="meta-stack">
-          <span>Claude API</span>
-          <span>React + TypeScript</span>
-          <span>Tailwind CSS</span>
-          <span>Vercel Deploy</span>
-        </p>
-        <ul class="meta-bars">
-          <li style="--v:70%"><span>UX 기획 · 리서치</span><i></i></li>
-          <li style="--v:85%"><span>와이어프레임</span><i></i></li>
-          <li style="--v:90%"><span>UI 디자인</span><i></i></li>
-          <li style="--v:100%"><span>프론트엔드 구현</span><i></i></li>
-          <li style="--v:65%"><span>기획서 · 발표</span><i></i></li>
-          <li style="--v:80%"><span>배포 · 사용성 테스트</span><i></i></li>
-        </ul>
-      </div>
       </div>
     </section>
 
     <!-- ===== 03. 배운 것 ===== -->
-    <section class="case-sec">
+    <figure class="case-learned-media">
+      <img src="images/case-study-01.webp" alt="도심을 함께 달리는 W:RUN 러너들" loading="lazy" />
+    </figure>
+
+    <section class="case-sec case-sec--learned">
       <h2 class="case-h">What<br />I Learned</h2>
       <div class="case-body">
         <p class="case-lead">Tools got faster because I did.</p>
@@ -166,7 +158,7 @@
     <nav class="f-nav">
       <a href="index.html#hero">HOME</a>
       <a href="index.html#about">ABOUT</a>
-      <a href="index.html#work">WORK</a>
+      <a href="works.html">WORK</a>
       <a href="#contact">CONTACT</a>
     </nav>
 
