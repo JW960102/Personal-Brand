@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>W:RUN — 김종욱 케이스 스터디</title>
+  <meta name="description" content="러닝 팬덤 앱 W:RUN — 첫 API 연동을 해결한 과정" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://api.fontshare.com" />
+  <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin />
+  <link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;1,6..72,300;1,6..72,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
+  <link rel="stylesheet" href="css/tokens.css" />
+  <link rel="stylesheet" href="css/style.css" />
+  <script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+
+  <!-- 헤더 (메인과 동일 — 추후 JS include 로 공통화 예정) -->
+  <header class="site-header">
+    <a class="logo" href="index.html">JW portfolio</a>
+    <button class="menu" type="button">Menu</button>
+  </header>
+
+  <!-- 1920 무대. 케이스 스터디는 시안 좌표가 없어 흐름 배치를 쓴다
+       (메인의 절대배치와 달리 내용 길이가 바뀌어도 레이아웃이 따라옴) -->
+  <div class="stage-wrap">
+  <div class="stage-clamp" id="clamp1">
+  <div class="stage" id="stage1">
+  <main class="case">
+
+    <!-- ===== 히어로 (시안 실측 절대배치) =====
+         이미지가 첫 화면(1080) 아래로 넘어가 상단만 보이고, 제목 아랫부분을 살짝 덮는다. -->
+    <section class="ch">
+      <!-- 십자 — 메인 히어로와 같은 자리·같은 규격 -->
+      <span class="hero-mark" aria-hidden="true"></span>
+
+      <h1 class="ch-title">
+        <span class="chw"><span>RUNNIG APP</span></span>
+        <span class="chw"><span>WE RUN</span></span>
+      </h1>
+
+      <!-- 사진은 무대 밖 고정 레이어에 있다 (스크롤에 따라 아래 슬롯으로 이동) -->
+
+      <p class="ch-meta">
+        React · TypeScript · Tailwind CSS<br />
+        Claude API · Vercel 배포<br />
+        2026.07 · 3주 · 6인 팀
+      </p>
+      <a class="p-link ch-link" href="https://ezenteamproject2.vercel.app/"
+         target="_blank" rel="noopener noreferrer">사이트 보기</a>
+
+      <!-- 메인 히어로와 동일한 화살표. 스크롤에 따라 페이드 (js/main.js) -->
+      <svg class="hero-arrow" width="93" height="98" viewBox="0 0 93 98" fill="none" aria-hidden="true">
+        <line x1="46.5" y1="0" x2="46.5" y2="97" stroke="currentColor" stroke-width="1.5" />
+        <path d="M0 51 L46.5 97.5 L93 51" stroke="currentColor" stroke-width="1.5" fill="none" />
+      </svg>
+    </section>
+
+    <!-- ===== 01. 개요 ===== -->
+    <section class="case-block">
+      <div class="case-row">
+        <div class="case-text">
+          <span class="case-num">01 — OVERVIEW</span>
+          <h2 class="case-en">A fandom app for runners.</h2>
+          <p class="case-ko">
+            혼자 뛰는 사람들을 이어 주는 앱을 만들었습니다. 대회 정보를 추천하고,
+            GPS로 그림을 그리는 코스를 제안하고, 함께 뛸 크루를 찾아 줍니다.<br />
+            저는 UI 디자인과 프론트엔드 구현을 맡았고, 팀 안에서는 발표와 코딩 총괄,
+            GitHub 협업 관리를 담당했습니다.
+          </p>
+        </div>
+        <!-- 히어로 사진이 스크롤에 따라 여기로 내려와 앉는다 (빈 슬롯) -->
+        <figure class="case-figure" id="caseSlot"></figure>
+      </div>
+    </section>
+
+    <!-- ===== 02. 어려웠던 점과 해결 (기존 CHALLENGE·APPROACH·RESULT 통합) ===== -->
+    <section class="case-sec">
+      <h2 class="case-h">Challenge<br />&amp; Solution</h2>
+      <div class="case-body">
+        <p class="case-lead">The first time I connected real APIs.</p>
+        <p>
+          가장 애를 먹은 지점은 API 연동이었습니다. 러닝 앱 특성상 챗봇, 지도,
+          음악 재생과 순위 추천까지 외부 연동이 필수였는데, 제가 잘 아는 분야가 아니었습니다.
+          화면을 그리는 일과 달리 실제 서비스 직전 단계까지 끌고 가는 경험은 처음이었습니다.
+        </p>
+        <p>
+          앞선 두 프로젝트에서 길러 온 AI 활용 능력을 여기에 썼습니다. 모르는 영역을
+          어떻게 파악하고 어디부터 손대야 하는지 접근하는 방식을 찾았고, 결국 연동을
+          끝까지 구현했습니다. API 키가 브라우저에 노출되지 않도록 서버리스 함수를 두고,
+          프론트는 자체 엔드포인트만 호출하도록 분리했습니다. 요청 수와 대화 길이에
+          상한을 두어 비용이 새지 않도록 방어했습니다.
+        </p>
+        <p>
+          기간은 3주였지만 완성이라 할 수 있는 단계에 2주 안에 도달했고, 남은 기간은
+          앱 자체의 디테일과 완성도를 높이는 데 썼습니다.
+        </p>
+
+      <div class="meta-card case-card">
+        <span class="meta-label">MY CONTRIBUTION</span>
+        <p class="meta-stack">
+          <span>Claude API</span>
+          <span>React + TypeScript</span>
+          <span>Tailwind CSS</span>
+          <span>Vercel Deploy</span>
+        </p>
+        <ul class="meta-bars">
+          <li style="--v:70%"><span>UX 기획 · 리서치</span><i></i></li>
+          <li style="--v:85%"><span>와이어프레임</span><i></i></li>
+          <li style="--v:90%"><span>UI 디자인</span><i></i></li>
+          <li style="--v:100%"><span>프론트엔드 구현</span><i></i></li>
+          <li style="--v:65%"><span>기획서 · 발표</span><i></i></li>
+          <li style="--v:80%"><span>배포 · 사용성 테스트</span><i></i></li>
+        </ul>
+      </div>
+      </div>
+    </section>
+
+    <!-- ===== 03. 배운 것 ===== -->
+    <section class="case-sec">
+      <h2 class="case-h">What<br />I Learned</h2>
+      <div class="case-body">
+        <p class="case-lead">Tools got faster because I did.</p>
+        <p>
+          GOI에서 구현하는 능력과 AI 활용법을 얻었고, 일광전구에서 팀 협업의 문제를
+          다루는 법을 배웠습니다. 그 두 가지가 모두 녹아든 것이 이 프로젝트입니다.
+        </p>
+        <p>
+          도구만으로는 속도와 완성도가 함께 오르지 않습니다. 모르는 영역을 마주했을 때
+          무엇부터 확인해야 하는지 아는 것이, 결국 도구를 쓸 수 있게 만들었습니다.
+        </p>
+      </div>
+    </section>
+
+    <!-- ===== 다음 프로젝트 ===== -->
+    <nav class="case-next">
+      <span class="case-next-label">NEXT PROJECT</span>
+      <a class="case-next-link" href="work-ilkw.html">
+        <span>TEAM PROJECT — Web Renewal</span>
+        <svg width="24" height="14" viewBox="0 0 24 14" fill="none" aria-hidden="true">
+          <path d="M0 7 H22 M16 1 L22.5 7 L16 13" stroke="currentColor" stroke-width="1.5" fill="none" />
+        </svg>
+      </a>
+    </nav>
+
+  </main>
+  </div><!-- /#stage1 -->
+  </div><!-- /#clamp1 -->
+  </div><!-- /.stage-wrap -->
+
+  <!-- 푸터 (메인과 동일 — 본문이 걷히면 드러남) -->
+  <div class="footer-space" id="contact"></div>
+  <div class="footer-reveal" id="footerReveal">
+  <div class="footer-scale">
+  <footer class="site-footer">
+    <p class="f-cta">Looking for a designer<br />who can build it, too?</p>
+    <a class="btn-fill f-contact" href="mailto:jongwook0102@gmail.com" data-copy="jongwook0102@gmail.com">
+      <svg class="ico-corner" width="13" height="12" viewBox="0 0 13 12" fill="none" aria-hidden="true">
+        <path d="M1 0 V7 H11 M7.5 3.5 L11.5 7 L7.5 10.5" stroke="currentColor" stroke-width="1" fill="none" />
+      </svg>
+      <span>Contact</span>
+    </a>
+    <nav class="f-nav">
+      <a href="index.html#hero">HOME</a>
+      <a href="index.html#about">ABOUT</a>
+      <a href="index.html#work">WORK</a>
+      <a href="#contact">CONTACT</a>
+    </nav>
+
+    <div class="f-line f-line1"></div>
+    <div class="f-line f-line2"></div>
+    <div class="f-line f-line3"></div>
+
+    <span class="f-label f-label1">MY ADDRESS</span>
+    <p class="f-body f-body1">27, Yonggu-daero<br />2753beon-gi<br />Suji-gu, Yongin-si<br />Gyeonggi-do<br />103 901</p>
+
+    <span class="f-label f-label2">GET IN TOUCH</span>
+    <p class="f-body f-body2"><a href="mailto:jongwook0102@gmail.com">jongwook0102@gmail.com</a><br />010 2912 6264</p>
+
+    <span class="f-label f-label3">CONNET WHIT ME</span>
+    <p class="f-body f-body3"><a href="#">X</a><br /><a href="#">INSTAGRAM</a><br /><a href="#">FACEBOOK</a></p>
+  </footer>
+  </div><!-- /.footer-scale -->
+  </div><!-- /.footer-reveal -->
+
+  <!-- 히어로 사진 — 무대 밖 고정 레이어.
+       스크롤에 따라 히어로 자리 → 01 OVERVIEW 슬롯으로 이동·축소한다 (js/main.js) -->
+  <img class="ch-photo" id="chPhoto" src="images/on101_img.webp" alt="W:RUN 앱 화면" />
+
+  <!-- 플로팅 버튼 (메인과 동일) -->
+  <div class="fab-stack">
+    <button class="fab" id="fabTop" type="button" aria-label="맨 위로 이동">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+        <path d="M4 13.5 L11 6.5 L18 13.5" stroke="currentColor" stroke-width="1.5" fill="none" />
+      </svg>
+    </button>
+    <a class="fab fab-text" id="fabApp" href="https://card-news-editor-peach.vercel.app/"
+       target="_blank" rel="noopener noreferrer">InApp</a>
+    <button class="fab fab-chat" id="fabChat" type="button" aria-label="AI에게 물어보기"
+            aria-expanded="false" aria-controls="chatPanel"></button>
+  </div>
+
+  <!-- AI 챗봇 패널 (메인과 동일) -->
+  <section class="chat-panel" id="chatPanel" aria-label="AI 안내원" hidden>
+    <header class="chat-head">
+      <span class="chat-title">Ask about JW</span>
+      <button class="chat-close" id="chatClose" type="button" aria-label="닫기">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path d="M3 3 L13 13 M13 3 L3 13" stroke="currentColor" stroke-width="1.5" />
+        </svg>
+      </button>
+    </header>
+    <div class="chat-log" id="chatLog" role="log" aria-live="polite"></div>
+    <div class="chat-chips" id="chatChips">
+      <button type="button">이 프로젝트에 대해 알려주십시오</button>
+      <button type="button">어떤 역할을 맡았습니까?</button>
+    </div>
+    <form class="chat-form" id="chatForm">
+      <input class="chat-input" id="chatInput" type="text" autocomplete="off"
+             placeholder="궁금한 점을 물어보세요" maxlength="2000" />
+      <button class="chat-send" type="submit" aria-label="보내기">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+          <path d="M2 9 H15 M10 4 L15 9 L10 14" stroke="currentColor" stroke-width="1.5" fill="none" />
+        </svg>
+      </button>
+    </form>
+  </section>
+
+  <script src="js/main.js"></script>
+  <script src="js/chat.js"></script>
+</body>
+</html>
