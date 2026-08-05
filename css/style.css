@@ -1266,6 +1266,207 @@ main, .site-footer { width: 100%; }
   .chat-panel { right: 16px; left: 16px; width: auto; bottom: 240px; }
 }
 
+/* ============================================
+   케이스 스터디 페이지 (work-*.html)
+   메인과 달리 Figma 시안 좌표가 없으므로 절대배치가 아니라 흐름 배치를 쓴다.
+   글 길이가 바뀌어도 레이아웃이 따라오고, 3개 페이지를 복제해 쓰기 쉽다.
+   타이포·색·간격은 메인의 토큰과 부품을 그대로 재사용한다.
+   ============================================ */
+.case { padding: 0 var(--gutter) 240px; }
+
+/* ---- 히어로 (시안 실측 절대배치) ----
+   .case 의 거터 패딩을 음수 마진으로 상쇄해 캔버스 전체(1920)를 쓴다.
+   그래야 시안 좌표(30 / 647 / 911 …)를 그대로 쓸 수 있다. */
+.ch {
+  position: relative;
+  width: var(--canvas);
+  margin: 0 calc(var(--gutter) * -1);
+  height: 2050px;
+}
+/* 대형 제목 — 히어로와 같은 250px 이되 행간만 0.85 (시안) */
+.ch-title {
+  position: absolute;
+  left: 30px; top: 287px;
+  margin: 0;
+  font-family: var(--f-display);
+  font-weight: 400;
+  font-size: var(--fs-250);
+  line-height: 0.85;
+  letter-spacing: -17.5px;
+  white-space: nowrap;
+}
+/* 줄 마스크 — 패딩만큼 음수 마진을 줘 행간(0.85)이 흐트러지지 않게 한다 */
+.chw {
+  display: block;
+  overflow: hidden;
+  padding: 0 24px 24px 0;
+  margin-bottom: -24px;
+}
+.chw > span { display: block; }
+/* 사진 — 무대 밖 고정 레이어. 위치·크기는 js/main.js 가 스크롤에 맞춰 계산한다.
+   (히어로 자리에서 시작해 01 OVERVIEW 슬롯으로 이동·축소)
+   ※ 스케일된 무대 안에서는 fixed 가 깨지므로 밖에 둔다. */
+.ch-photo {
+  position: fixed;
+  left: 0; top: 0;
+  object-fit: cover;
+  z-index: 2;                     /* 제목 위를 덮되 헤더(100)보다는 아래 */
+}
+/* 사진이 내려앉을 빈 슬롯 — 이미지가 없어도 자리를 차지해야 한다 */
+.case-figure { aspect-ratio: 4 / 5; }
+.ch-meta {
+  position: absolute;
+  left: 130px; top: 1859px;
+  margin: 0;
+  font-family: var(--f-display);
+  font-weight: 500;
+  font-size: var(--fs-20);
+  line-height: 1.4;
+  letter-spacing: -0.6px;
+  white-space: nowrap;
+}
+
+.ch-link { position: absolute; left: 130px; top: 1975px; }
+
+/* 히어로 등장 — 메인과 같은 타이밍 체계 */
+.js .ch-title .chw > span { transform: translateY(115%); }
+.js:not(.intro-play) .ch-photo { opacity: 0; }
+.ch-title .chw:nth-child(1) { --delay: 0.70s; }
+.ch-title .chw:nth-child(2) { --delay: 1.00s; }
+.intro-play .ch-title .chw > span {
+  transform: translateY(0);
+  transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1) var(--delay, 0s);
+}
+.intro-play .ch-photo { opacity: 1; transition: opacity 0.9s ease 1.3s; }
+@media (prefers-reduced-motion: reduce) {
+  .js .ch-title .chw > span { transform: none; transition: none; }
+  .js .ch-photo { opacity: 1; transition: none; }
+}
+
+/* ---- 본문 섹션 (좌: 짧은 라벨 / 우: 본문) ----
+   레퍼런스(outpost)와 같은 2단. 라벨과 본문을 좌우로 갈라 놓고 아래에 구분선을 둔다. */
+.case-sec {
+  display: grid;
+  grid-template-columns: 650px minmax(0, 890px);
+  margin-top: 200px;
+  padding-bottom: 140px;
+  border-bottom: 1px solid var(--c-line);
+}
+.case-h {
+  margin: 0;
+  font-family: var(--f-display);
+  font-weight: 500;
+  font-size: var(--fs-56);
+  line-height: 1.05;
+  letter-spacing: -1.5px;
+  text-transform: uppercase;
+}
+.case-body > * + * { margin-top: 32px; }
+.case-body > .case-card { margin-top: 72px; }
+.case-body p {
+  margin: 0;
+  font-family: var(--f-sans);
+  font-size: var(--fs-24);
+  line-height: 1.7;
+  letter-spacing: -0.72px;
+  color: var(--c-ink-60);
+  word-break: keep-all;
+}
+/* 영문 리드 문장 — 한글 본문보다 한 단계 크고 진하게 */
+.case-body .case-lead {
+  font-family: var(--f-display);
+  font-size: var(--fs-32);
+  font-weight: 500;
+  line-height: 1.35;
+  letter-spacing: -0.96px;
+  color: var(--c-ink);
+}
+
+/* ---- 본문 블록 (01 오버뷰 — 이미지 슬롯이 있는 블록) ---- */
+.case-block { margin-top: 200px; }
+.case-num {                       /* 단계 표시 — 섹션 라벨(마름모)과 구분되게 */
+  display: block;
+  margin-bottom: 28px;
+  font-family: var(--f-display);
+  font-size: var(--fs-16);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--c-ink-40);
+}
+.case-en {
+  margin: 0 0 40px;
+  max-width: 1400px;
+  font-family: var(--f-display);
+  font-weight: 500;
+  font-size: var(--fs-80);
+  line-height: 1;
+  letter-spacing: -2.4px;
+}
+.case-ko {
+  margin: 0;
+  max-width: 1100px;              /* 글줄이 너무 길어지지 않도록 */
+  font-family: var(--f-sans);
+  font-size: var(--fs-24);
+  line-height: 1.7;
+  letter-spacing: -0.72px;
+  color: var(--c-ink-60);
+  word-break: keep-all;
+}
+/* 제목·본문·이미지를 한 덩어리로 묶어 한쪽으로 몰고, 반대편을 비운다.
+   (메인 프로젝트 섹션과 같은 비대칭 리듬 — 폭을 꽉 채우지 않는 것이 핵심)
+   --flip 을 붙이면 좌우가 뒤바뀌어 블록마다 방향이 교차한다. */
+.case-row {
+  display: grid;
+  grid-template-columns: 1fr 712px;     /* 882 + 66 + 712 = 1660 → 거터 양끝(130·1790)에 딱 붙음 */
+  gap: 66px;
+  align-items: stretch;                 /* 글 칸이 사진 높이만큼 늘어나야 위·아래 정렬이 성립 */
+}
+.case-row--flip { grid-template-columns: 712px 1fr; }
+.case-row--flip .case-text { order: 2; }
+/* 번호는 사진 상단에, 제목·본문은 사진 하단에 맞춘다 */
+.case-text { display: flex; flex-direction: column; }
+.case-text .case-en { margin-top: auto; margin-bottom: 32px; }
+.case-text .case-ko { max-width: none; margin-bottom: 0; }   /* 칸 너비가 글줄을 제한함 */
+
+.case-figure { margin: 0; align-self: start; }
+.case-figure img {
+  width: 100%;
+  aspect-ratio: 4 / 5;                  /* 세로로 긴 프레임 */
+  object-fit: cover;
+  border-radius: 10px;
+}
+/* 기여도 카드 — 메인에선 절대배치, 여기선 흐름 안에 놓는다 */
+.case-card { width: 417px; margin-top: 80px; align-self: start; }
+.case-card .meta-bars { margin-top: 44px; }
+
+/* ---- 다음 프로젝트 ---- */
+/* 바로 위 .case-sec 의 아래 구분선이 경계 역할을 하므로 여기엔 선을 두지 않는다 */
+.case-next { margin-top: 120px; }
+.case-next-label {
+  display: block;
+  margin-bottom: 24px;
+  font-family: var(--f-display);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--c-ink-40);
+}
+.case-next-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+  font-family: var(--f-display);
+  font-size: var(--fs-56);
+  font-weight: 500;
+  letter-spacing: -1.5px;
+  color: var(--c-ink-40);
+  transition: color 0.25s ease;
+}
+.case-next-link:hover { color: var(--c-ink); }
+.case-next-link svg { flex: none; transition: transform 0.25s ease; }
+.case-next-link:hover svg { transform: translateX(10px); }
+
 /* ---------- 모션 최소화 ---------- */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }

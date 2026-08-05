@@ -28,6 +28,17 @@
   var FLOAT_FADE = 0.6;     // 진행률 중 페이드인이 끝나는 비율
   var floats = [];          // { el, top(문서 기준 화면좌표), h }
 
+  // --- 케이스 스터디: 히어로 사진 → 01 슬롯 이동 (work-*.html 에서만 존재) ---
+  var chPhoto = document.getElementById('chPhoto');
+  var chSlot = document.getElementById('caseSlot');
+  var CH_BOX = { x: 647, y: 633, w: 876, h: 1282 };  // 시안 실측 (캔버스 px)
+  var CH_SETTLE = 0.2;      // 슬롯 상단이 화면 높이의 이 지점에 오면 이동 완료
+  var CH_HOLD = 0.9;        // '사이트 보기' 가 화면 이 지점까지 올라오면 이동 시작
+                            //  (0.9 = 화면 아래쪽에 막 나타났을 때 / 낮출수록 더 늦게 시작)
+  var chLink = document.querySelector('.ch-link');
+  var slotDoc = null;       // 슬롯의 문서 기준 위치·크기 (fit 때 측정)
+  var chLinkTop = 0;        // '사이트 보기' 의 문서상 위치
+
   // --- 히어로 영상 박스 (1920 캔버스 px · MAKE & 오른쪽) ---
   var BOX = { x: 1226, y: 465, w: 264, h: 176 };
   var EXPAND = 900;     // 박스→풀스크린 확장 스크롤 거리 (캔버스 px)
@@ -69,7 +80,17 @@
     if (footerReveal) footerReveal.style.height = FOOTER_H * sf + 'px';
     if (footerSpace) footerSpace.style.height = FOOTER_H * sf + 'px';
     measureFloats();   // 높이 확정 후 측정
+    measureSlot();
     onScroll();
+  }
+
+  // 케이스 스터디 사진이 내려앉을 슬롯의 문서상 위치를 재둔다
+  function measureSlot() {
+    if (!chSlot) return;
+    var y = window.scrollY || window.pageYOffset;
+    var r = chSlot.getBoundingClientRect();
+    slotDoc = { top: r.top + y, left: r.left, w: r.width, h: r.height };
+    if (chLink) chLinkTop = chLink.getBoundingClientRect().top + y;
   }
 
   // 클램프 높이 = 무대의 '축소된' 높이. 무대 안 내용이 늘어나면(아코디언 등)
@@ -128,6 +149,25 @@
       video.style.top = T + 'px';
       video.style.width = W + 'px';
       video.style.height = Hh + 'px';
+    }
+
+    // 케이스 스터디 히어로 사진: 히어로 자리 → 01 슬롯으로 이동·축소.
+    // 시작·끝 위치를 모두 '문서 좌표 − 스크롤'로 계산하므로, 도착(p=1) 이후에는
+    // 슬롯과 함께 자연스럽게 스크롤된다 (따로 고정 해제 처리가 필요 없다).
+    if (chPhoto && slotDoc) {
+      var sT = CH_BOX.y * sf, sL = margin + CH_BOX.x * sf;
+      var sW = CH_BOX.w * sf, sH = CH_BOX.h * sf;
+      // '사이트 보기'를 충분히 본 뒤(CH_HOLD)부터 시작해,
+      // 슬롯 상단이 화면 CH_SETTLE 지점에 닿을 때 끝난다
+      var chFrom = Math.max(0, chLinkTop - vh * CH_HOLD);
+      var chTo = slotDoc.top - vh * CH_SETTLE;
+      var cp = (y - chFrom) / Math.max(1, chTo - chFrom);
+      cp = cp < 0 ? 0 : (cp > 1 ? 1 : cp);
+      var ce = cp < 0.5 ? 4 * cp * cp * cp : 1 - Math.pow(-2 * cp + 2, 3) / 2;
+      chPhoto.style.left = lerp(sL, slotDoc.left, ce) + 'px';
+      chPhoto.style.top = lerp(sT - y, slotDoc.top - y, ce) + 'px';
+      chPhoto.style.width = lerp(sW, slotDoc.w, ce) + 'px';
+      chPhoto.style.height = lerp(sH, slotDoc.h, ce) + 'px';
     }
 
     // 인트로 카피: 섹션이 화면에 1/3쯤 들어오면 한 번만 순차 등장 (되돌리지 않음)
