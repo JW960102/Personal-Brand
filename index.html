@@ -37,7 +37,12 @@
   <!-- 헤더 (전 페이지 공통) -->
   <header class="site-header">
     <a class="logo" href="index.html">JW portfolio</a>
-    <button class="menu" type="button">Menu</button>
+    <nav class="site-gnb" aria-label="주요 메뉴">
+      <a href="#hero">Home</a>
+      <a href="#about">About</a>
+      <a href="works.html">Work</a>
+      <a href="#contact">Contact</a>
+    </nav>
   </header>
 
   <!-- ⏸ 배경 3D 유리 오브제 "JW" — 임시 비활성 (2026-08-03)
@@ -209,8 +214,10 @@
       <figure class="p1-photo"><img src="images/running-app-01-1.webp" alt="" /></figure>
       <h2 class="p-title p1-title">TEAM PROJECT<br />Running App</h2>
       <span class="p-tools p1-tools">RunninApp &ldquo;WE RUN&rdquo;</span>
-      <a class="p-link p1-link" href="https://ezenteamproject2.vercel.app/"
-         target="_blank" rel="noopener noreferrer">사이트 보기</a>
+      <div class="p-links p1-links">
+        <a class="p-link" href="https://ezenteamproject2.vercel.app/" target="_blank" rel="noopener noreferrer">사이트 보기</a>
+        <a class="p-link p-case-link" href="work-wrun.html">케이스 스터디</a>
+      </div>
       <!-- 기여도 카드 — 막대는 최대값(바이브코딩) 대비 상대 길이. 수치는 노출하지 않음 -->
       <div class="meta-card p1-meta">
         <span class="meta-label">MY CONTRIBUTION</span>
@@ -240,8 +247,10 @@
       <img class="p2-photo" src="images/ILKW-01.webp" alt="" />
       <h2 class="p-title p2-title">TEAM PROJECT<br />Web Renewal</h2>
       <span class="p-tools p2-tools">K-brand &ldquo;ILKW web&rdquo;</span>
-      <a class="p-link p2-link" href="https://ezen-teamproject-1.vercel.app/"
-         target="_blank" rel="noopener noreferrer">사이트 보기</a>
+      <div class="p-links p2-links">
+        <a class="p-link" href="https://ezen-teamproject-1.vercel.app/" target="_blank" rel="noopener noreferrer">사이트 보기</a>
+        <a class="p-link p-case-link" href="work-ilkw.html">케이스 스터디</a>
+      </div>
       <!-- 기여도 카드 — 막대는 최대값(배포·사용성 평가) 대비 상대 길이 -->
       <div class="meta-card p2-meta">
         <span class="meta-label">MY CONTRIBUTION</span>
@@ -271,8 +280,10 @@
       <img class="p3-photo" src="images/diary-app-01.webp" alt="" />
       <h2 class="p-title p3-title">SIDE PROJECT<br />Diary App</h2>
       <span class="p-tools p3-tools">DiaryApp &ldquo;GOI&rdquo;</span>
-      <a class="p-link p3-link" href="https://goi-diary-react.vercel.app/onboarding"
-         target="_blank" rel="noopener noreferrer">사이트 보기</a>
+      <div class="p-links p3-links">
+        <a class="p-link" href="https://goi-diary-react.vercel.app/onboarding" target="_blank" rel="noopener noreferrer">사이트 보기</a>
+        <a class="p-link p-case-link" href="work-goi.html">케이스 스터디</a>
+      </div>
       <!-- 개인 프로젝트 — 막대는 단계별 작업 비중 (수치 추정치, 확정되면 --v 조정) -->
       <div class="meta-card p3-meta">
         <span class="meta-label">SOLO PROJECT</span>
@@ -302,7 +313,7 @@
       <div class="cta-body">
         <h2 class="cta-title">Designed to be used, not just seen</h2>
         <p class="cta-sub">보여주기 위한 게 아니라, 실제로 쓰이는 결과물</p>
-        <a class="btn-fill btn-more" href="#more">
+        <a class="btn-fill btn-more" href="works.html">
           <svg class="ico-corner" width="14" height="12" viewBox="0 0 14 12" fill="none" aria-hidden="true">
             <path d="M1 0 V7 H12 M8.5 3.5 L12.5 7 L8.5 10.5" stroke="currentColor" stroke-width="1" fill="none" />
           </svg>
@@ -406,7 +417,7 @@
     <nav class="f-nav">
       <a href="#hero">HOME</a>
       <a href="#about">ABOUT</a>
-      <a href="#work">WORK</a>
+      <a href="works.html">WORK</a>
       <a href="#contact">CONTACT</a>
     </nav>
 

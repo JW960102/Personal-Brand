@@ -157,13 +157,24 @@ main, .site-footer { width: 100%; }
   font-size: calc(var(--fs-32) * var(--sf));  /* 32px × 스케일 */
   line-height: 1;
 }
-.site-header .menu {
+.site-gnb {
+  display: flex;
+  align-items: center;
+  gap: calc(32px * var(--sf));
+}
+.site-gnb a {
   font-family: var(--f-display);
-  font-size: calc(var(--fs-24) * var(--sf));  /* 24px × 스케일 */
-  font-weight: 400;                           /* 500 → 400 (2026-08-04, 로고와 굵기 맞춤) */
-  letter-spacing: var(--ls-head);
+  font-size: calc(18px * var(--sf));
+  font-weight: 400;
+  letter-spacing: -0.03em;
   line-height: 1;
-  background: none; border: none; color: inherit; cursor: pointer;
+  color: inherit;
+  text-transform: uppercase;
+}
+.site-gnb a:hover { opacity: 0.55; }
+@media (max-width: 600px) {
+  .site-gnb { gap: 12px; }
+  .site-gnb a { font-size: 12px; }
 }
 
 /* ===== 01. Hero — THINK / MAKE & / DELIVER (1920 캔버스 실측 절대좌표) =====
@@ -938,10 +949,16 @@ main, .site-footer { width: 100%; }
 
 /* 프로젝트 섹션 배포 링크 — 툴 라인(하단 815) 아래 20px, 제목·툴과 같은 세로선에 정렬.
    01·03 은 우측 끝 1027 기준이라 right 로, 02 는 좌측 893 기준이라 left 로 잡는다. */
-.p-link  { position: absolute; }
-.p1-link { right: 893px; top: 835px; }
-.p2-link { left: 893px;  top: 835px; }
-.p3-link { right: 893px; top: 826px; }
+.p-links {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.p1-links { right: 893px; top: 835px; }
+.p2-links { left: 893px;  top: 835px; }
+.p3-links { right: 893px; top: 826px; }
+.p-case-link::after { display: none; }
 
 /* ===== 07. Footer ===== */
 /* 다크 박스 = 캔버스 풀블리드(0~1920). 내부 콘텐츠만 301부터 */
@@ -1366,7 +1383,7 @@ main, .site-footer { width: 100%; }
 .case-body p {
   margin: 0;
   font-family: var(--f-sans);
-  font-size: var(--fs-24);
+  font-size: 18px;
   line-height: 1.7;
   letter-spacing: -0.72px;
   color: var(--c-ink-60);
@@ -1375,12 +1392,29 @@ main, .site-footer { width: 100%; }
 /* 영문 리드 문장 — 한글 본문보다 한 단계 크고 진하게 */
 .case-body .case-lead {
   font-family: var(--f-display);
-  font-size: var(--fs-32);
+  font-size: 40px;
   font-weight: 500;
   line-height: 1.35;
   letter-spacing: -0.96px;
   color: var(--c-ink);
 }
+/* 영문 리드와 첫 한글 문단만 밀도 있게 연결하고, 이후 문단 간격은 유지한다. */
+.case-body .case-lead + p { margin-top: 8px; }
+
+/* What I Learned 앞의 전폭 이미지 — 본문의 안쪽 거터(130px)만큼만 비워 둔다. */
+.case-learned-media {
+  margin: 200px 0 0;
+  aspect-ratio: 16 / 9; /* 이미지 로드 전에도 높이를 확보해 푸터 겹침을 방지 */
+  overflow: hidden;
+}
+.case-learned-media img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.case-learned-media--goi { aspect-ratio: 4 / 3; }
+/* 이미지와 다음 텍스트 2단 사이의 호흡 */
+.case-sec--learned { margin-top: 192px; }
 
 /* ---- 본문 블록 (01 오버뷰 — 이미지 슬롯이 있는 블록) ---- */
 .case-block { margin-top: 200px; }
@@ -1466,6 +1500,85 @@ main, .site-footer { width: 100%; }
 .case-next-link:hover { color: var(--c-ink); }
 .case-next-link svg { flex: none; transition: transform 0.25s ease; }
 .case-next-link:hover svg { transform: translateX(10px); }
+
+/* ============================================
+   Works 페이지 — Outpost의 비대칭 모자이크 리듬을 따르되,
+   프로젝트별 이미지 비율과 카드 위치를 달리해 한 줄 그리드로 보이지 않게 한다.
+   ============================================ */
+.works-page { padding: 0 var(--gutter) 280px; }
+.works-hero { padding: 260px 0 190px; }
+.works-eyebrow,
+.work-card-type {
+  display: block;
+  font-family: var(--f-display);
+  font-size: var(--fs-16);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--c-ink-40);
+}
+.works-hero h1 {
+  margin: 52px 0 46px;
+  font-family: var(--f-display);
+  font-size: 170px;
+  font-weight: 500;
+  line-height: 0.86;
+  letter-spacing: -0.075em;
+}
+.works-hero p {
+  max-width: 520px;
+  font-family: var(--f-sans);
+  font-size: var(--fs-24);
+  line-height: 1.55;
+  letter-spacing: -0.72px;
+  color: var(--c-ink-60);
+}
+.works-grid { display: flex; flex-direction: column; }
+.works-row {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: 48px;
+  align-items: start;
+}
+.works-row + .works-row { margin-top: 210px; }
+.works-row--one .work-card:first-child { grid-column: 1 / span 7; }
+.works-row--one .work-card:last-child { grid-column: 9 / span 4; }
+.works-row--two .work-card { grid-column: 3 / span 7; }
+.works-row--three .work-card:first-child { grid-column: 1 / span 4; }
+.works-row--three .work-card:last-child { grid-column: 7 / span 6; }
+.works-row--four .work-card:first-child { grid-column: 3 / span 5; }
+.works-row--four .work-card:last-child { grid-column: 9 / span 4; }
+.work-card--offset { margin-top: 180px; }
+.works-row--four .work-card--offset { margin-top: 90px; }
+.work-card-media {
+  width: 100%;
+  aspect-ratio: var(--ratio);
+  overflow: hidden;
+  background: var(--c-placeholder);
+}
+.work-card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.work-card:hover .work-card-media img { transform: scale(1.04); }
+.work-card-type { margin-top: 24px; }
+.work-card h2 {
+  margin-top: 13px;
+  font-family: var(--f-display);
+  font-size: var(--fs-56);
+  font-weight: 500;
+  line-height: 0.95;
+  letter-spacing: -0.05em;
+}
+.work-card p {
+  margin-top: 14px;
+  font-family: var(--f-display);
+  font-size: var(--fs-20);
+  letter-spacing: -0.03em;
+  color: var(--c-ink-60);
+}
+.site-gnb a[aria-current="page"] { opacity: 0.55; }
 
 /* ---------- 모션 최소화 ---------- */
 @media (prefers-reduced-motion: reduce) {
