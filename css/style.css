@@ -1708,16 +1708,25 @@ main, .site-footer { width: 100%; }
 
 /* ---- 인덱스 목록 ( 01 ) ~ ( 04 ) ---- */
 .ax { margin-top: 200px; }
+/* About 안의 sticky 제목이 뷰포트를 기준으로 움직이게 한다.
+   overflow:clip 은 내용은 자르지만 새 스크롤 컨테이너를 만들지 않는다. */
+.about-page .stage-clamp { overflow: clip; }
 /* .story-label 은 원래 절대배치(가터/150) — 여기서는 흐름에 둔다 */
 .ax .story-label { position: static; margin-bottom: 56px; }
 .ax-list { list-style: none; margin: 0; padding: 0; }
-.ax-list li { border-top: 1px solid var(--c-line); }
-.ax-list li:last-child { border-bottom: 1px solid var(--c-line); }
-.ax-list a {
-  display: flex;
-  align-items: baseline;
+.ax-item { border-top: 1px solid var(--c-line); }
+.ax-item:last-child { border-bottom: 1px solid var(--c-line); }
+.ax-trigger {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 110px minmax(0, 1fr) 40px;
+  align-items: center;
   gap: 40px;
   padding: 36px 0;
+  border: 0;
+  background: none;
+  text-align: left;
+  cursor: pointer;
   font-family: var(--f-display);
   font-weight: 500;
   font-size: var(--fs-56);
@@ -1727,17 +1736,67 @@ main, .site-footer { width: 100%; }
   /* 호버 시 살짝 안으로 밀린다 — 목록이 "눌리는 것"임을 알림 */
   transition: color 0.25s ease, padding-left 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.ax-list a:hover,
-.ax-list a:focus-visible { color: var(--c-ink); padding-left: 24px; }
+.ax-trigger:hover,
+.ax-trigger:focus-visible,
+.ax-item.is-open .ax-trigger { color: var(--c-ink); padding-left: 24px; }
+.ax-trigger:focus-visible { outline: 2px solid currentColor; outline-offset: 6px; }
 .ax-list .ax-i {
-  flex: none;
-  width: 110px;
   font-size: var(--fs-20);
   letter-spacing: -0.6px;
   color: var(--c-ink-40);
 }
 
-/* 펼친 섹션의 왼쪽 칸 — 번호 + 제목 (.case-sec 의 첫 번째 그리드 칸) */
+/* 닫힘에는 오른쪽(>)을, 펼침에는 아래(v)를 가리키는 방향 표시. */
+.ax-arrow {
+  justify-self: end;
+  width: 20px;
+  height: 20px;
+  border-top: 2px solid currentColor;
+  border-right: 2px solid currentColor;
+  transform: rotate(45deg);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.ax-item.is-open .ax-arrow { transform: rotate(135deg); }
+
+/* 패널은 실제 콘텐츠 높이까지 부드럽게 열린다.
+   clip 을 사용해야 패널 안의 sticky 제목이 죽지 않는다. */
+.ax-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  visibility: hidden;
+  transition:
+    grid-template-rows 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    visibility 0s linear 0.5s;
+}
+.ax-item.is-open .ax-panel {
+  grid-template-rows: 1fr;
+  visibility: visible;
+  transition:
+    grid-template-rows 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    visibility 0s;
+}
+.ax-panel-clip { min-height: 0; overflow: hidden; }
+/* 전환이 끝난 뒤에는 클리핑을 풀어야 내부 sticky 제목이 뷰포트를 따라간다. */
+.ax-item.is-settled .ax-panel-clip { overflow: visible; }
+.ax-panel .case-sec {
+  margin-top: 0;
+  padding-top: 80px;
+  border-bottom: 0;
+}
+
+/* 펼친 섹션의 왼쪽 제목은 고정하고, 오른쪽 내용만 계속 흐르게 한다. */
+.ax-head {
+  position: sticky;
+  top: 120px;
+  align-self: start;
+}
+/* 1920 무대가 transform:scale() 된 환경에서는 브라우저 sticky 계산이 무시된다.
+   JS가 같은 동작을 translateY 로 보정하며, JS가 없을 때는 위 sticky가 fallback이다. */
+.js .about-page .ax-head {
+  position: relative;
+  top: auto;
+  will-change: transform;
+}
 .ax-head .ax-i {
   display: block;
   margin-bottom: 20px;

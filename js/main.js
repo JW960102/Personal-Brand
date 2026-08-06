@@ -19,6 +19,12 @@
   var footerSpace = document.querySelector('.footer-space');
   var introSec = document.querySelector('.intro');
   var introRevealed = false;
+  var aboutStickyHeads = [];
+  var aboutSections = document.querySelectorAll('.ax .case-sec');
+  for (var asi = 0; asi < aboutSections.length; asi++) {
+    var aboutHead = aboutSections[asi].querySelector('.ax-head');
+    if (aboutHead) aboutStickyHeads.push({ section: aboutSections[asi], head: aboutHead, shift: 0 });
+  }
 
   // 프로젝트 이미지·기여도 박스: 아래에 떠 있다가 자기 영역이 다 보이면 제자리로
   // (스크롤에 연동 — 위로 올리면 그대로 되돌아감)
@@ -144,6 +150,39 @@
   function lerp(a, b, t) { return a + (b - a) * t; }
   function easeInOut(t) { return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2; }
 
+  // About 제목 sticky 보정.
+  // 전체 무대가 transform:scale() 되어 있어 CSS sticky가 브라우저에서 동작하지 않으므로,
+  // 섹션 범위 안에서 제목에 필요한 만큼만 translateY를 적용한다.
+  function updateAboutSticky() {
+    if (!aboutStickyHeads.length) return;
+
+    var scale = sf || 1;
+    var stickyTop = (header ? header.getBoundingClientRect().height : 0) + 24;
+
+    for (var i = 0; i < aboutStickyHeads.length; i++) {
+      var entry = aboutStickyHeads[i];
+      var item = entry.section.closest('.ax-item');
+      if (!item || !item.classList.contains('is-open') || !item.classList.contains('is-settled')) {
+        entry.shift = 0;
+        entry.head.style.transform = '';
+        continue;
+      }
+
+      var sectionRect = entry.section.getBoundingClientRect();
+      var headRect = entry.head.getBoundingClientRect();
+      var bodyRect = entry.section.querySelector('.case-body').getBoundingClientRect();
+      var naturalTop = headRect.top - entry.shift * scale;
+      // 제목 하단이 오른쪽 콘텐츠의 실제 하단선과 만나는 지점까지만 내려간다.
+      // sectionRect.bottom 을 쓰면 섹션의 padding-bottom 만큼 더 내려가 버린다.
+      var maxTop = Math.min(sectionRect.bottom, bodyRect.bottom) - headRect.height;
+      var desiredTop = Math.min(Math.max(naturalTop, stickyTop), maxTop);
+      var nextShift = Math.max(0, (desiredTop - naturalTop) / scale);
+
+      entry.shift = nextShift;
+      entry.head.style.transform = nextShift > 0.1 ? 'translate3d(0,' + nextShift + 'px,0)' : '';
+    }
+  }
+
   // 스크롤 위치에 따라 영상 레이어의 뷰포트 좌표를 계산
   //  구간1 [0 ~ EXPAND)      : 히어로 박스(문서 앵커)에서 풀스크린으로 보간 확장
   //  구간2 [EXPAND ~ +HOLD]  : 풀스크린 고정(핀)
@@ -257,6 +296,7 @@
         header.classList.remove('hidden');
       }
     }
+    updateAboutSticky();
     lastY = y;
   }
 
@@ -288,6 +328,76 @@
         this.setAttribute('aria-expanded', open ? 'true' : 'false');
         followHeight();
       });
+    }
+  }
+
+  // About 목차 아코디언 — 목차 자리에서 해당 섹션을 펼친다.
+  // 여러 섹션을 함께 열 수 있고, 왼쪽 제목은 CSS sticky 로 유지된다.
+  function initAboutAccordion() {
+    var triggers = document.querySelectorAll('.ax-trigger');
+    if (!triggers.length) return;
+
+    function followHeight() {
+      var until = Date.now() + 600;          // 패널 전환 0.5s + 여유
+      (function step() {
+        syncHeights();
+        if (Date.now() < until) {
+          requestAnimationFrame(step);
+        } else {
+          measureFloats();
+          onScroll();
+        }
+      })();
+    }
+
+    function setOpen(trigger, open) {
+      var item = trigger.closest('.ax-item');
+      var panelId = trigger.getAttribute('aria-controls');
+      var panel = panelId ? document.getElementById(panelId) : null;
+      if (!item || !panel) return;
+
+      if (item._axSettleTimer) clearTimeout(item._axSettleTimer);
+      item.classList.remove('is-settled');
+      for (var si = 0; si < aboutStickyHeads.length; si++) {
+        if (aboutStickyHeads[si].section.closest('.ax-item') === item) {
+          aboutStickyHeads[si].shift = 0;
+          aboutStickyHeads[si].head.style.transform = '';
+        }
+      }
+      item.classList.toggle('is-open', open);
+      trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+      panel.setAttribute('aria-hidden', open ? 'false' : 'true');
+      panel.inert = !open;
+
+      // 열리는 동안에는 내용을 잘라 애니메이션을 유지하고,
+      // 전환이 끝난 뒤 overflow 를 풀어 내부 sticky 제목을 활성화한다.
+      if (open) {
+        item._axSettleTimer = setTimeout(function () {
+          if (item.classList.contains('is-open')) {
+            item.classList.add('is-settled');
+            updateAboutSticky();
+          }
+        }, 520);
+      }
+    }
+
+    for (var i = 0; i < triggers.length; i++) {
+      var trigger = triggers[i];
+      setOpen(trigger, false);
+      trigger.addEventListener('click', function () {
+        var open = this.getAttribute('aria-expanded') !== 'true';
+        setOpen(this, open);
+        followHeight();
+      });
+    }
+
+    // about.html#timeline 같은 기존 딥링크는 해당 패널을 먼저 열어 둔다.
+    if (location.hash) {
+      var target;
+      try { target = document.querySelector(location.hash); } catch (e) { target = null; }
+      var targetItem = target && target.closest ? target.closest('.ax-item') : null;
+      var targetTrigger = targetItem ? targetItem.querySelector('.ax-trigger') : null;
+      if (targetTrigger) setOpen(targetTrigger, true);
     }
   }
 
@@ -443,6 +553,7 @@
   }
 
   initAccordion();
+  initAboutAccordion();
   initPreview();
   playIntro();
 })();
