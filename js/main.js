@@ -28,6 +28,15 @@
   var FLOAT_FADE = 0.6;     // 진행률 중 페이드인이 끝나는 비율
   var floats = [];          // { el, top(문서 기준 화면좌표), h }
 
+  // 프로젝트 01·02·03 이미지 — 커튼 리빌 (clones/05 뮤자인의 .img.motion 과 같은 방식).
+  // 원본은 흰 오버레이 height 를 90%→0% 로 줄이는데, 여기서는 clip-path 로 같은 결과를 낸다
+  // (<img> 에는 ::after 를 못 붙인다).
+  // ⚠️ IntersectionObserver 로 하면 안 된다 — 요소가 스스로를 8% 로 잘라 두기 때문에
+  //    교차 '비율'이 그 위로 올라가지 못해 threshold 를 영영 넘지 못한다 (2026-08-06 실제로 겪음).
+  //    이미 매 프레임 도는 스크롤 계산이 있으니 그쪽에 붙인다.
+  var curtains = [];        // { el, top }
+  var CURTAIN_AT = 0.85;    // 요소 상단이 화면 이 지점에 닿으면 걷힌다
+
   // --- 케이스 스터디: 히어로 사진 → 01 슬롯 이동 (work-*.html 에서만 존재) ---
   var chPhoto = document.getElementById('chPhoto');
   var chSlot = document.getElementById('caseSlot');
@@ -102,8 +111,11 @@
 
   // 부유 대상의 문서상 위치를 미리 재둔다 (매 스크롤마다 레이아웃을 읽으면 버벅임).
   // transform이 걸린 상태로 재면 위치가 어긋나므로 전부 초기화한 뒤 한 번에 측정.
+  // ⚠️ 이미지(img·figure)는 여기서 제외한다 — 2026-08-06 부터 커튼 리빌이 맡는다.
+  //    같은 요소에 부유 + 커튼을 겹치면 등장이 두 번 일어나 산만해진다.
   function measureFloats() {
-    var els = document.querySelectorAll('.proj > img, .proj > figure, .proj > .ph-meta, .proj > .meta-card');
+    measureCurtains();
+    var els = document.querySelectorAll('.proj > .ph-meta, .proj > .meta-card');
     var i;
     for (i = 0; i < els.length; i++) {
       els[i].style.transform = '';
@@ -114,6 +126,18 @@
     for (i = 0; i < els.length; i++) {
       var r = els[i].getBoundingClientRect();
       floats.push({ el: els[i], top: r.top + y, h: r.height });
+    }
+  }
+
+  // 커튼 대상의 문서상 위치를 재둔다. clip-path 는 getBoundingClientRect 에 영향이 없어
+  // 잘린 상태에서 재도 원래 박스가 나온다.
+  function measureCurtains() {
+    var els = document.querySelectorAll('.proj > img, .proj > figure');
+    var y = window.scrollY || window.pageYOffset;
+    curtains = [];
+    for (var i = 0; i < els.length; i++) {
+      if (!reduceMotion) els[i].classList.add('curtain');
+      curtains.push({ el: els[i], top: els[i].getBoundingClientRect().top + y });
     }
   }
 
@@ -175,6 +199,16 @@
     if (introSec && !introRevealed && introSec.getBoundingClientRect().top < vh * 0.67) {
       introSec.classList.add('reveal');
       introRevealed = true;
+    }
+
+    // 커튼 리빌: 요소 상단이 화면 CURTAIN_AT 지점까지 올라오면 걷는다. 한 번만(되돌리지 않음).
+    for (var ci = 0; ci < curtains.length; ci++) {
+      var c = curtains[ci];
+      if (c.done) continue;
+      if (c.top - y < vh * CURTAIN_AT) {
+        c.el.classList.add('is-open');
+        c.done = true;
+      }
     }
 
     // 프로젝트 이미지·기여도 박스 부유:
@@ -341,14 +375,41 @@
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
   fit();
 
-  // 다른 페이지에서 index.html#about 처럼 들어온 경우.
+  // --- 같은 페이지 앵커 이동 ---
+  // CSS scroll-margin-top 을 쓸 수 없다: 목적지가 scale(--sf) 된 무대 안에 있어서
+  // 여백이 배율만큼 같이 줄어드는데, 헤더는 그와 무관한 실제 px 라 양이 안 맞는다.
+  // → 헤더 높이를 실측해 직접 계산한다.
+  function anchorOffset() {
+    return (header ? header.getBoundingClientRect().height : 0) + 24;   // 헤더 + 최소 여유
+  }
+  function scrollToTarget(el, smooth) {
+    var y = (window.scrollY || window.pageYOffset)
+          + el.getBoundingClientRect().top - anchorOffset();
+    window.scrollTo({ top: y < 0 ? 0 : y, behavior: (smooth && !reduceMotion) ? 'smooth' : 'auto' });
+  }
+
+  // 어바웃 목차처럼 문서 안을 가리키는 링크 (href="#" 단독은 제외)
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest ? e.target.closest('a[href^="#"]') : null;
+    if (!a) return;
+    var hash = a.getAttribute('href');
+    if (!hash || hash === '#') return;
+    var target;
+    try { target = document.querySelector(hash); } catch (err) { return; }
+    if (!target) return;
+    e.preventDefault();
+    scrollToTarget(target, true);
+    if (history.replaceState) history.replaceState(null, '', hash);
+  });
+
+  // 다른 페이지에서 about.html#timeline 처럼 들어온 경우.
   // 브라우저의 앵커 점프는 클램프 높이가 정해지기 전에 일어나 엉뚱한 곳에 서므로,
   // 높이가 확정된 뒤(load) 한 번 더 목적지로 맞춰 준다.
   if (location.hash) {
     window.addEventListener('load', function () {
       var target;
       try { target = document.querySelector(location.hash); } catch (e) { return; }
-      if (target) target.scrollIntoView();
+      if (target) scrollToTarget(target, false);
     });
   }
 
