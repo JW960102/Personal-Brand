@@ -534,3 +534,97 @@ if (fabTop) {
     })(figs[i]);
   }
 })();
+
+// InApp — 카드뉴스 에디터를 새 탭이 아니라 모달로 연다 (2026-08-06).
+// 마크업을 JS 가 만든다: 6개 페이지에 같은 HTML 을 넣지 않아도 되고, 한 곳만 고치면 된다.
+// 버튼은 <a href> 그대로 두어, JS 가 죽으면 원래대로 새 탭으로 열린다 (안전한 실패).
+// ⚠️ 이 블록은 파일 맨 끝에 있다. 지우거나 덮어쓰면 InApp 이 다시 새 탭으로 열린다.
+(function () {
+  var btn = document.getElementById('fabApp');
+  if (!btn) return;
+
+  var url = btn.getAttribute('href');
+  var modal = null, frame = null, loader = null, lastFocus = null;
+
+  function build() {
+    modal = document.createElement('div');
+    modal.className = 'appmodal';
+    modal.hidden = true;
+    modal.innerHTML =
+      '<div class="appmodal-dim" data-close></div>' +
+      '<div class="appmodal-box" role="dialog" aria-modal="true" aria-label="카드뉴스 에디터">' +
+        '<div class="appmodal-head">' +
+          '<span class="appmodal-title">Card News Editor</span>' +
+          '<a class="appmodal-out" target="_blank" rel="noopener noreferrer">새 탭에서 열기 ↗</a>' +
+          '<button class="appmodal-close" type="button" data-close aria-label="닫기">' +
+            '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">' +
+            '<path d="M3 3 L13 13 M13 3 L3 13" stroke="currentColor" stroke-width="1.5"/></svg>' +
+          '</button>' +
+        '</div>' +
+        '<div class="appmodal-body">' +
+          '<div class="appmodal-load">에디터를 불러오는 중입니다…</div>' +
+        '</div>' +
+      '</div>';
+    document.body.appendChild(modal);
+    modal.querySelector('.appmodal-out').href = url;
+    loader = modal.querySelector('.appmodal-load');
+
+    // 닫기: 배경 클릭 · X 버튼
+    modal.addEventListener('click', function (e) {
+      if (e.target.closest && e.target.closest('[data-close]')) close();
+    });
+  }
+
+  function open() {
+    if (!modal) build();
+    lastFocus = document.activeElement;
+
+    // iframe 은 처음 열 때만 만든다 (다시 열 때 작업 내용이 날아가지 않도록)
+    if (!frame) {
+      frame = document.createElement('iframe');
+      frame.title = '카드뉴스 에디터';
+      frame.src = url;
+      frame.addEventListener('load', function () { loader.classList.add('is-done'); });
+      modal.querySelector('.appmodal-body').appendChild(frame);
+    }
+
+    modal.hidden = false;
+    // 스크롤 잠금. window.innerWidth 는 스크롤바를 포함하므로 이 값이 변하지 않아
+    // fit() 이 다시 돌아도 무대 배율이 튀지 않는다.
+    document.documentElement.style.overflow = 'hidden';
+    // hidden 해제 직후 같은 프레임에 클래스를 붙이면 전환이 생략된다.
+    // ⚠️ requestAnimationFrame 으로 미루지 않는다 — 배경 탭 등에서 rAF 가 늦거나 안 돌면
+    //    모달이 안 보이는 채로 스크롤만 잠기는 상태가 된다. 강제 리플로우가 확실하다.
+    void modal.offsetWidth;
+    modal.classList.add('is-open');
+
+    btn.setAttribute('aria-expanded', 'true');
+    modal.querySelector('.appmodal-close').focus();
+    document.addEventListener('keydown', onKey);
+  }
+
+  function close() {
+    if (!modal || modal.hidden) return;
+    modal.classList.remove('is-open');
+    document.documentElement.style.overflow = '';
+    btn.setAttribute('aria-expanded', 'false');
+    document.removeEventListener('keydown', onKey);
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) { modal.hidden = true; return; }
+    setTimeout(function () { if (!modal.classList.contains('is-open')) modal.hidden = true; }, 320);
+  }
+
+  function onKey(e) { if (e.key === 'Escape') close(); }
+
+  btn.setAttribute('aria-expanded', 'false');
+  btn.addEventListener('click', function (e) {
+    // 새 탭으로 열려는 의도(Ctrl/Cmd/Shift/휠클릭)는 그대로 존중한다
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) return;
+    // 좁은 화면에서는 모달이 답답하므로 원래대로 새 탭
+    if (window.innerWidth <= 900) return;
+    e.preventDefault();
+    open();
+  });
+})();
