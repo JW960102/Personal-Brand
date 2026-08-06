@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About — 김종욱</title>
+  <meta name="description" content="김종욱 — 디자인하고, 구현하고, 검증하는 UX/UI 디자이너의 지금까지" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://api.fontshare.com" />
+  <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin />
+  <link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;1,6..72,300;1,6..72,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
+  <link rel="stylesheet" href="css/tokens.css" />
+  <link rel="stylesheet" href="css/style.css" />
+  <script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+
+  <header class="site-header">
+    <a class="logo" href="index.html">JW portfolio</a>
+    <nav class="site-gnb" aria-label="주요 메뉴">
+      <a href="index.html#hero">Home</a>
+      <a href="about.html" aria-current="page">About</a>
+      <a href="works.html">Work</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <!-- 케이스 스터디와 같은 흐름 배치. 시안 좌표가 없으므로 절대배치를 쓰지 않는다. -->
+  <div class="stage-wrap">
+  <div class="stage-clamp" id="clamp1">
+  <div class="stage" id="stage1">
+  <main class="case">
+
+    <!-- ===== 히어로 ===== -->
+    <section class="ah">
+      <span class="hero-mark" aria-hidden="true"></span>
+
+      <h1 class="ah-title">
+        <span class="chw"><span>ABOUT</span></span>
+        <span class="chw"><span>JONG-WOOK</span></span>
+      </h1>
+
+      <p class="ah-lead">
+        디자인하고, 구현하고, 직접 검증합니다.
+      </p>
+
+      <p class="ah-meta">
+        김종욱 · UX/UI Designer<br />
+        경기도 용인시<br />
+        jongwook0102@gmail.com
+      </p>
+
+      <svg class="hero-arrow" width="93" height="98" viewBox="0 0 93 98" fill="none" aria-hidden="true">
+        <line x1="46.5" y1="0" x2="46.5" y2="97" stroke="currentColor" stroke-width="1.5" />
+        <path d="M0 51 L46.5 97.5 L93 51" stroke="currentColor" stroke-width="1.5" fill="none" />
+      </svg>
+    </section>
+
+    <!-- ===== 인덱스 (레퍼런스의 숫자 목록) =====
+         먼저 훑고, 아래에서 하나씩 펼쳐 설명하는 2단 구성. -->
+    <section class="ax" aria-label="목차">
+      <!-- 앞의 마름모는 CSS 가 그린다 — ◆ 문자를 넣지 말 것 -->
+      <span class="story-label">WHO I AM</span>
+      <ol class="ax-list">
+        <li><a href="#timeline"><span class="ax-i">( 01 )</span><span class="ax-name">Timeline</span></a></li>
+        <li><a href="#education"><span class="ax-i">( 02 )</span><span class="ax-name">Education</span></a></li>
+        <li><a href="#experience"><span class="ax-i">( 03 )</span><span class="ax-name">Experience</span></a></li>
+        <li><a href="#offclock"><span class="ax-i">( 04 )</span><span class="ax-name">Off the clock</span></a></li>
+      </ol>
+    </section>
+
+    <!-- ===== 01. TIMELINE =====
+         ⚠️ 연도만 표기한다 (월 단위 금지).
+            월까지 쓰면 읽는 사람이 기간을 계산하기 시작한다. -->
+    <section class="case-sec" id="timeline">
+      <div class="ax-head">
+        <span class="ax-i">( 01 )</span>
+        <h2 class="case-h">Timeline</h2>
+      </div>
+      <div class="case-body">
+        <p class="case-lead">A path with no gaps.</p>
+        <p>
+          디자인을 전공하고, 다른 일을 하다, 다시 디자인으로 돌아왔습니다.
+          돌아가는 길처럼 보이지만 그 사이의 모든 일이 사람을 관찰하는 일이었습니다.
+        </p>
+
+        <ol class="tl">
+          <li class="tl-row">
+            <span class="tl-year">2014 — 2023</span>
+            <div class="tl-body">
+              <h3>한밭대학교 시각디자인 졸업</h3>
+              <p>브랜드, 편집, 타이포그래피를 다루며 '보이는 것'을 설계하는 훈련을 받았습니다.</p>
+            </div>
+          </li>
+
+          <li class="tl-row">
+            <span class="tl-year">2016 — 2018</span>
+            <div class="tl-body">
+              <h3>육군 병장 만기전역 · 포병</h3>
+              <p>규율과 절차가 사람을 어떻게 움직이는지 몸으로 배운 시간이었습니다.</p>
+            </div>
+          </li>
+
+          <li class="tl-row">
+            <span class="tl-year">2019</span>
+            <div class="tl-body">
+              <h3>㈜테크앤 전기전자공학연구소 · 디자인</h3>
+              <p>
+                디자인 담당자로 1년간 근무하며 아두이노 하드웨어 제품의 사용 설명서와
+                브로슈어를 디자인했습니다. 설명서는 처음으로 "사용자가 이걸 이해할까"를
+                계속 되묻게 만든 작업이었습니다.
+              </p>
+            </div>
+          </li>
+
+          <li class="tl-row">
+            <span class="tl-year">2023 — 2024</span>
+            <div class="tl-body">
+              <h3>파스쿠찌 바리스타</h3>
+              <p>하루에 수백 명의 주문을 받으며 사람이 무엇을 망설이고 무엇을 그냥 지나치는지 봤습니다.</p>
+            </div>
+          </li>
+
+          <li class="tl-row">
+            <span class="tl-year">2024 — 2025</span>
+            <div class="tl-body">
+              <h3>에스텍시스템 · 신라호텔 보안</h3>
+              <p>안내와 통제가 동시에 필요한 자리였습니다. 말을 줄이고 동선으로 설명하는 법을 배웠습니다.</p>
+            </div>
+          </li>
+
+          <li class="tl-row">
+            <span class="tl-year">2026</span>
+            <div class="tl-body">
+              <h3>이젠아카데미 강남캠퍼스 · UXUI 디자인 프론트엔드</h3>
+              <p>다시 디자인으로 돌아오면서, 이번에는 구현까지 직접 하기로 했습니다.</p>
+            </div>
+          </li>
+
+          <li class="tl-row">
+            <span class="tl-year">2026</span>
+            <div class="tl-body">
+              <h3>GOI → ILKW → W:RUN</h3>
+              <p>
+                여섯 달 동안 세 개의 프로젝트를 만들었습니다. 혼자 만들고, 팀으로 만들고,
+                마지막에는 실제 API를 붙여 서비스 직전까지 끌고 갔습니다.
+              </p>
+              <a class="p-link tl-link" href="works.html">작업 보기</a>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ===== 02. EDUCATION ===== -->
+    <section class="case-sec" id="education">
+      <div class="ax-head">
+        <span class="ax-i">( 02 )</span>
+        <h2 class="case-h">Education</h2>
+      </div>
+      <div class="case-body">
+        <p class="case-lead">Trained to design. Retrained to build.</p>
+        <p>
+          한밭대학교에서 시각디자인을 전공했습니다. 화면을 그리는 일은 익숙했지만,
+          그 화면이 실제로 어떻게 작동하게 되는지는 알지 못했습니다.
+        </p>
+        <p>
+          이젠아카데미DX교육센터 강남캠퍼스에서 UXUI 디자인과 프론트엔드를 함께 배우며
+          그 간극을 메웠습니다. 지금은 제가 그린 화면을 제가 구현하고, 직접 써 보며 고칩니다.
+        </p>
+
+        <ul class="fact">
+          <li><span>한밭대학교 시각디자인</span><em>2014 — 2023</em></li>
+          <li><span>이젠아카데미DX교육센터 강남캠퍼스 · UXUI 디자인 프론트엔드</span><em>2026</em></li>
+          <li><span>육군 병장 만기전역 · 포병</span><em>2016 — 2018</em></li>
+          <li><span>GTQ 1급 · 한국생산성본부</span><em>2015</em></li>
+          <li><span>강원 기업지원 디자인 공모전 입상 · 강원디자인진흥원</span><em>2020</em></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ===== 03. EXPERIENCE ===== -->
+    <section class="case-sec" id="experience">
+      <div class="ax-head">
+        <span class="ax-i">( 03 )</span>
+        <h2 class="case-h">Experience</h2>
+      </div>
+      <div class="case-body">
+        <p class="case-lead">Every job was about watching people.</p>
+        <p>
+          디자인 실무는 ㈜테크앤에서 시작했습니다. 아두이노 제품의 사용 설명서를 만들며
+          "내가 아는 것"과 "사용자가 이해하는 것"이 다르다는 걸 처음 알았습니다.
+        </p>
+        <p>
+          이후 바리스타와 호텔 보안으로 일했습니다. UX/UI 직무는 아니었지만 두 일 모두
+          하루 종일 사람을 마주하는 자리였고, 사람이 어디서 망설이고 어디서 되묻는지를
+          계속 보게 했습니다. 지금 화면을 설계할 때 가장 먼저 떠올리는 감각이 거기서 왔습니다.
+        </p>
+        <p>
+          졸업 이후 지금까지 공백 없이 일해 왔습니다.
+        </p>
+
+        <ul class="fact">
+          <li><span>㈜테크앤 전기전자공학연구소 · 웹/브로슈어 디자인</span><em>2019</em></li>
+          <li><span>파스쿠찌 · 바리스타</span><em>2023 — 2024</em></li>
+          <li><span>에스텍시스템 · 신라호텔 보안</span><em>2024 — 2025</em></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ===== 04. OFF THE CLOCK =====
+         ※ 초안 — 문구는 편하게 고쳐 쓸 것. 사진 3장 들어갈 자리를 잡아 뒀다. -->
+    <section class="case-sec" id="offclock">
+      <div class="ax-head">
+        <span class="ax-i">( 04 )</span>
+        <h2 class="case-h">Off the clock</h2>
+      </div>
+      <div class="case-body">
+        <p class="case-lead">Snowboards, games, and cats.</p>
+        <p>
+          일하지 않을 때는 대체로 이 셋 중 하나를 하고 있습니다.
+        </p>
+
+        <!-- 사진은 파일을 넣는 즉시 켜진다.
+             images/about-snow.webp · about-game.webp · about-cat.webp (3:4 세로)
+             ⚠️ 파일이 없으면 js/main.js 가 <figure>를 지워 텍스트만 남긴다.
+                → 셋 다 준비되지 않은 상태로 배포해도 빈칸이 보이지 않는다. -->
+        <ul class="hobby">
+          <li>
+            <figure class="hobby-media"><img src="images/about-snow.webp" alt="" loading="lazy" /></figure>
+            <h3>스노우보드</h3>
+            <p>겨울이면 산에 갑니다. 잘 타는 것보다 넘어지는 데 익숙해지는 게 먼저였습니다.</p>
+          </li>
+          <li>
+            <figure class="hobby-media"><img src="images/about-game.webp" alt="" loading="lazy" /></figure>
+            <h3>게임</h3>
+            <p>잘 만든 게임은 설명서 없이도 무엇을 해야 할지 알게 합니다. 그 화면들을 오래 들여다봅니다.</p>
+          </li>
+          <li>
+            <figure class="hobby-media"><img src="images/about-cat.webp" alt="" loading="lazy" /></figure>
+            <h3>고양이 만지기</h3>
+            <p>먼저 다가오게 두는 편이 빠릅니다. 사람도 크게 다르지 않다고 생각합니다.</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ===== 다음 ===== -->
+    <nav class="case-next">
+      <span class="case-next-label">NEXT</span>
+      <a class="case-next-link" href="works.html">
+        <span>SEE THE WORK</span>
+        <svg width="24" height="14" viewBox="0 0 24 14" fill="none" aria-hidden="true">
+          <path d="M0 7 H22 M16 1 L22.5 7 L16 13" stroke="currentColor" stroke-width="1.5" fill="none" />
+        </svg>
+      </a>
+    </nav>
+
+  </main>
+  </div><!-- /#stage1 -->
+  </div><!-- /#clamp1 -->
+  </div><!-- /.stage-wrap -->
+
+  <div class="footer-space" id="contact"></div>
+  <div class="footer-reveal" id="footerReveal">
+  <div class="footer-scale">
+  <footer class="site-footer">
+    <p class="f-cta">Looking for a designer<br />who can build it, too?</p>
+    <a class="btn-fill f-contact" href="mailto:jongwook0102@gmail.com" data-copy="jongwook0102@gmail.com">
+      <svg class="ico-corner" width="13" height="12" viewBox="0 0 13 12" fill="none" aria-hidden="true"><path d="M1 0 V7 H11 M7.5 3.5 L11.5 7 L7.5 10.5" stroke="currentColor" stroke-width="1" fill="none" /></svg>
+      <span>Contact</span>
+    </a>
+    <nav class="f-nav">
+      <a href="index.html#hero">HOME</a>
+      <a href="about.html">ABOUT</a>
+      <a href="works.html">WORK</a>
+      <a href="#contact">CONTACT</a>
+    </nav>
+    <div class="f-line f-line1"></div><div class="f-line f-line2"></div><div class="f-line f-line3"></div>
+    <span class="f-label f-label1">MY ADDRESS</span>
+    <p class="f-body f-body1">27, Yonggu-daero<br />2753beon-gi<br />Suji-gu, Yongin-si<br />Gyeonggi-do<br />103 901</p>
+    <span class="f-label f-label2">GET IN TOUCH</span>
+    <p class="f-body f-body2"><a href="mailto:jongwook0102@gmail.com">jongwook0102@gmail.com</a><br />010 2912 6264</p>
+    <span class="f-label f-label3">CONNECT WITH ME</span>
+    <p class="f-body f-body3"><a href="#">X</a><br /><a href="#">INSTAGRAM</a><br /><a href="#">FACEBOOK</a></p>
+  </footer>
+  </div><!-- /.footer-scale -->
+  </div><!-- /.footer-reveal -->
+
+  <div class="fab-stack">
+    <button class="fab" id="fabTop" type="button" aria-label="맨 위로 이동">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+        <path d="M4 13.5 L11 6.5 L18 13.5" stroke="currentColor" stroke-width="1.5" fill="none" />
+      </svg>
+    </button>
+    <a class="fab fab-text" id="fabApp" href="https://card-news-editor-peach.vercel.app/"
+       target="_blank" rel="noopener noreferrer">InApp</a>
+    <button class="fab fab-chat" id="fabChat" type="button" aria-label="AI에게 물어보기"
+            aria-expanded="false" aria-controls="chatPanel"></button>
+  </div>
+
+  <section class="chat-panel" id="chatPanel" aria-label="AI 안내원" hidden>
+    <header class="chat-head">
+      <span class="chat-title">Ask about JW</span>
+      <button class="chat-close" id="chatClose" type="button" aria-label="닫기">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path d="M3 3 L13 13 M13 3 L3 13" stroke="currentColor" stroke-width="1.5" />
+        </svg>
+      </button>
+    </header>
+    <div class="chat-log" id="chatLog" role="log" aria-live="polite"></div>
+    <div class="chat-chips" id="chatChips">
+      <button type="button">어떤 경력을 가지고 있습니까?</button>
+      <button type="button">왜 UX/UI 디자이너가 되었습니까?</button>
+    </div>
+    <form class="chat-form" id="chatForm">
+      <input class="chat-input" id="chatInput" type="text" autocomplete="off"
+             placeholder="궁금한 점을 물어보세요" maxlength="2000" />
+      <button class="chat-send" type="submit" aria-label="보내기">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+          <path d="M2 9 H15 M10 4 L15 9 L10 14" stroke="currentColor" stroke-width="1.5" fill="none" />
+        </svg>
+      </button>
+    </form>
+  </section>
+
+  <script src="js/main.js"></script>
+  <script src="js/chat.js"></script>
+</body>
+</html>

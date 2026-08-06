@@ -22,7 +22,7 @@
     <a class="logo" href="index.html">JW portfolio</a>
     <nav class="site-gnb" aria-label="주요 메뉴">
       <a href="index.html#hero">Home</a>
-      <a href="index.html#about">About</a>
+      <a href="about.html">About</a>
       <a href="works.html" aria-current="page">Work</a>
       <a href="#contact">Contact</a>
     </nav>
@@ -51,7 +51,7 @@
 
         <a class="work-card work-card--offset" href="work-ilkw.html">
           <figure class="work-card-media" style="--ratio: 1 / 1">
-            <img src="images/ILKW-01.webp" alt="일광전구 웹 리뉴얼 프로젝트" />
+            <img src="images/ILKW-01.webp" alt="일광전구 웹 리뉴얼 프로젝트" loading="lazy" />
           </figure>
           <span class="work-card-type">TEAM PROJECT · 02</span>
           <h2>ILKW</h2>
@@ -62,7 +62,7 @@
       <div class="works-row works-row--two">
         <a class="work-card" href="work-goi.html">
           <figure class="work-card-media" style="--ratio: 4 / 3">
-            <img src="images/diary-app-03.webp" alt="GOI 다이어리 앱 화면" />
+            <img src="images/diary-app-03.webp" alt="GOI 다이어리 앱 화면" loading="lazy" />
           </figure>
           <span class="work-card-type">SIDE PROJECT · 03</span>
           <h2>GOI</h2>
@@ -73,7 +73,7 @@
       <div class="works-row works-row--three">
         <a class="work-card" href="clones/03/" target="_blank" rel="noopener noreferrer">
           <figure class="work-card-media" style="--ratio: 48 / 25">
-            <img src="clones/03/img/visual1.jpg" alt="와이스튜디오 클론코딩" />
+            <img src="clones/03/img/visual1.jpg" alt="와이스튜디오 클론코딩" loading="lazy" />
           </figure>
           <span class="work-card-type">CLONE CODING · 04</span>
           <h2>Y STUDIO</h2>
@@ -82,7 +82,7 @@
 
         <a class="work-card work-card--offset" href="clones/04/" target="_blank" rel="noopener noreferrer">
           <figure class="work-card-media" style="--ratio: 1 / 1">
-            <img src="clones/04/img/service.jpg" alt="Crew à la Mode 클론코딩" />
+            <img src="clones/04/img/service.jpg" alt="Crew à la Mode 클론코딩" loading="lazy" />
           </figure>
           <span class="work-card-type">CLONE CODING · 05</span>
           <h2>CREW À LA MODE</h2>
@@ -93,7 +93,7 @@
       <div class="works-row works-row--four">
         <a class="work-card" href="clones/05/" target="_blank" rel="noopener noreferrer">
           <figure class="work-card-media" style="--ratio: 781 / 814">
-            <img src="clones/05/img/mainVisual.jpg" alt="뮤자인 클론코딩" />
+            <img src="clones/05/img/mainVisual.jpg" alt="뮤자인 클론코딩" loading="lazy" />
           </figure>
           <span class="work-card-type">CLONE CODING · 06</span>
           <h2>MUSIGN</h2>
@@ -102,7 +102,7 @@
 
         <a class="work-card work-card--offset" href="clones/06/" target="_blank" rel="noopener noreferrer">
           <figure class="work-card-media" style="--ratio: 384 / 175">
-            <img src="clones/06/img/visual1.jpg" alt="대방산업 클론코딩" />
+            <img src="clones/06/img/visual1.jpg" alt="대방산업 클론코딩" loading="lazy" />
           </figure>
           <span class="work-card-type">CLONE CODING · 07</span>
           <h2>DAEBANG</h2>
@@ -126,7 +126,7 @@
     </a>
     <nav class="f-nav">
       <a href="index.html#hero">HOME</a>
-      <a href="index.html#about">ABOUT</a>
+      <a href="about.html">ABOUT</a>
       <a href="works.html">WORK</a>
       <a href="#contact">CONTACT</a>
     </nav>
@@ -141,6 +141,46 @@
   </div><!-- /.footer-scale -->
   </div><!-- /.footer-reveal -->
 
+  <!-- 플로팅 버튼 (전 페이지 공통) -->
+  <div class="fab-stack">
+    <button class="fab" id="fabTop" type="button" aria-label="맨 위로 이동">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+        <path d="M4 13.5 L11 6.5 L18 13.5" stroke="currentColor" stroke-width="1.5" fill="none" />
+      </svg>
+    </button>
+    <a class="fab fab-text" id="fabApp" href="https://card-news-editor-peach.vercel.app/"
+       target="_blank" rel="noopener noreferrer">InApp</a>
+    <button class="fab fab-chat" id="fabChat" type="button" aria-label="AI에게 물어보기"
+            aria-expanded="false" aria-controls="chatPanel"></button>
+  </div>
+
+  <!-- AI 챗봇 패널 (전 페이지 공통) -->
+  <section class="chat-panel" id="chatPanel" aria-label="AI 안내원" hidden>
+    <header class="chat-head">
+      <span class="chat-title">Ask about JW</span>
+      <button class="chat-close" id="chatClose" type="button" aria-label="닫기">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path d="M3 3 L13 13 M13 3 L3 13" stroke="currentColor" stroke-width="1.5" />
+        </svg>
+      </button>
+    </header>
+    <div class="chat-log" id="chatLog" role="log" aria-live="polite"></div>
+    <div class="chat-chips" id="chatChips">
+      <button type="button">어떤 프로젝트를 진행했습니까?</button>
+      <button type="button">어떤 기술을 다룰 수 있습니까?</button>
+    </div>
+    <form class="chat-form" id="chatForm">
+      <input class="chat-input" id="chatInput" type="text" autocomplete="off"
+             placeholder="궁금한 점을 물어보세요" maxlength="2000" />
+      <button class="chat-send" type="submit" aria-label="보내기">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+          <path d="M2 9 H15 M10 4 L15 9 L10 14" stroke="currentColor" stroke-width="1.5" fill="none" />
+        </svg>
+      </button>
+    </form>
+  </section>
+
   <script src="js/main.js"></script>
+  <script src="js/chat.js"></script>
 </body>
 </html>

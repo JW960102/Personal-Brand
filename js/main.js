@@ -340,6 +340,18 @@
   window.addEventListener('load', fit);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
   fit();
+
+  // 다른 페이지에서 index.html#about 처럼 들어온 경우.
+  // 브라우저의 앵커 점프는 클램프 높이가 정해지기 전에 일어나 엉뚱한 곳에 서므로,
+  // 높이가 확정된 뒤(load) 한 번 더 목적지로 맞춰 준다.
+  if (location.hash) {
+    window.addEventListener('load', function () {
+      var target;
+      try { target = document.querySelector(location.hash); } catch (e) { return; }
+      if (target) target.scrollIntoView();
+    });
+  }
+
   initAccordion();
   initPreview();
   playIntro();
@@ -415,3 +427,49 @@ if (fabTop) {
 }
 
 // 챗봇 버튼(#fabChat) 동작은 js/chat.js 가 담당한다.
+
+// Works 카드: 첫 진입에만 아래에서 부드럽게 나타난다.
+// 다시 위아래로 스크롤해도 반복 재생하지 않는다.
+(function () {
+  var cards = document.querySelectorAll('.works-grid .work-card');
+  if (!cards.length) return;
+
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduceMotion || !('IntersectionObserver' in window)) return;
+
+  for (var i = 0; i < cards.length; i++) {
+    cards[i].classList.add('is-reveal-pending');
+    cards[i].style.setProperty('--reveal-delay', (i % 2) * 120 + 'ms');
+  }
+
+  var observer = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add('is-visible');
+      observer.unobserve(entry.target);
+    });
+  }, {
+    threshold: 0.2,
+    rootMargin: '0px 0px -28% 0px'
+  });
+
+  cards.forEach(function (card) { observer.observe(card); });
+})();
+
+// About 취미 사진: 파일이 아직 없으면 그 자리를 통째로 지운다.
+// 사진 3장을 한 번에 준비하기 어려워 마크업을 미리 넣어 뒀는데,
+// 파일이 없는 채로는 빈 회색 박스가 보이면 안 되기 때문.
+// → images/about-*.webp 를 넣는 즉시 아무 수정 없이 사진이 켜진다.
+(function () {
+  var figs = document.querySelectorAll('.hobby-media');
+  for (var i = 0; i < figs.length; i++) {
+    (function (fig) {
+      var img = fig.querySelector('img');
+      if (!img) return;
+      function drop() { if (fig.parentNode) fig.parentNode.removeChild(fig); }
+      // 스크립트가 늦게 실행돼 error 이벤트를 이미 놓친 경우까지 잡는다
+      if (img.complete && img.naturalWidth === 0) drop();
+      else img.addEventListener('error', drop);
+    })(figs[i]);
+  }
+})();
