@@ -351,6 +351,35 @@
     if (v) { var p = v.play(); if (p && p.catch) p.catch(function () {}); }
   }
 
+  // 기본 loop은 마지막 프레임에서 첫 프레임으로 즉시 점프한다.
+  // 히어로 영상만 끝에서 사라졌다가 첫 프레임부터 다시 나타나도록 직접 반복한다.
+  function setupFadedVideoLoop() {
+    var v = video && video.querySelector('video');
+    if (!v) return;
+
+    v.removeAttribute('loop');
+    v.addEventListener('ended', function () {
+      if (reduceMotion) {
+        v.currentTime = 0;
+        startVideo();
+        return;
+      }
+
+      video.classList.add('is-loop-fading');
+      setTimeout(function () {
+        v.currentTime = 0;
+        var p = v.play();
+        if (p && p.catch) p.catch(function () {});
+        // ⚠️ requestAnimationFrame 으로 미루면 안 된다 — 페이드 도중 탭을 옮기면
+        //    rAF 가 멈춰 클래스가 영영 안 지워지고 영상이 투명한 채로 남는다.
+        //    되감기 직후 바로 지워도 첫 프레임은 이미 그려져 있다.
+        video.classList.remove('is-loop-fading');
+      }, 620);
+    });
+  }
+
+  setupFadedVideoLoop();
+
   function playIntro() {
     if (reduceMotion) {
       root.classList.add('intro-play');
@@ -538,6 +567,7 @@ if (fabTop) {
 // InApp — 카드뉴스 에디터를 새 탭이 아니라 모달로 연다 (2026-08-06).
 // 마크업을 JS 가 만든다: 6개 페이지에 같은 HTML 을 넣지 않아도 되고, 한 곳만 고치면 된다.
 // 버튼은 <a href> 그대로 두어, JS 가 죽으면 원래대로 새 탭으로 열린다 (안전한 실패).
+// ⚠️ 이 블록은 파일 맨 끝에 있다. 지우거나 덮어쓰면 InApp 이 다시 새 탭으로 열린다.
 (function () {
   var btn = document.getElementById('fabApp');
   if (!btn) return;
