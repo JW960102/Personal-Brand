@@ -908,11 +908,17 @@ main, .site-footer { width: 100%; }
   transition: opacity 0.25s ease, transform 0.25s ease;
 }
 .more-preview.is-on { opacity: 1; transform: translateY(0); }
+/* ⚠️ iframe 안쪽 스크롤바는 바깥 CSS 로 못 없앤다 (다른 문서라 규칙이 안 닿음).
+   대신 프레임을 스크롤바 폭(넉넉히 20px)만큼 크게 잡아 스크롤바를 컨테이너 밖으로 밀어내고,
+   .more-preview 의 overflow:hidden 으로 잘라낸다.
+     가로 1300 × 0.28125 = 365.6px → 360px 컨테이너 밖 (세로 스크롤바 잘림)
+     세로  820 × 0.28125 = 230.6px → 225px 컨테이너 밖 (가로 스크롤바 잘림)
+   덤으로 실제 콘텐츠 폭이 1300-17 ≈ 1283 이 되어 의도한 1280 에 더 가까워진다. */
 .more-preview iframe {
   position: absolute;
   left: 0; top: 0;
-  width: 1280px;
-  height: 800px;
+  width: 1300px;
+  height: 820px;
   border: 0;
   transform: scale(0.28125);
   transform-origin: top left;
@@ -1944,4 +1950,129 @@ main, .site-footer { width: 100%; }
     letter-spacing: -0.3px;
     color: var(--c-ink);
   }
+}
+
+/* ---- 프로젝트 이미지 커튼 리빌 (clones/05 뮤자인 .img.motion 재현) ----
+   원본: 흰 오버레이의 height 를 90% → 0% 로 줄여 아래에서 위로 걷어낸다.
+   여기서는 clip-path 로 같은 결과를 낸다 — <img> 에는 ::after 를 붙일 수 없고,
+   합성 단계에서만 처리되어 스크롤 중에도 부담이 적다.
+   .curtain 은 JS(initCurtain)가 붙인다 → JS 가 없으면 이미지는 그냥 보인다. */
+.curtain { clip-path: inset(92% 0 0 0); }
+.curtain.is-open {
+  clip-path: inset(0 0 0 0);
+  transition: clip-path 1.15s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .curtain, .curtain.is-open { clip-path: none; transition: none; }
+}
+
+/* ============================================
+   InApp 모달 — 카드뉴스 에디터를 팝업으로 연다 (2026-08-06)
+   마크업은 js/main.js 가 만든다. 6개 페이지에 같은 HTML 을 넣지 않기 위해서다
+   (한 곳만 고치면 되고, 다른 작업과 파일이 겹치지 않는다).
+   ⚠️ 삽입이 가능한 이유: card-news-editor 배포본에 X-Frame-Options 도
+      frame-ancestors 도 없어 iframe 이 허용된다 (2026-08-06 확인).
+   ============================================ */
+.appmodal {
+  position: fixed;
+  inset: 0;
+  z-index: 300;                    /* 헤더(100)·플로팅(200) 위 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+}
+.appmodal[hidden] { display: none; }
+
+/* 배경 오버레이 */
+.appmodal-dim {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  cursor: pointer;
+}
+.appmodal.is-open .appmodal-dim { opacity: 1; }
+
+.appmodal-box {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: min(1400px, 100%);
+  height: min(880px, 100%);
+  background: #fff;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  transform: translateY(14px) scale(0.985);
+  transition: opacity 0.32s ease, transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.appmodal.is-open .appmodal-box { opacity: 1; transform: none; }
+
+.appmodal-head {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 16px 0 24px;
+  height: 56px;
+  border-bottom: 1px solid var(--c-line);
+}
+.appmodal-title {
+  flex: 1;
+  font-family: var(--f-display);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+  color: var(--c-ink);
+}
+/* 좁은 모달에서 에디터를 쓰긴 답답하므로 탈출구를 남긴다 */
+.appmodal-out {
+  font-family: var(--f-display);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: -0.2px;
+  color: var(--c-ink-60);
+  padding-bottom: 2px;
+  border-bottom: 1px solid var(--c-line);
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+.appmodal-out:hover { color: var(--c-ink); border-color: var(--c-ink); }
+
+.appmodal-close {
+  flex: none;
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  border: none; border-radius: 50%;
+  background: none; color: var(--c-ink);
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+.appmodal-close:hover { background: rgba(0, 0, 0, 0.06); }
+
+.appmodal-body { position: relative; flex: 1; min-height: 0; background: #fff; }
+.appmodal-body iframe { display: block; width: 100%; height: 100%; border: 0; }
+
+/* 불러오는 동안 — 빈 흰 화면만 보이면 고장난 줄 안다 */
+.appmodal-load {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--f-sans);
+  font-size: 14px;
+  letter-spacing: -0.3px;
+  color: var(--c-ink-40);
+  background: #fff;
+  transition: opacity 0.3s ease;
+}
+.appmodal-load.is-done { opacity: 0; pointer-events: none; }
+
+@media (max-width: 900px) { .appmodal { display: none !important; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .appmodal-dim, .appmodal-box { transition: none; }
 }
