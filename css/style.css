@@ -1822,3 +1822,126 @@ main, .site-footer { width: 100%; }
   color: var(--c-ink);
 }
 .case-body .hobby p { font-size: 16px; line-height: 1.65; }
+
+/* ============================================
+   모바일 안내 화면 (.mgate) — 임시 대응
+   이 사이트는 1920 캔버스를 통째로 scale() 하는 구조라, 화면이 좁아지면
+   레이아웃이 깨지는 대신 '글자가 같이 작아진다'. 375px 에서 --sf 가 0.17 이라
+   본문 18px 이 실제 3px 로 찍혀 읽을 수 없다.
+   → 진짜 반응형 레이아웃을 만들기 전까지, 좁은 화면에서는 본문 대신 안내를 보여준다.
+   ⚠️ 데스크톱에는 영향이 전혀 없다 (900px 이하에서만 켜짐).
+   ⚠️ 반응형을 만들면 이 블록 + 각 페이지의 .mgate 마크업만 지우면 된다.
+   ※ 여기서는 --fs-* 토큰을 쓰지 않는다. 그 값들은 스케일되는 무대 기준(캔버스 px)이라
+      스케일이 걸리지 않는 이 화면에서는 의미가 달라진다.
+   ============================================ */
+.mgate { display: none; }
+
+@media (max-width: 900px) {
+  /* 안내 화면 하나만 남기고 전부 감춘다 (헤더·무대·푸터·플로팅 버튼·챗봇) */
+  body > *:not(.mgate) { display: none !important; }
+
+  .mgate {
+    display: block;
+    min-height: 100vh;
+    padding: 64px 24px 56px;
+    background: var(--c-bg);
+    color: var(--c-ink);
+  }
+  .mgate-inner { max-width: 460px; margin: 0 auto; }
+
+  .mgate-logo {
+    display: block;
+    font-family: var(--f-display);
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: -0.3px;
+    color: var(--c-ink-40);
+  }
+
+  .mgate-name {
+    margin: 40px 0 0;
+    font-family: var(--f-sans);
+    font-size: 34px;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -1.2px;
+  }
+  .mgate-name span {           /* 직군 — 이름 아래 한 줄 */
+    display: block;
+    margin-top: 8px;
+    font-family: var(--f-display);
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: -0.2px;
+    color: var(--c-ink-60);
+  }
+
+  .mgate-msg {
+    margin: 28px 0 0;
+    font-family: var(--f-sans);
+    font-size: 15px;
+    line-height: 1.75;
+    letter-spacing: -0.4px;
+    color: var(--c-ink-60);
+    word-break: keep-all;
+  }
+
+  /* 핵심 — "PC에서 보세요"로 끝내지 않고, 이 폰에서 지금 볼 수 있는 것을 준다.
+     세 프로젝트는 원래 모바일 앱/반응형 웹이라 오히려 폰이 제대로 된 환경이다. */
+  .mgate-block { margin-top: 48px; }
+  .mgate-label {
+    display: block;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--c-line);
+    font-family: var(--f-display);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: var(--c-ink-40);
+  }
+  .mgate-links { list-style: none; margin: 0; padding: 0; }
+  .mgate-links li { border-bottom: 1px solid var(--c-line); }
+  .mgate-links a {
+    display: block;
+    padding: 20px 28px 20px 0;
+    position: relative;
+    color: var(--c-ink);
+  }
+  .mgate-links a::after {      /* ↗ */
+    content: "";
+    position: absolute;
+    right: 4px; top: 50%;
+    width: 9px; height: 9px;
+    margin-top: -6px;
+    border-top: 1.5px solid var(--c-ink-40);
+    border-right: 1.5px solid var(--c-ink-40);
+    transform: rotate(45deg);
+  }
+  .mgate-links strong {
+    display: block;
+    font-family: var(--f-display);
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.6px;
+  }
+  .mgate-links span {
+    display: block;
+    margin-top: 6px;
+    font-family: var(--f-sans);
+    font-size: 13px;
+    letter-spacing: -0.3px;
+    color: var(--c-ink-60);
+  }
+
+  .mgate-mail {
+    display: inline-block;
+    margin-top: 48px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--c-ink);
+    font-family: var(--f-display);
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: -0.3px;
+    color: var(--c-ink);
+  }
+}
