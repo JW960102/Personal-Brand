@@ -311,7 +311,13 @@ main, .site-footer { width: 100%; }
   font-family: var(--f-display);
   font-size: 16px;
 }
-.hero-video video { width: 100%; height: 100%; object-fit: cover; }
+.hero-video video {
+  width: 100%; height: 100%; object-fit: cover;
+  opacity: 1;
+  transition: opacity 0.6s ease;
+}
+/* 영상 끝 → 첫 프레임으로 돌아가는 짧은 순간을 감춰 무한 재생이 덜 끊겨 보이게 함 */
+.hero-video.is-loop-fading video { opacity: 0; }
 
 /* ===== 02. Intro (시안 실측: Pretendard 50px/1.4/-1.5px, 버튼 141×42) ===== */
 .intro {
