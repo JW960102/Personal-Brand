@@ -19,3 +19,7 @@ build/
 # 로그
 *.log
 npm-debug.log*
+
+# Vercel Blob에 올릴 히어로 영상 원본·내보내기 파일
+videos/*.mp4
+videos/*.webm
