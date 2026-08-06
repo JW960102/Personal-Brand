@@ -16,7 +16,7 @@
   <link rel="stylesheet" href="css/style.css" />
   <script>document.documentElement.classList.add('js');</script>
 </head>
-<body>
+<body class="about-page">
 
   <!-- ===== 모바일 안내 (900px 이하에서만 보임 · 데스크톱에는 영향 없음) =====
        반응형 레이아웃을 만들면 이 블록과 css/style.css 의 .mgate 규칙만 지우면 된다. -->
@@ -100,18 +100,20 @@
       </svg>
     </section>
 
-    <!-- ===== 인덱스 (레퍼런스의 숫자 목록) =====
-         먼저 훑고, 아래에서 하나씩 펼쳐 설명하는 2단 구성. -->
+    <!-- ===== 인덱스 아코디언 =====
+         목차를 누르면 같은 자리에서 해당 섹션이 펼쳐진다. -->
     <section class="ax" aria-label="목차">
       <!-- 앞의 마름모는 CSS 가 그린다 — ◆ 문자를 넣지 말 것 -->
       <span class="story-label">WHO I AM</span>
       <ol class="ax-list">
-        <li><a href="#timeline"><span class="ax-i">( 01 )</span><span class="ax-name">Timeline</span></a></li>
-        <li><a href="#education"><span class="ax-i">( 02 )</span><span class="ax-name">Education</span></a></li>
-        <li><a href="#experience"><span class="ax-i">( 03 )</span><span class="ax-name">Experience</span></a></li>
-        <li><a href="#offclock"><span class="ax-i">( 04 )</span><span class="ax-name">Off the clock</span></a></li>
-      </ol>
-    </section>
+        <li class="ax-item">
+          <button class="ax-trigger" type="button" aria-expanded="false" aria-controls="ax-panel-timeline">
+            <span class="ax-i">( 01 )</span>
+            <span class="ax-name">Timeline</span>
+            <span class="ax-arrow" aria-hidden="true"></span>
+          </button>
+          <div class="ax-panel" id="ax-panel-timeline" aria-hidden="true">
+            <div class="ax-panel-clip">
 
     <!-- ===== 01. TIMELINE =====
          ⚠️ 연도만 표기한다 (월 단위 금지).
@@ -195,6 +197,18 @@
         </ol>
       </div>
     </section>
+            </div>
+          </div>
+        </li>
+
+        <li class="ax-item">
+          <button class="ax-trigger" type="button" aria-expanded="false" aria-controls="ax-panel-education">
+            <span class="ax-i">( 02 )</span>
+            <span class="ax-name">Education</span>
+            <span class="ax-arrow" aria-hidden="true"></span>
+          </button>
+          <div class="ax-panel" id="ax-panel-education" aria-hidden="true">
+            <div class="ax-panel-clip">
 
     <!-- ===== 02. EDUCATION ===== -->
     <section class="case-sec" id="education">
@@ -222,6 +236,18 @@
         </ul>
       </div>
     </section>
+            </div>
+          </div>
+        </li>
+
+        <li class="ax-item">
+          <button class="ax-trigger" type="button" aria-expanded="false" aria-controls="ax-panel-experience">
+            <span class="ax-i">( 03 )</span>
+            <span class="ax-name">Experience</span>
+            <span class="ax-arrow" aria-hidden="true"></span>
+          </button>
+          <div class="ax-panel" id="ax-panel-experience" aria-hidden="true">
+            <div class="ax-panel-clip">
 
     <!-- ===== 03. EXPERIENCE ===== -->
     <section class="case-sec" id="experience">
@@ -251,6 +277,18 @@
         </ul>
       </div>
     </section>
+            </div>
+          </div>
+        </li>
+
+        <li class="ax-item">
+          <button class="ax-trigger" type="button" aria-expanded="false" aria-controls="ax-panel-offclock">
+            <span class="ax-i">( 04 )</span>
+            <span class="ax-name">Off the clock</span>
+            <span class="ax-arrow" aria-hidden="true"></span>
+          </button>
+          <div class="ax-panel" id="ax-panel-offclock" aria-hidden="true">
+            <div class="ax-panel-clip">
 
     <!-- ===== 04. OFF THE CLOCK =====
          ※ 초안 — 문구는 편하게 고쳐 쓸 것. 사진 3장 들어갈 자리를 잡아 뒀다. -->
@@ -287,6 +325,11 @@
           </li>
         </ul>
       </div>
+    </section>
+            </div>
+          </div>
+        </li>
+      </ol>
     </section>
 
     <!-- ===== 다음 ===== -->
