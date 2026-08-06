@@ -48,6 +48,8 @@ a { color: inherit; text-decoration: none; }
    → 마지막 클램프(#clamp2) 아래로 stage높이×(1-sf) 만큼 흰 여백이 생김 (2026-08-04 수정).
    sticky 트랙은 클램프 밖 형제라 여기 overflow를 줘도 핀에 영향 없음. */
 .stage-clamp { overflow: hidden; }
+/* 앵커 도착 지점 — 높이 0. 고정 헤더에 가리지 않도록 헤더 높이만큼 여유를 둔다. */
+.anchor { height: 0; scroll-margin-top: calc(90px * var(--sf, 1)); }
 /* 스케일 래퍼 공통 — 좌우 여백(--stage-margin)만큼 밀고 축소.
    translateX 를 scale 앞에 두어 여백은 배율의 영향을 받지 않는다. */
 .stage {
@@ -1570,19 +1572,46 @@ main, .site-footer { width: 100%; }
   font-weight: 500;
   line-height: 0.95;
   letter-spacing: -0.05em;
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.work-card h2::after {
+  content: '↗';
+  display: inline-block;
+  margin-left: 12px;
+  font-size: 0.66em;
+  font-weight: 400;
+  vertical-align: 0.08em;
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .work-card p {
-  margin-top: 14px;
+  margin-top: 6px;
   font-family: var(--f-display);
   font-size: var(--fs-20);
   letter-spacing: -0.03em;
   color: var(--c-ink-60);
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.45s ease;
+}
+.work-card:hover h2 { transform: translateY(-5px); }
+.work-card:hover h2::after { transform: translate(5px, -5px); }
+.work-card:hover p { transform: translateY(-3px); opacity: 0.7; }
+.work-card.is-reveal-pending .work-card-media {
+  clip-path: inset(100% 0 0 0);
+  transition: clip-path 1.8s cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0ms);
+}
+.work-card.is-reveal-pending.is-visible .work-card-media {
+  clip-path: inset(0 0 0 0);
 }
 .site-gnb a[aria-current="page"] { opacity: 0.55; }
 
 /* ---------- 모션 최소화 ---------- */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
+  .work-card,
+  .work-card-media img,
+  .work-card h2,
+  .work-card p,
+  .work-card h2::after { transition: none; }
+  .work-card.is-reveal-pending .work-card-media { clip-path: none; }
 }
 
 /* ---------- 반응형 (태블릿) ---------- */
@@ -1605,3 +1634,191 @@ main, .site-footer { width: 100%; }
   .more-tags { display: none; }             /* 모바일: 태그 생략 */
   .foot-cols { grid-template-columns: 1fr; }
 }
+
+/* ============================================
+   About 페이지 (about.html)
+   레퍼런스(adcker/services)의 "숫자 목록으로 먼저 훑고, 아래에서 하나씩 펼친다" 2단 구성.
+   펼친 섹션은 케이스 스터디의 .case-sec 을 그대로 재사용한다.
+   ============================================ */
+
+/* ---- 히어로 ----
+   .hero-mark(911,108) 와 .hero-arrow(1697,862) 는 캔버스 절대좌표라
+   이 컨테이너가 캔버스 전체(1920)를 차지해야 다른 페이지와 같은 자리에 놓인다.
+   → .case 의 거터 패딩을 음수 마진으로 상쇄. 단 내부 텍스트는 흐름 배치(시안 없음). */
+.ah {
+  position: relative;
+  width: var(--canvas);
+  margin: 0 calc(var(--gutter) * -1);
+  min-height: 1080px;
+  padding: 287px var(--gutter) 0 var(--pad-x);
+}
+/* 케이스 스터디 제목과 같은 규격 (250px · 행간 0.85 · 자간 -17.5) */
+.ah-title {
+  margin: 0;
+  font-family: var(--f-display);
+  font-weight: 400;
+  font-size: var(--fs-250);
+  line-height: 0.85;
+  letter-spacing: -17.5px;
+  white-space: nowrap;
+}
+/* 리드·메타는 거터(130)에 맞춘다 — 제목은 엣지(30), 본문 정보는 한 칸 안쪽 */
+.ah-lead {
+  margin: 90px 0 0 calc(var(--gutter) - var(--pad-x));
+  max-width: 900px;
+  font-family: var(--f-display);
+  font-weight: 500;
+  font-size: 40px;
+  line-height: 1.35;
+  letter-spacing: -0.96px;
+  color: var(--c-ink);
+}
+.ah-meta {
+  margin: 48px 0 0 calc(var(--gutter) - var(--pad-x));
+  font-family: var(--f-display);
+  font-weight: 500;
+  font-size: var(--fs-20);
+  line-height: 1.5;
+  letter-spacing: -0.6px;
+  color: var(--c-ink-60);
+}
+/* 히어로 등장 — 케이스 스터디와 같은 타이밍 체계 */
+.js .ah-title .chw > span { transform: translateY(115%); }
+.ah-title .chw:nth-child(1) { --delay: 0.70s; }
+.ah-title .chw:nth-child(2) { --delay: 1.00s; }
+.intro-play .ah-title .chw > span {
+  transform: translateY(0);
+  transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1) var(--delay, 0s);
+}
+@media (prefers-reduced-motion: reduce) {
+  .js .ah-title .chw > span { transform: none; transition: none; }
+}
+
+/* ---- 인덱스 목록 ( 01 ) ~ ( 04 ) ---- */
+.ax { margin-top: 200px; }
+/* .story-label 은 원래 절대배치(가터/150) — 여기서는 흐름에 둔다 */
+.ax .story-label { position: static; margin-bottom: 56px; }
+.ax-list { list-style: none; margin: 0; padding: 0; }
+.ax-list li { border-top: 1px solid var(--c-line); }
+.ax-list li:last-child { border-bottom: 1px solid var(--c-line); }
+.ax-list a {
+  display: flex;
+  align-items: baseline;
+  gap: 40px;
+  padding: 36px 0;
+  font-family: var(--f-display);
+  font-weight: 500;
+  font-size: var(--fs-56);
+  line-height: 1.1;
+  letter-spacing: -1.5px;
+  color: var(--c-ink-40);
+  /* 호버 시 살짝 안으로 밀린다 — 목록이 "눌리는 것"임을 알림 */
+  transition: color 0.25s ease, padding-left 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.ax-list a:hover,
+.ax-list a:focus-visible { color: var(--c-ink); padding-left: 24px; }
+.ax-list .ax-i {
+  flex: none;
+  width: 110px;
+  font-size: var(--fs-20);
+  letter-spacing: -0.6px;
+  color: var(--c-ink-40);
+}
+
+/* 펼친 섹션의 왼쪽 칸 — 번호 + 제목 (.case-sec 의 첫 번째 그리드 칸) */
+.ax-head .ax-i {
+  display: block;
+  margin-bottom: 20px;
+  font-family: var(--f-display);
+  font-size: var(--fs-16);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--c-ink-40);
+}
+
+/* ---- 01 연대기 ----
+   ⚠️ 연도만 표기한다. 월까지 쓰면 읽는 사람이 기간을 계산하기 시작한다. */
+.case-body > .tl { margin-top: 56px; }
+.tl { list-style: none; margin: 0; padding: 0; }
+.tl-row {
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr);
+  gap: 40px;
+  padding: 32px 0;
+  border-top: 1px solid var(--c-line);
+}
+.tl-row:last-child { border-bottom: 1px solid var(--c-line); }
+.tl-year {
+  font-family: var(--f-display);
+  font-weight: 500;
+  font-size: var(--fs-20);
+  letter-spacing: -0.6px;
+  color: var(--c-ink-40);
+  white-space: nowrap;
+}
+.tl-body h3 {
+  margin: 0 0 10px;
+  font-family: var(--f-sans);
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.6px;
+  color: var(--c-ink);
+}
+.case-body .tl-body p { font-size: 17px; }
+.tl-link { margin-top: 20px; }
+
+/* ---- 02·03 항목 목록 (제목 ↔ 연도) ---- */
+.case-body > .fact { margin-top: 56px; }
+.fact { list-style: none; margin: 0; padding: 0; }
+.fact li {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 24px;
+  padding: 18px 0;
+  border-top: 1px solid var(--c-line);
+  font-family: var(--f-sans);
+  font-size: 17px;
+  letter-spacing: -0.5px;
+  color: var(--c-ink-60);
+  word-break: keep-all;
+}
+.fact li:last-child { border-bottom: 1px solid var(--c-line); }
+.fact em {
+  flex: none;
+  font-family: var(--f-display);
+  font-style: normal;
+  font-weight: 500;
+  color: var(--c-ink-40);
+}
+
+/* ---- 04 취미 (3열) ---- */
+.case-body > .hobby { margin-top: 56px; }
+.hobby {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 32px;
+  margin: 0;
+  padding: 0;
+}
+/* 사진이 없으므로 윗선으로 칸을 구분한다 — 이 선이 없으면 글이 허공에 뜬다 */
+.hobby > li { padding-top: 24px; border-top: 1px solid var(--c-line); }
+/* ⏸ 사진을 넣기로 하면 이 규칙이 그대로 살아난다 (마크업만 되살리면 됨) */
+.hobby-media {
+  margin: 0 0 20px;
+  aspect-ratio: 3 / 4;
+  background: var(--c-placeholder);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.hobby-media img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.hobby h3 {
+  margin: 0 0 8px;
+  font-family: var(--f-sans);
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.6px;
+  color: var(--c-ink);
+}
+.case-body .hobby p { font-size: 16px; line-height: 1.65; }
