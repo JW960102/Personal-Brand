@@ -2022,10 +2022,10 @@ main, .site-footer { width: 100%; }
    여기서는 clip-path 로 같은 결과를 낸다 — <img> 에는 ::after 를 붙일 수 없고,
    합성 단계에서만 처리되어 스크롤 중에도 부담이 적다.
    .curtain 은 JS(initCurtain)가 붙인다 → JS 가 없으면 이미지는 그냥 보인다. */
-.curtain { clip-path: inset(92% 0 0 0); }
+.curtain { clip-path: inset(100% 0 0 0); }
 .curtain.is-open {
   clip-path: inset(0 0 0 0);
-  transition: clip-path 1.15s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: clip-path 1.8s cubic-bezier(0.22, 1, 0.36, 1);
 }
 @media (prefers-reduced-motion: reduce) {
   .curtain, .curtain.is-open { clip-path: none; transition: none; }
