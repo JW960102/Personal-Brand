@@ -1980,7 +1980,7 @@ main, .site-footer { width: 100%; }
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 32px;
+  padding: 18px;
 }
 .appmodal[hidden] { display: none; }
 
@@ -1999,8 +1999,8 @@ main, .site-footer { width: 100%; }
   position: relative;
   display: flex;
   flex-direction: column;
-  width: min(1400px, 100%);
-  height: min(880px, 100%);
+  width: min(1680px, 100%);
+  height: min(1040px, 100%);
   background: #fff;
   border-radius: 14px;
   overflow: hidden;
@@ -2017,7 +2017,7 @@ main, .site-footer { width: 100%; }
   align-items: center;
   gap: 16px;
   padding: 0 16px 0 24px;
-  height: 56px;
+  height: 46px;
   border-bottom: 1px solid var(--c-line);
 }
 .appmodal-title {
