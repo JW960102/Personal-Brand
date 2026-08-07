@@ -69,6 +69,18 @@
   var STAGE_MARGIN_MIN = 24;
   var STAGE_MARGIN_MAX = 120;
 
+  // --- 모바일 모드 ---
+  // 이 폭 아래에서는 1920 캔버스 스케일을 통째로 쓰지 않고 흐름 배치로 간다
+  // (sf 가 0.5 아래로 내려가면 본문이 9px 밑으로 떨어져 어차피 못 읽는다).
+  //
+  // ⭐ 브레이크포인트 숫자를 여기 적지 않는다. css/tokens.css 의 --is-mobile 이
+  //    유일한 기준이고 JS 는 그 결과만 읽는다. 숫자를 양쪽에 적으면 언젠가
+  //    한쪽만 바뀌어, CSS 는 모바일인데 JS 는 데스크톱으로 도는 상태가 된다.
+  var isMobileNow = false;
+  function readMobile() {
+    return getComputedStyle(root).getPropertyValue('--is-mobile').trim() === '1';
+  }
+
   var sf = 1;
   var margin = 0;       // 이번 프레임의 실제 여백 px
   var lastY = 0;        // 헤더 방향 감지용 직전 스크롤 위치
@@ -79,7 +91,53 @@
   // 단, 좌우에 여백(--stage-margin)을 남기고 그만큼 작게 그린다.
   // 좌표를 건드리지 않고 여백을 만드는 방법이라 시안과의 정렬이 그대로 보존된다.
   // transform은 레이아웃 높이를 안 줄이므로 클램프/트랙 높이를 실제 px로 보정.
+
+  // 모바일 진입 시 fit() 이 넣어 둔 인라인 height 를 '지운다'.
+  // 인라인 스타일은 CSS 로 못 덮어서, 그냥 두면 미디어쿼리마다 !important 를 붙이게 된다.
+  function clearStageInline() {
+    var els = [zone, clamp1, clamp2, sticky, track, footerReveal, footerSpace];
+    for (var i = 0; i < els.length; i++) if (els[i]) els[i].style.height = '';
+  }
+
+  // onScroll() 이 남긴 좌표·변형도 지워야 한다.
+  // fit() 만 막으면 데스크톱 → 모바일 리사이즈 시 직전 프레임의 좌표가 그대로 굳는다.
+  function clearScrollInline() {
+    if (video) video.removeAttribute('style');
+    if (chPhoto) chPhoto.removeAttribute('style');
+    if (arrow) arrow.style.opacity = '';
+    if (header) header.classList.remove('hidden');
+    if (values) values.classList.remove('s1', 's2', 's3');
+    for (var i = 0; i < floats.length; i++) {
+      floats[i].el.style.transform = '';
+      floats[i].el.style.opacity = '';
+    }
+    for (var j = 0; j < aboutStickyHeads.length; j++) {
+      aboutStickyHeads[j].shift = 0;
+      aboutStickyHeads[j].head.style.transform = '';
+    }
+  }
+
   function fit() {
+    var wasMobile = isMobileNow;
+    isMobileNow = readMobile();
+    // CSS 분기의 근거를 클래스로도 내려보낸다 (JS 로만 가능한 처리와 짝을 맞추기 위해).
+    root.classList.toggle('is-mobile', isMobileNow);
+
+    if (isMobileNow) {
+      // --sf 를 지우지 않고 1 로 둔다. 지우면 calc(74px * var(--sf)) 가 무효가 되어
+      // 규칙 자체가 사라지는데, 1 이면 '조금 큰 채로' 남아 못 덮은 곳을 찾기 쉽다.
+      // (CSS 에도 같은 값이 있지만 인라인이 우선이므로 여기서도 명시한다)
+      sf = 1;
+      margin = 0;
+      root.style.setProperty('--sf', 1);
+      root.style.setProperty('--stage-margin', '0px');
+      clearStageInline();
+      if (wasMobile !== isMobileNow) clearScrollInline();
+      measureCurtains();   // 커튼 리빌은 모바일에서도 유지 → 위치 재측정 필요
+      onScroll();
+      return;
+    }
+
     var m = window.innerWidth * STAGE_MARGIN;
     if (m < STAGE_MARGIN_MIN) m = STAGE_MARGIN_MIN;
     if (m > STAGE_MARGIN_MAX) m = STAGE_MARGIN_MAX;
@@ -197,6 +255,8 @@
   // 섹션 범위 안에서 제목에 필요한 만큼만 translateY를 적용한다.
   function updateAboutSticky() {
     if (!aboutStickyHeads.length) return;
+    // 모바일은 1열이라 제목이 따라 내려올 필요가 없다. 켜 두면 translateY 잔상만 남는다.
+    if (isMobileNow) return;
 
     var scale = sf || 1;
     var stickyTop = (header ? header.getBoundingClientRect().height : 0) + 24;
@@ -236,7 +296,12 @@
     var D = EXPAND * sf;
     var H = HOLD * sf;
 
-    if (video) {
+    // ⚠️ 아래 좌표 기반 연출들은 전부 '1920 캔버스 px × sf' 로 계산한다.
+    //    모바일에서는 그 좌표계 자체가 없으므로(스케일 해제) 건너뛴다.
+    //    영상 확장·가치 스텝은 모바일용으로 따로 붙일 예정 (PR3).
+    var canvasMode = !isMobileNow;
+
+    if (video && canvasMode) {
       var bx = margin + BOX.x * sf, by = BOX.y * sf, bw = BOX.w * sf, bh = BOX.h * sf;
       var L, T, W, Hh;
       if (y < D) {
@@ -259,7 +324,7 @@
     // 케이스 스터디 히어로 사진: 히어로 자리 → 01 슬롯으로 이동·축소.
     // 시작·끝 위치를 모두 '문서 좌표 − 스크롤'로 계산하므로, 도착(p=1) 이후에는
     // 슬롯과 함께 자연스럽게 스크롤된다 (따로 고정 해제 처리가 필요 없다).
-    if (chPhoto && slotDoc) {
+    if (chPhoto && slotDoc && canvasMode) {
       var sT = CH_BOX.y * sf, sL = margin + CH_BOX.x * sf;
       var sW = CH_BOX.w * sf, sH = CH_BOX.h * sf;
       // '사이트 보기'를 충분히 본 뒤(CH_HOLD)부터 시작해,
@@ -299,7 +364,8 @@
     // 화면 아래쪽(FLOAT_START)에 닿을 때부터 서서히 나타나며 떠오르고,
     // 상단이 FLOAT_SETTLE 지점까지 올라오면 제자리(0)에 안착.
     // 이동 구간을 화면 기준으로 잡아 요소 크기와 무관하게 같은 리듬으로 움직인다.
-    if (!reduceMotion) {
+    // FLOAT_OFFSET(90) 이 캔버스 px 라 모바일에서는 이동량이 과해진다 → 건너뜀
+    if (!reduceMotion && canvasMode) {
       var range = vh * (FLOAT_START - FLOAT_SETTLE);
       for (var fi = 0; fi < floats.length; fi++) {
         var f = floats[fi];
@@ -316,7 +382,7 @@
     }
 
     // 가치 섹션 스텝: 핀은 네이티브 sticky가 담당, JS는 클래스 토글만
-    if (track && values) {
+    if (track && values && canvasMode) {
       var tt = y - track.offsetTop;             // 트랙 진입 후 스크롤량 (실제 px)
       var PD = PIN_DIST * sf;
       var step = tt < 0 ? 0 : (tt >= PD ? 3 : 1 + Math.min(2, Math.floor(tt / (PD / 3))));
@@ -328,7 +394,8 @@
     // 히어로 화살표: 스크롤 시작(0)부터 서서히 페이드 → 영상 풀스크린 시점에 소멸
     // (인트로 재생 중에는 CSS 페이드인이 담당하므로 건드리지 않음)
     if (arrow && introDone) {
-      arrow.style.opacity = Math.max(0, 1 - y / D);
+      // 모바일엔 영상 확장 구간(D)이 없으므로 화면 한 개 높이를 기준으로 삼는다
+      arrow.style.opacity = Math.max(0, 1 - y / (canvasMode ? D : vh));
     }
 
     // 헤더 (방향 기반): 최상단 = 항상 보임 / 내리는 중 = 숨김 / 올리면 = 등장

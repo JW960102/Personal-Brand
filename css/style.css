@@ -2145,3 +2145,96 @@ main, .site-footer { width: 100%; }
 @media (prefers-reduced-motion: reduce) {
   .appmodal-dim, .appmodal-box { transition: none; }
 }
+
+/* ============================================
+   모바일 리셋 레이어 (2026-08-07)
+   브레이크포인트는 css/tokens.css 의 --is-mobile 이 기준이지만,
+   미디어쿼리는 변수를 조건으로 못 쓰므로 같은 숫자를 여기에도 적는다.
+   ⚠️ 1024 를 바꾸려면 tokens.css 와 여기 두 곳을 같이 바꿀 것.
+
+   토큰(--canvas / --gutter / --pad-x) 재정의만으로 27곳이 따라오므로
+   여기서는 '토큰으로 안 되는 것'만 다룬다.
+   ============================================ */
+@media (max-width: 1024px) {
+  /* 레이아웃 토큰 재정의.
+     ⚠️ tokens.css 가 아니라 여기 있는 이유: 이 넷은 위쪽 :root(19행) 에도 정의되어 있고
+        style.css 가 tokens.css 보다 나중에 로드되므로, tokens.css 에서 바꾸면 덮인다.
+     --canvas 하나로 .stage / .values-scale / .footer-scale / .hero / .story / .proj
+     / .ch / .ah 가 한 번에 따라온다. */
+  :root {
+    --canvas: 100%;
+    --gutter: clamp(16px, 5.3vw, 40px);   /* 130 → 375px 에서 260px 을 패딩에 쓸 수 없다 */
+    --pad-x: clamp(16px, 5.3vw, 40px);
+
+    /* JS 가 죽어도 모바일이 성립하도록 CSS 에서 못 박는다.
+       0 이 아니라 1 인 이유: calc(74px * var(--sf)) 같은 규칙을 미처 못 덮었을 때
+       요소가 사라지지 않고 '조금 큰 채로' 남아야 발견하기 쉽다. */
+    --sf: 1;
+    --stage-margin: 0px;
+  }
+
+  /* 스케일 래퍼 3종 해제 — 무대가 아니라 그냥 문서가 된다 */
+  .stage,
+  .values-scale,
+  .footer-scale { width: 100%; transform: none; }
+
+  /* 높이를 JS 가 지정하지 않으므로 클립할 이유가 없다.
+     오히려 hidden 이면 내용이 늘어날 때 잘린다. */
+  .stage-clamp { overflow: visible; height: auto; }
+
+  /* ⚠️ .footer-space 는 건드리지 않는다 — #contact 앵커의 실체다.
+     JS 가 인라인 높이를 지우면 높이 0 짜리 앵커로 자연 전환된다. */
+
+  /* ---- 헤더 ----
+     데스크톱은 높이·글자가 전부 * var(--sf) 라 sf=1 이면 74px/32px 로 원본 크기가 나온다.
+     375px 화면에는 과하므로 여기서 실제 값을 지정한다. */
+  .site-header { height: 56px; padding: 0 var(--pad-x); }
+  .site-header .logo { font-size: 20px; }
+  .site-gnb { gap: 14px; }
+  .site-gnb a { font-size: 13px; }
+
+  /* ---- 공용 푸터 ----
+     데스크톱은 700px 고정 높이 + 내부 13요소 절대배치다.
+     position:static 만 풀면 DOM 순서(가는 선 3개가 연달아 나온다)가 그대로 드러나
+     이상한 모양이 된다. HTML 은 6개 페이지에 흩어져 있어 손대고 싶지 않으므로
+     grid-template-areas 로 '순서만' 다시 짠다. */
+  .site-footer {
+    height: auto;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "cta" "contact"
+      "l1" "lb1" "b1"
+      "l2" "lb2" "b2"
+      "l3" "lb3" "b3"
+      "nav";
+    padding: clamp(48px, 12vw, 88px) var(--gutter) clamp(40px, 10vw, 72px);
+  }
+  .site-footer > * { position: static; left: auto; top: auto; }
+
+  .f-cta {
+    grid-area: cta;
+    white-space: normal;                 /* nowrap 이면 여기서 바로 넘친다 */
+    font-size: clamp(22px, 6.4vw, 34px);
+    letter-spacing: -0.03em;
+  }
+  .f-contact { grid-area: contact; margin-top: 28px; }
+  .f-nav {
+    grid-area: nav;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 18px;
+    margin-top: 48px;
+  }
+  .f-line1 { grid-area: l1; } .f-line2 { grid-area: l2; } .f-line3 { grid-area: l3; }
+  .f-line  { width: 100%; margin-top: 40px; }
+  .f-label1 { grid-area: lb1; } .f-label2 { grid-area: lb2; } .f-label3 { grid-area: lb3; }
+  .f-label { margin-top: 20px; }
+  .f-body1 { grid-area: b1; } .f-body2 { grid-area: b2; } .f-body3 { grid-area: b3; }
+  .f-body  { margin-top: 12px; white-space: normal; }
+
+  /* 드러남 연출 해제 — 성립 조건이 '.stage-wrap 이 불투명하게 덮고 있다가 걷힌다' 인데
+     모바일에선 .footer-space 높이를 JS 가 쓰지 않아 그 전제가 사라진다.
+     fixed 로 두면 iOS 주소창 높이가 바뀔 때마다 푸터가 튄다. */
+  .footer-reveal { position: static; height: auto; overflow: visible; }
+}
