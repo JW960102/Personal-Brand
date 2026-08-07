@@ -143,7 +143,49 @@
     curtains = [];
     for (var i = 0; i < els.length; i++) {
       if (!reduceMotion) els[i].classList.add('curtain');
-      curtains.push({ el: els[i], top: els[i].getBoundingClientRect().top + y });
+      // fit() 은 최초 진입·폰트 로드·리사이즈마다 실행된다. 이미 열렸던
+      // 이미지를 다시 미완료 상태로 등록하면 다음 onScroll() 에서 열린 상태가
+      // 같은 프레임에 재적용돼 전환이 생략될 수 있으므로 완료 상태를 보존한다.
+      curtains.push({
+        el: els[i],
+        top: els[i].getBoundingClientRect().top + y,
+        done: els[i].classList.contains('is-open')
+      });
+    }
+
+    // 닫힌 clip-path 를 한 번 계산해 둔 뒤 onScroll() 이 is-open 을 붙이게 한다.
+    // 스크롤 복원·빠른 리사이즈처럼 두 클래스가 같은 프레임에 생기는 경우에도
+    // 브라우저가 100% → 0% 커튼 전환을 건너뛰지 않는다.
+    if (!reduceMotion && curtains.length) void curtains[0].el.offsetWidth;
+  }
+
+  // 빠르게 멀리 스크롤하면 lazy 이미지가 아직 그려질 준비를 못 한 상태에서
+  // 커튼이 먼저 열릴 수 있다. 이미지를 기다린 다음에만 커튼을 걷어
+  // 빈 영역이 있다가 사진이 순간적으로 나타나는 일을 막는다.
+  function revealCurtain(el) {
+    if (!el || el.classList.contains('is-open') || el.dataset.curtainOpening === 'true') return;
+
+    var image = el.tagName === 'FIGURE' ? el.querySelector('img') : el;
+    function open() {
+      delete el.dataset.curtainOpening;
+      el.classList.add('is-open');
+    }
+
+    if (!image || !image.complete || !image.naturalWidth) {
+      el.dataset.curtainOpening = 'true';
+      if (!image) { open(); return; }
+      image.addEventListener('load', open, { once: true });
+      image.addEventListener('error', open, { once: true });
+      return;
+    }
+
+    // complete 는 네트워크 완료만 뜻할 수 있으므로 decode()까지 기다린다.
+    // 지원하지 않는 브라우저와 디코드 실패는 곧바로 열어 기존 동작을 유지한다.
+    if (image.decode) {
+      el.dataset.curtainOpening = 'true';
+      image.decode().then(open, open);
+    } else {
+      open();
     }
   }
 
@@ -236,6 +278,9 @@
     // 인트로 카피: 섹션이 화면에 1/3쯤 들어오면 한 번만 순차 등장 (되돌리지 않음)
     // getBoundingClientRect는 무대 스케일이 반영된 실제 화면 좌표라 --sf 보정이 불필요
     if (introSec && !introRevealed && introSec.getBoundingClientRect().top < vh * 0.67) {
+      // 커튼과 마찬가지로 초기화/스크롤 복원 타이밍에도 시작 상태를 확정한다.
+      // 첫 렌더에 reveal 이 바로 붙어 소개 문구가 순간 노출되는 일을 막는다.
+      void introSec.offsetWidth;
       introSec.classList.add('reveal');
       introRevealed = true;
     }
@@ -245,7 +290,7 @@
       var c = curtains[ci];
       if (c.done) continue;
       if (c.top - y < vh * CURTAIN_AT) {
-        c.el.classList.add('is-open');
+        revealCurtain(c.el);
         c.done = true;
       }
     }
