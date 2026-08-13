@@ -16,7 +16,7 @@
   <link rel="stylesheet" href="css/style.css" />
   <script>document.documentElement.classList.add('js');</script>
 </head>
-<body class="about-page">
+<body class="about-page subpage">
 
   <!-- ===== 모바일 안내 (900px 이하에서만 보임 · 데스크톱에는 영향 없음) =====
        반응형 레이아웃을 만들면 이 블록과 css/style.css 의 .mgate 규칙만 지우면 된다. -->
@@ -66,7 +66,11 @@
       <a href="about.html" aria-current="page">About</a>
       <a href="works.html">Work</a>
       <a href="#contact">Contact</a>
+      <a class="mobile-inapp-nav" href="https://card-news-editor-peach.vercel.app/" target="_blank" rel="noopener noreferrer">InApp</a>
     </nav>
+    <button class="menu-toggle" type="button" aria-label="메뉴 열기" aria-expanded="false" aria-controls="primary-navigation">
+      <span></span><span></span><span></span>
+    </button>
   </header>
 
   <!-- 케이스 스터디와 같은 흐름 배치. 시안 좌표가 없으므로 절대배치를 쓰지 않는다. -->

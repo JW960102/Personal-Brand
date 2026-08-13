@@ -679,9 +679,16 @@
   var total = document.getElementById('storyTotal');
   var prev = document.getElementById('storyPrev');
   var next = document.getElementById('storyNext');
+  var pages = sec.querySelectorAll('.story-page');
+  var stage = sec.querySelector('.story-stage');
   if (!slides.length) return;
 
   var idx = 0;
+  var timer = null;
+  var isVisible = false;
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var startX = null;
+  var startY = null;
   function pad(n) { return n < 10 ? '0' + n : String(n); }
 
   function show(n) {
@@ -689,13 +696,104 @@
     for (var i = 0; i < slides.length; i++) {
       slides[i].classList.toggle('is-active', i === idx);
     }
+    for (var j = 0; j < pages.length; j++) {
+      var active = j === idx;
+      pages[j].classList.toggle('is-active', active);
+      pages[j].setAttribute('aria-current', active ? 'true' : 'false');
+    }
     if (now) now.textContent = pad(idx + 1);
   }
 
+  function stopAutoplay() {
+    if (timer) { clearTimeout(timer); timer = null; }
+  }
+
+  function scheduleAutoplay() {
+    stopAutoplay();
+    if (!isVisible || reduceMotion || document.hidden) return;
+    timer = setTimeout(function () {
+      show(idx + 1);
+      scheduleAutoplay();
+    }, 5000);
+  }
+
+  function userChange(n) {
+    show(n);
+    scheduleAutoplay();
+  }
+
   if (total) total.textContent = pad(slides.length);
-  if (prev) prev.addEventListener('click', function () { show(idx - 1); });
-  if (next) next.addEventListener('click', function () { show(idx + 1); });
+  if (prev) prev.addEventListener('click', function () { userChange(idx - 1); });
+  if (next) next.addEventListener('click', function () { userChange(idx + 1); });
+  for (var pi = 0; pi < pages.length; pi++) {
+    pages[pi].addEventListener('click', function () {
+      userChange(Number(this.getAttribute('data-story-index')));
+    });
+  }
+
+  if (stage && window.PointerEvent) {
+    stage.addEventListener('pointerdown', function (event) {
+      if (event.isPrimary === false) return;
+      startX = event.clientX;
+      startY = event.clientY;
+    });
+    stage.addEventListener('pointerup', function (event) {
+      if (startX === null || startY === null) return;
+      var dx = event.clientX - startX;
+      var dy = event.clientY - startY;
+      startX = null;
+      startY = null;
+      if (Math.abs(dx) < 40 || Math.abs(dx) <= Math.abs(dy)) return;
+      userChange(idx + (dx < 0 ? 1 : -1));
+    });
+    stage.addEventListener('pointercancel', function () { startX = null; startY = null; });
+  }
+
+  if ('IntersectionObserver' in window) {
+    var observer = new IntersectionObserver(function (entries) {
+      isVisible = entries[0].isIntersecting;
+      scheduleAutoplay();
+    }, { threshold: 0.35 });
+    observer.observe(sec);
+  }
+
+  document.addEventListener('visibilitychange', scheduleAutoplay);
   show(0);
+})();
+
+// 모바일 내비게이션: 메인·서브페이지에서 햄버거 메뉴를 사용한다.
+// 데스크톱/태블릿의 인라인 GNB에는 영향을 주지 않는다.
+(function () {
+  var button = document.querySelector('.menu-toggle');
+  var nav = document.querySelector('.site-gnb');
+  if (!button || !nav) return;
+
+  function setOpen(open) {
+    document.documentElement.classList.toggle('nav-open', open);
+    button.setAttribute('aria-expanded', open ? 'true' : 'false');
+    button.setAttribute('aria-label', open ? '메뉴 닫기' : '메뉴 열기');
+  }
+
+  button.addEventListener('click', function () {
+    setOpen(button.getAttribute('aria-expanded') !== 'true');
+  });
+
+  nav.addEventListener('click', function (event) {
+    if (event.target.closest && event.target.closest('a')) setOpen(false);
+  });
+
+  document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape') setOpen(false);
+  });
+
+  document.addEventListener('click', function (event) {
+    if (button.getAttribute('aria-expanded') === 'true' &&
+        !event.target.closest('.site-header')) setOpen(false);
+  });
+
+  window.addEventListener('resize', function () {
+    if (getComputedStyle(button).display === 'none') setOpen(false);
+  });
 })();
 
 // Contact 버튼: 메일 작성창은 href(mailto)가 열고, 동시에 주소를 클립보드에 복사.
@@ -737,6 +835,13 @@ if (fabTop) {
     var smooth = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     window.scrollTo({ top: 0, behavior: smooth ? 'smooth' : 'auto' });
   });
+
+  function updateFabTop() {
+    fabTop.classList.toggle('is-visible', window.scrollY > window.innerHeight);
+  }
+  window.addEventListener('scroll', updateFabTop, { passive: true });
+  window.addEventListener('resize', updateFabTop);
+  updateFabTop();
 }
 
 // 챗봇 버튼(#fabChat) 동작은 js/chat.js 가 담당한다.
