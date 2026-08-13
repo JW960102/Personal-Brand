@@ -16,7 +16,7 @@
   <link rel="stylesheet" href="css/style.css" />
   <script>document.documentElement.classList.add('js');</script>
 </head>
-<body>
+<body class="subpage case-page work-wrun-page">
 
   <!-- ===== 모바일 안내 (900px 이하에서만 보임 · 데스크톱에는 영향 없음) =====
        반응형 레이아웃을 만들면 이 블록과 css/style.css 의 .mgate 규칙만 지우면 된다. -->
@@ -67,7 +67,11 @@
       <a href="about.html">About</a>
       <a href="works.html">Work</a>
       <a href="#contact">Contact</a>
+      <a class="mobile-inapp-nav" href="https://card-news-editor-peach.vercel.app/" target="_blank" rel="noopener noreferrer">InApp</a>
     </nav>
+    <button class="menu-toggle" type="button" aria-label="메뉴 열기" aria-expanded="false" aria-controls="primary-navigation">
+      <span></span><span></span><span></span>
+    </button>
   </header>
 
   <!-- 1920 무대. 케이스 스터디는 시안 좌표가 없어 흐름 배치를 쓴다
@@ -84,9 +88,12 @@
       <span class="hero-mark" aria-hidden="true"></span>
 
       <h1 class="ch-title">
-        <span class="chw"><span>RUNNIG APP</span></span>
+        <span class="chw"><span>RUNNING APP</span></span>
         <span class="chw"><span>WE RUN</span></span>
       </h1>
+      <figure class="ch-mobile-media">
+        <img src="images/on101_img.webp" alt="W:RUN 앱 화면" />
+      </figure>
 
       <!-- 사진은 무대 밖 고정 레이어에 있다 (스크롤에 따라 아래 슬롯으로 이동) -->
 

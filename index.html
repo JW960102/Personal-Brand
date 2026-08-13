@@ -34,7 +34,7 @@
   </script>
   -->
 </head>
-<body>
+<body class="home-page">
 
   <!-- ===== 모바일 안내 (900px 이하에서만 보임 · 데스크톱에는 영향 없음) =====
        반응형 레이아웃을 만들면 이 블록과 css/style.css 의 .mgate 규칙만 지우면 된다. -->
@@ -80,11 +80,15 @@
   <!-- 헤더 (전 페이지 공통) -->
   <header class="site-header">
     <a class="logo" href="index.html">JW portfolio</a>
-    <nav class="site-gnb" aria-label="주요 메뉴">
+    <button class="menu-toggle" type="button" aria-label="메뉴 열기" aria-expanded="false" aria-controls="siteGnb">
+      <span></span><span></span><span></span>
+    </button>
+    <nav class="site-gnb" id="siteGnb" aria-label="주요 메뉴">
       <a href="#hero">Home</a>
       <a href="about.html">About</a>
       <a href="works.html">Work</a>
       <a href="#contact">Contact</a>
+      <a class="mobile-inapp-nav" href="https://card-news-editor-peach.vercel.app/" target="_blank" rel="noopener noreferrer">InApp</a>
     </nav>
   </header>
 
@@ -102,6 +106,11 @@
 
     <!-- ===== 01. Hero — THINK / MAKE & / DELIVER (실측 절대좌표) ===== -->
     <section class="hero" id="hero">
+      <div class="hero-mobile-visual" aria-hidden="true">
+        <video muted playsinline autoplay loop preload="metadata">
+          <source src="https://phyunkkjikpk5uvs.public.blob.vercel-storage.com/hero-demo-subtle.mp4?v=20260806-2" type="video/mp4" />
+        </video>
+      </div>
       <!-- 각 줄은 마스크(overflow) + 내부 span 이동으로 "자기 자리 아래에서 솟아오르는" 등장 -->
       <h1 class="hero-title">
         <span class="hw hw-think"><span>THINK</span></span>
@@ -247,6 +256,12 @@
             <span class="story-caption">STEP 04 — VALIDATE</span>
           </div>
         </article>
+      </div>
+      <div class="story-pagination" role="group" aria-label="How I Work 슬라이드 선택">
+        <button class="story-page is-active" type="button" data-story-index="0" aria-label="1번 슬라이드" aria-current="true"></button>
+        <button class="story-page" type="button" data-story-index="1" aria-label="2번 슬라이드"></button>
+        <button class="story-page" type="button" data-story-index="2" aria-label="3번 슬라이드"></button>
+        <button class="story-page" type="button" data-story-index="3" aria-label="4번 슬라이드"></button>
       </div>
     </section>
 
