@@ -159,6 +159,13 @@ main, .site-footer { width: 100%; }
   font-size: calc(var(--fs-32) * var(--sf));  /* 32px × 스케일 */
   line-height: 1;
 }
+/* 모바일 햄버거 버튼 — 기본은 숨김. 767px 이하에서만 켠다.
+   ⚠ 숨김을 미디어쿼리 안에만 두면 안 된다 (2026-09-01 수정).
+     이전엔 @media (max-width:1024px) 안에만 display:none 이 있어서, 1024px 을 넘는
+     데스크톱에는 이 버튼에 적용되는 규칙이 하나도 없었다. 그 결과 스타일 없는
+     <button> 이 빈 <span> 3개를 담은 채 헤더 가운데에 점처럼 찍혔다.
+     기본값을 숨김으로 두고 필요한 폭에서만 켜는 방향이 맞다. */
+.menu-toggle { display: none; }
 .site-gnb {
   display: flex;
   align-items: center;
@@ -2268,7 +2275,7 @@ main, .site-footer { width: 100%; }
   .home-page .site-header .logo { font-size: 22px; }
   .home-page .site-gnb { gap: clamp(18px, 3vw, 32px); }
   .home-page .site-gnb a { font-size: 14px; }
-  .menu-toggle { display: none; }
+  /* .menu-toggle 숨김은 기본 규칙으로 올렸다 — 여기 있으면 1024px 초과에서 비게 된다 */
 
   .home-page .hero {
     display: flex;
