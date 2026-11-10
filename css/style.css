@@ -786,6 +786,7 @@ main, .site-footer { width: 100%; }
 }
 .meta-scope-note {
   margin: 14px 0 0;
+  word-break: keep-all;
   font-family: var(--f-sans);
   font-size: max(13px, var(--fs-floor-14));
   letter-spacing: -0.39px;
@@ -840,7 +841,22 @@ main, .site-footer { width: 100%; }
 .p3-img2 { position: absolute; left: 763px;  top: 1274px; width: 550px; height: 412px; object-fit: cover; }  /* 다이어리+폰 */
 .p3-img3 { position: absolute; left: 1408px; top: 1019px; width: 382px; height: 510px; object-fit: cover; }  /* 작업 사진, 우측 끝 1790 */
 
-/* (구) 프로젝트 그리드 규칙은 01·02·03 실측 절대배치로 대체되어 제거됨 */
+/* ===== 04-04. SIDE PROJECT · Brand Web — 02와 같은 좌측 사진 미러 (y0 = 03 끝 라인) ===== */
+.proj4 { height: 1944px; }   /* 02와 동일 */
+.p4-num   { left: 871px; top: 100px; }
+.p4-title { left: 893px; top: 571px; width: 732px; text-align: left; }
+.p4-tools { left: 893px; top: 791px; }
+.p4-photo {
+  position: absolute;
+  left: 130px; top: 100px;
+  width: 712px; height: 713px;
+  object-fit: cover;
+}
+.p4-meta { position: absolute; left: 1373px; top: 815px;  width: 417px; min-height: 514px; }  /* 오른쪽 끝 1790 */
+.p4-img2 { position: absolute; left: 130px;  top: 1036px; width: 417px; height: 514px; object-fit: cover; object-position: top; }  /* 모바일 화면 */
+.p4-obj  { position: absolute; left: 596px;  top: 1318px; width: 681px; height: 383px; object-fit: cover; }  /* 데스크톱 화면 */
+
+/* (구) 프로젝트 그리드 규칙은 01·02·03·04 실측 절대배치로 대체되어 제거됨 */
 
 /* ===== 05. Transition — Designed to be used (y0 = 03 끝 라인) ===== */
 .cta-more {
@@ -1011,6 +1027,7 @@ main, .site-footer { width: 100%; }
 .p1-links { right: 893px; top: 835px; }
 .p2-links { left: 893px;  top: 835px; }
 .p3-links { right: 893px; top: 826px; }
+.p4-links { left: 893px;  top: 835px; }
 .p-case-link::after { display: none; }
 
 /* ===== 07. Footer ===== */
@@ -2550,7 +2567,8 @@ main, .site-footer { width: 100%; }
   .home-page .p-num { font-size: 14px; font-weight: 600; }
   .home-page .p1-photo,
   .home-page .p2-photo,
-  .home-page .p3-photo {
+  .home-page .p3-photo,
+  .home-page .p4-photo {
     order: 1;
     width: 100%;
     height: auto;
@@ -2559,7 +2577,8 @@ main, .site-footer { width: 100%; }
   }
   .home-page .p1-photo img,
   .home-page .p2-photo,
-  .home-page .p3-photo { width: 100%; height: 100%; object-fit: cover; }
+  .home-page .p3-photo,
+  .home-page .p4-photo { width: 100%; height: 100%; object-fit: cover; }
   .home-page .p-title {
     order: 2;
     width: auto;
@@ -2588,7 +2607,8 @@ main, .site-footer { width: 100%; }
   .home-page .meta-scope-note { font-size: 14px; }
   .home-page .p1-img2, .home-page .p1-img3,
   .home-page .p2-img2, .home-page .p2-obj,
-  .home-page .p3-img2, .home-page .p3-img3 {
+  .home-page .p3-img2, .home-page .p3-img3,
+  .home-page .p4-img2, .home-page .p4-obj {
     order: 6;
     width: 100%;
     height: auto;
@@ -2596,8 +2616,9 @@ main, .site-footer { width: 100%; }
     object-fit: cover;
   }
   .home-page .p1-img2, .home-page .p1-img3,
-  .home-page .p2-img2, .home-page .p3-img3 { aspect-ratio: 4 / 5; }
+  .home-page .p2-img2, .home-page .p3-img3, .home-page .p4-img2 { aspect-ratio: 4 / 5; }
   .home-page .p2-obj, .home-page .p3-img2 { aspect-ratio: 4 / 3; }
+  .home-page .p4-obj { aspect-ratio: 16 / 9; }
 
   .home-page .cta-more {
     display: grid;
