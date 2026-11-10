@@ -762,6 +762,32 @@ main, .site-footer { width: 100%; }
   width: var(--v, 0%);
   background: var(--c-ink);
 }
+/* 개인 프로젝트 — 팀 기여도 막대 대신 "전 과정 1인" 범위.
+   단계명 한 줄 + 꽉 찬 막대 하나 + 한 줄 설명으로, 막대 카드와 같은 자리·리듬을 유지한다. */
+.meta-scope { margin-top: auto; }
+.meta-steps {
+  display: flex;
+  justify-content: space-between;
+  margin: 0 0 12px;
+  padding: 0;
+  list-style: none;
+  font-family: var(--f-display);
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: -0.3px;
+}
+.meta-scope-bar {
+  display: block;
+  height: 5px;
+  background: var(--c-ink);
+}
+.meta-scope-note {
+  margin: 14px 0 0;
+  font-family: var(--f-sans);
+  font-size: 13px;
+  letter-spacing: -0.39px;
+  color: var(--c-ink-60);
+}
 .p1-img2  { position: absolute; left: 684px;  top: 1036px; width: 343px; height: 515px; object-fit: cover; }
 /* ※ Figma의 685×514는 크롭 전 원본 이미지 노드 크기. 실제 보이는 영역은
    417×514(우측 끝 1790 정렬) — 툴·기여도 박스와 동일 규격 */
@@ -2554,6 +2580,9 @@ main, .site-footer { width: 100%; }
   .home-page .meta-stack { font-size: clamp(21px, 3vw, 28px); }
   .home-page .meta-bars { margin-top: 36px; }
   .home-page .meta-bars span { font-size: 14px; }
+  .home-page .meta-scope { margin-top: 36px; }
+  .home-page .meta-steps { font-size: 14px; }
+  .home-page .meta-scope-note { font-size: 14px; }
   .home-page .p1-img2, .home-page .p1-img3,
   .home-page .p2-img2, .home-page .p2-obj,
   .home-page .p3-img2, .home-page .p3-img3 {
