@@ -193,7 +193,7 @@ export const KNOWLEDGE = `
   모바일 메뉴는 화면 전체를 브랜드 그린으로 덮는 방식으로 설계했다.
 · 사용 툴: Figma, AI 어시스턴트.
 · 구현 기술 (기술을 직접 물을 때만): HTML, CSS, JavaScript, Tailwind CSS(CDN), Vercel.
-· 볼 수 있는 곳: 메인 홈 대표 프로젝트에는 없고, Work 페이지(SIDE PROJECT · 04)와 케이스 스터디에 있다.
+· 볼 수 있는 곳: 메인 홈 대표 프로젝트 04(SIDE PROJECT · Brand Web), Work 페이지(SIDE PROJECT · 04), 케이스 스터디.
 · 포트폴리오 목적의 리뉴얼 시안이며 실제 이니스프리와 무관하다. 물으면 그대로 답한다.
 · 가장 어려웠던 지점과 해결
   쇼핑몰(이커머스) 형태의 사이트에 브랜드 경험을 어떻게 더하면서도 이커머스의 쓰임새를
