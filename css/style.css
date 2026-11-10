@@ -173,7 +173,7 @@ main, .site-footer { width: 100%; }
 }
 .site-gnb a {
   font-family: var(--f-display);
-  font-size: calc(18px * var(--sf));
+  font-size: max(14px, calc(18px * var(--sf)));
   font-weight: 400;
   letter-spacing: -0.03em;
   line-height: 1;
@@ -184,7 +184,7 @@ main, .site-footer { width: 100%; }
 .mobile-inapp-nav { display: none; }
 @media (max-width: 600px) {
   .site-gnb { gap: 12px; }
-  .site-gnb a { font-size: 12px; }
+  .site-gnb a { font-size: 14px; }
 }
 
 /* ===== 01. Hero — THINK / MAKE & / DELIVER (1920 캔버스 실측 절대좌표) =====
@@ -452,7 +452,8 @@ main, .site-footer { width: 100%; }
 /* 라벨 (Newsreader 이탤릭 20px) @ (736,184) */
 .v-label {
   position: absolute;
-  left: 736px; top: 184px;
+  /* 오른쪽 끝(853px)을 기준으로 둔다 — 글자 하한으로 폭이 늘어도 OF 쪽으로 밀고 들어가지 않게 */
+  right: 1067px; top: 184px;
   font-family: var(--f-serif);
   font-style: italic;
   font-weight: 400;
@@ -704,7 +705,7 @@ main, .site-footer { width: 100%; }
 /* 우측 끝 1027 에 맞춰야 하므로 left 가 아니라 right 로 잡는다
    (문구 길이가 바뀌어도 정렬선이 유지됨) */
 .p1-tools { right: 893px; top: 791px; }
-.p1-meta  { position: absolute; left: 130px;  top: 815px;  width: 417px; height: 514px; }
+.p1-meta  { position: absolute; left: 130px;  top: 815px;  width: 417px; min-height: 514px; } /* min: 작은 화면에서 글자 하한이 걸리면 살짝 늘어난다 */
 
 /* ---------- 기여도 카드 (프로젝트 메타 박스) ----------
    수치를 적지 않고 막대 길이만으로 비중을 읽히게 한다.
@@ -717,7 +718,7 @@ main, .site-footer { width: 100%; }
 }
 .meta-label {
   font-family: var(--f-display);
-  font-size: 12px;
+  font-size: max(12px, var(--fs-floor-14));
   font-weight: 600;
   letter-spacing: 0.1em;
   color: var(--c-ink-40);
@@ -732,6 +733,8 @@ main, .site-footer { width: 100%; }
   letter-spacing: -0.78px;
 }
 .meta-stack span { display: block; }
+/* 카드가 글자 하한으로 늘어날 때도 툴 목록과 막대 사이 최소 간격 유지 */
+.meta-card .meta-stack { margin-bottom: 28px; }
 /* 단계별 비중 — 카드 아래쪽에 고정 */
 .meta-bars {
   margin-top: auto;
@@ -745,7 +748,7 @@ main, .site-footer { width: 100%; }
   display: block;
   margin-bottom: 7px;
   font-family: var(--f-sans);
-  font-size: 13px;
+  font-size: max(13px, var(--fs-floor-14));
   letter-spacing: -0.39px;
   color: var(--c-ink-60);
 }
@@ -772,7 +775,7 @@ main, .site-footer { width: 100%; }
   padding: 0;
   list-style: none;
   font-family: var(--f-display);
-  font-size: 15px;
+  font-size: max(15px, var(--fs-floor-14));
   font-weight: 500;
   letter-spacing: -0.3px;
 }
@@ -784,7 +787,7 @@ main, .site-footer { width: 100%; }
 .meta-scope-note {
   margin: 14px 0 0;
   font-family: var(--f-sans);
-  font-size: 13px;
+  font-size: max(13px, var(--fs-floor-14));
   letter-spacing: -0.39px;
   color: var(--c-ink-60);
 }
@@ -817,7 +820,7 @@ main, .site-footer { width: 100%; }
   width: 712px; height: 713px;
   object-fit: cover;
 }
-.p2-meta { position: absolute; left: 1373px; top: 815px;  width: 417px; height: 514px; }  /* 오른쪽 끝 1790 */
+.p2-meta { position: absolute; left: 1373px; top: 815px;  width: 417px; min-height: 514px; }  /* 오른쪽 끝 1790 */
 .p2-img2 { position: absolute; left: 130px;  top: 1036px; width: 417px; height: 514px; object-fit: cover; }  /* 팀 작업 사진 */
 .p2-obj  { position: absolute; left: 596px;  top: 1318px; width: 681px; height: 383px; object-fit: cover; }  /* ILKW 제품컷 */
 
@@ -833,7 +836,7 @@ main, .site-footer { width: 100%; }
   width: 712px; height: 713px;
   object-fit: cover;
 }
-.p3-meta { position: absolute; left: 130px;  top: 806px;  width: 417px; height: 514px; }
+.p3-meta { position: absolute; left: 130px;  top: 806px;  width: 417px; min-height: 514px; }
 .p3-img2 { position: absolute; left: 763px;  top: 1274px; width: 550px; height: 412px; object-fit: cover; }  /* 다이어리+폰 */
 .p3-img3 { position: absolute; left: 1408px; top: 1019px; width: 382px; height: 510px; object-fit: cover; }  /* 작업 사진, 우측 끝 1790 */
 
@@ -873,7 +876,7 @@ main, .site-footer { width: 100%; }
   padding: 0 22px;
   border-radius: 22px;
   font-family: var(--f-display);
-  font-size: 14px;
+  font-size: max(14px, var(--fs-floor-14));
   font-weight: 500;
   letter-spacing: 0.02em;
 }
@@ -1041,7 +1044,7 @@ main, .site-footer { width: 100%; }
   border-color: #fff;
   color: #fff;
   font-family: var(--f-display);
-  font-size: 18px;
+  font-size: max(18px, var(--fs-floor-14));
   font-weight: 500;
   letter-spacing: -0.54px;
 }
@@ -1079,7 +1082,7 @@ main, .site-footer { width: 100%; }
   top: 418px;
   font-family: var(--f-display);
   font-weight: 500;
-  font-size: 12px;
+  font-size: max(12px, var(--fs-floor-14));
   letter-spacing: -0.36px;
   line-height: 0.9;
   white-space: nowrap;
@@ -1157,7 +1160,7 @@ main, .site-footer { width: 100%; }
 /* InApp — 텍스트 버튼 (원 안에 들어가도록 작게) */
 .fab-text {
   font-family: var(--f-display);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
   letter-spacing: -0.39px;
 }
@@ -1249,7 +1252,7 @@ main, .site-footer { width: 100%; }
 .chat-note {
   margin: -4px 0 2px;
   font-family: var(--f-sans);
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.4;
   letter-spacing: -0.24px;
   color: var(--c-ink-40);
@@ -1283,7 +1286,7 @@ main, .site-footer { width: 100%; }
   border-radius: 999px;
   background: none;
   font-family: var(--f-sans);
-  font-size: 13px;
+  font-size: 14px;
   color: var(--c-ink-60);
   cursor: pointer;
   transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
@@ -1434,7 +1437,7 @@ main, .site-footer { width: 100%; }
 .case-body p {
   margin: 0;
   font-family: var(--f-sans);
-  font-size: 18px;
+  font-size: max(18px, var(--fs-floor-16));
   line-height: 1.7;
   letter-spacing: -0.72px;
   color: var(--c-ink-60);
@@ -1531,7 +1534,7 @@ main, .site-footer { width: 100%; }
   display: block;
   margin-bottom: 24px;
   font-family: var(--f-display);
-  font-size: 12px;
+  font-size: max(12px, var(--fs-floor-14));
   font-weight: 600;
   letter-spacing: 0.1em;
   color: var(--c-ink-40);
@@ -1883,7 +1886,7 @@ main, .site-footer { width: 100%; }
   letter-spacing: -0.6px;
   color: var(--c-ink);
 }
-.case-body .tl-body p { font-size: 17px; }
+.case-body .tl-body p { font-size: max(17px, var(--fs-floor-16)); }
 .tl-link { margin-top: 20px; }
 
 /* ---- 02·03 항목 목록 (제목 ↔ 연도) ---- */
@@ -1897,7 +1900,7 @@ main, .site-footer { width: 100%; }
   padding: 18px 0;
   border-top: 1px solid var(--c-line);
   font-family: var(--f-sans);
-  font-size: 17px;
+  font-size: max(17px, var(--fs-floor-16));
   letter-spacing: -0.5px;
   color: var(--c-ink-60);
   word-break: keep-all;
@@ -1940,7 +1943,7 @@ main, .site-footer { width: 100%; }
   letter-spacing: -0.6px;
   color: var(--c-ink);
 }
-.case-body .hobby p { font-size: 16px; line-height: 1.65; }
+.case-body .hobby p { font-size: max(16px, var(--fs-floor-16)); line-height: 1.65; }
 
 /* ============================================
    모바일 안내 화면 (.mgate) — 임시 대응
@@ -2013,7 +2016,7 @@ main, .site-footer { width: 100%; }
     padding-bottom: 16px;
     border-bottom: 1px solid var(--c-line);
     font-family: var(--f-display);
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 600;
     letter-spacing: 0.06em;
     color: var(--c-ink-40);
@@ -2047,7 +2050,7 @@ main, .site-footer { width: 100%; }
     display: block;
     margin-top: 6px;
     font-family: var(--f-sans);
-    font-size: 13px;
+    font-size: 14px;
     letter-spacing: -0.3px;
     color: var(--c-ink-60);
   }
@@ -2148,7 +2151,7 @@ main, .site-footer { width: 100%; }
 /* 좁은 모달에서 에디터를 쓰긴 답답하므로 탈출구를 남긴다 */
 .appmodal-out {
   font-family: var(--f-display);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
   letter-spacing: -0.2px;
   color: var(--c-ink-60);
@@ -2239,7 +2242,7 @@ main, .site-footer { width: 100%; }
   .site-header { height: 56px; padding: 0 var(--pad-x); }
   .site-header .logo { font-size: 20px; }
   .site-gnb { gap: 14px; }
-  .site-gnb a { font-size: 13px; }
+  .site-gnb a { font-size: 14px; }
 
   /* ---- 공용 푸터 ----
      데스크톱은 700px 고정 높이 + 내부 13요소 절대배치다.
