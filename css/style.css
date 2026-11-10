@@ -1567,7 +1567,8 @@ main, .site-footer { width: 100%; }
 .works-row + .works-row { margin-top: 210px; }
 .works-row--one .work-card:first-child { grid-column: 1 / span 7; }
 .works-row--one .work-card:last-child { grid-column: 9 / span 4; }
-.works-row--two .work-card { grid-column: 3 / span 7; }
+.works-row--two .work-card:first-child { grid-column: 2 / span 5; }
+.works-row--two .work-card:last-child { grid-column: 8 / span 5; }
 .works-row--three .work-card:first-child { grid-column: 1 / span 4; }
 .works-row--three .work-card:last-child { grid-column: 7 / span 6; }
 .works-row--four .work-card:first-child { grid-column: 3 / span 5; }
